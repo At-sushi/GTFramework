@@ -6,7 +6,6 @@
 #include <string>
 #include <list>
 #include <stack>
-#include <wtypes.h>
 
 
 
@@ -27,7 +26,7 @@ namespace GTF
 *	@ingroup Tasks
 *	@brief	基本タスク
 *
-*	・ExecuteでFALSEを返すと破棄される
+*	・Executeでfalseを返すと破棄される
 *	・排他タスクが変更されたとき、破棄される
 */
 class CTaskBase
@@ -35,16 +34,11 @@ class CTaskBase
 public:
     virtual ~CTaskBase(){}
     virtual void Initialize(){}					//!< ExecuteまたはDrawがコールされる前に1度だけコールされる
-    virtual BOOL Execute(DWORD time)
-                        {return(TRUE);}			//!< 毎フレームコールされる
+    virtual bool Execute(unsigned int time)
+                        {return(true);}			//!< 毎フレームコールされる
     virtual void Terminate(){}					//!< タスクのリストから外されるときにコールされる（その直後、deleteされる）
     virtual void Draw(){}						//!< 描画時にコールされる
-    virtual void WndMessage(					//!< メインウインドウのメッセージと同じモノを受け取ることができる
-                    HWND hWnd,
-                    UINT msg, 
-                    WPARAM wparam, 
-                    LPARAM lparam){}
-    virtual DWORD GetID(){return 0;}			//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
+    virtual unsigned int GetID(){return 0;}			//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
     virtual int GetDrawPriority(){return -1;}	//!< 描画プライオリティ。低いほど手前に（後に）描画。マイナスならば表示しない
 
     static bool CompByDrawPriority(CTaskBase* arg1,CTaskBase* arg2)	//!< 描画プライオリティでソートするための比較演算
@@ -57,16 +51,16 @@ public:
 *	@brief 排他タスク
 *
 *	・他の排他タスクと一緒には動作(Execute)しない
-*	・他の排他タスクが追加された場合、Inactivateがコールされ、そこでFALSEを返すと
-*		破棄される。TRUEを返すとExecute、WndMessageがコールされない状態になり、
+*	・他の排他タスクが追加された場合、Inactivateがコールされ、そこでfalseを返すと
+*		破棄される。trueを返すとExecute、WndMessageがコールされない状態になり、
 *		新規の排他タスクが全て破棄されたときにActivateが呼ばれ、処理が再開する。
 */
 class CExclusiveTaskBase : public CTaskBase
 {
 public:
     virtual ~CExclusiveTaskBase(){}
-    virtual void Activate(DWORD prvTaskID){}				//!< Executeが再開されるときに呼ばれる
-    virtual BOOL Inactivate(DWORD nextTaskID){return FALSE;}//!< 他の排他タスクが開始したときに呼ばれる
+    virtual void Activate(unsigned int prvTaskID){}				//!< Executeが再開されるときに呼ばれる
+    virtual bool Inactivate(unsigned int nextTaskID){return false;}//!< 他の排他タスクが開始したときに呼ばれる
     
     virtual int GetDrawPriority(){return 0;}				//!< 描画プライオリティ取得メソッド
 };
@@ -84,14 +78,14 @@ class CBackgroundTaskBase : public CTaskBase
 {
 public:
     virtual ~CBackgroundTaskBase(){}
-    CBackgroundTaskBase(){m_isEnabled=TRUE;}
+    CBackgroundTaskBase(){m_isEnabled=true;}
 
-    BOOL IsEnabled(){return m_isEnabled;}
-    void Enable(){m_isEnabled = TRUE;}
-    void Disable(){m_isEnabled = FALSE;}
+    bool IsEnabled(){return m_isEnabled;}
+    void Enable(){m_isEnabled = true;}
+    void Disable(){m_isEnabled = false;}
 
 protected:
-    BOOL m_isEnabled;
+    bool m_isEnabled;
 };
 
 
@@ -119,20 +113,15 @@ public:
     //! タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
     void AddTask(CTaskBase *newTask);
-    void RemoveTaskByID(DWORD id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
-    void ReturnExclusiveTaskByID(DWORD id);		//!< 指定IDの排他タスクまでTerminate/popする
-    CExclusiveTaskBase* GetTopExclusiveTask();	//!< 最上位にあるエクスクルーシブタスクをゲト
-    CBackgroundTaskBase* FindBGTask(DWORD id);	//!< 指定IDをもつ常駐タスクゲット
-    CTaskBase* FindTask(DWORD id);				//!< 指定IDをもつ通常タスクゲット
+    void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
+    void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
+    CExclusiveTaskBase* GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト
+    CBackgroundTaskBase* FindBGTask(unsigned int id);	//!< 指定IDをもつ常駐タスクゲット
+    CTaskBase* FindTask(unsigned int id);				//!< 指定IDをもつ通常タスクゲット
 
-    void Execute(DWORD time);					//!< CSystemからコールされ、各タスクの同関数をコールする
-    void Draw();								//!< CSystemからコールされ、各タスクをプライオリティ順に描画する
-    void WndMessage(							//!< CSystemからコールされ、各タスクの同関数をコールする
-            HWND hWnd,
-            UINT msg,
-            WPARAM wparam,
-            LPARAM lparam);
-    BOOL ExEmpty();								//!< 排他タスクが全部なくなっちゃったかどうか
+    void Execute(unsigned int time);					//!< 各タスクのExecute関数をコールする
+    void Draw();										//!< 各タスクをプライオリティ順に描画する
+    bool ExEmpty();										//!< 排他タスクが全部なくなっちゃったかどうか
 
     //デバッグ
     void DebugOutputTaskList();					//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する

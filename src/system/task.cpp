@@ -81,7 +81,7 @@ namespace GTF
         exNext = pext;
     }
 
-    void CTaskManager::Execute(DWORD time)
+    void CTaskManager::Execute(unsigned int time)
     {
         TaskList::iterator i, ied;
         std::list<TaskList::iterator> deleteList;
@@ -103,7 +103,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                if ((*i)->Execute(time) == FALSE)
+                if ((*i)->Execute(time) == false)
                 {
                     deleteList.push_back(i);
                 }
@@ -116,7 +116,7 @@ namespace GTF
             }
 #endif
         }
-        //通常タスクでFALSEを返したものを消す
+        //通常タスクでfalseを返したものを消す
         if (deleteList.size() != 0){
             idl = deleteList.begin();
             idl_ed = deleteList.end();
@@ -138,7 +138,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                if ((*i)->Execute(time) == FALSE){
+                if ((*i)->Execute(time) == false){
                     deleteList.push_back(i);
                 }
 #ifdef _CATCH_WHILE_EXEC
@@ -149,7 +149,7 @@ namespace GTF
             }
 #endif
         }
-        //常駐タスクでFALSEを返したものを消す
+        //常駐タスクでfalseを返したものを消す
         if (deleteList.size() != 0){
             idl = deleteList.begin();
             idl_ed = deleteList.end();
@@ -165,7 +165,7 @@ namespace GTF
 
         CExclusiveTaskBase *exTsk;
 
-        BOOL ex_ret;
+        bool ex_ret;
 
         //排他タスク、topのみExecute
         if (ex_stack.size() != 0){
@@ -173,7 +173,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                ex_ret = TRUE;
+                ex_ret = true;
                 ex_ret = exTsk->Execute(time);
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
@@ -210,7 +210,7 @@ namespace GTF
                     }
 #endif
 
-                    DWORD prvID;
+                    unsigned int prvID;
 
 #ifdef _CATCH_WHILE_EXEC
                     try{
@@ -329,30 +329,7 @@ namespace GTF
 
     }
 
-    void CTaskManager::WndMessage(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
-    {
-        TaskList::iterator i, ied;
-
-        //通常タスク
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-            (*i)->WndMessage(hWnd, msg, wparam, lparam);
-        }
-
-        //バックグラウンドタスク
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; i++){
-            (*i)->WndMessage(hWnd, msg, wparam, lparam);
-        }
-
-        //排他タスク
-        if (ex_stack.size() == 0)return;
-        ex_stack.top()->WndMessage(hWnd, msg, wparam, lparam);
-    }
-
-    void CTaskManager::RemoveTaskByID(DWORD id)
+    void CTaskManager::RemoveTaskByID(unsigned int id)
     {
         TaskList::iterator i, ied;
 
@@ -396,10 +373,10 @@ namespace GTF
     }
 
     //指定IDの排他タスクまでTerminate/popする
-    void CTaskManager::ReturnExclusiveTaskByID(DWORD id)
+    void CTaskManager::ReturnExclusiveTaskByID(unsigned int id)
     {
-        BOOL act = FALSE;
-        DWORD previd = 0;
+        bool act = false;
+        unsigned int previd = 0;
 
         while (ex_stack.size() != 0){
             CExclusiveTaskBase *task = ex_stack.top();
@@ -411,7 +388,7 @@ namespace GTF
             }
             else{
                 previd = task->GetID();
-                act = TRUE;
+                act = true;
                 CleanupAllSubTasks();
                 task->Terminate();
                 delete task;
@@ -474,7 +451,7 @@ namespace GTF
 
 
     //指定IDの常駐タスク取得
-    CBackgroundTaskBase* CTaskManager::FindBGTask(DWORD id)
+    CBackgroundTaskBase* CTaskManager::FindBGTask(unsigned int id)
     {
         TaskList::iterator i, ied;
 
@@ -489,7 +466,7 @@ namespace GTF
     }
 
     //指定IDの通常タスク取得
-    CTaskBase* CTaskManager::FindTask(DWORD id)
+    CTaskBase* CTaskManager::FindTask(unsigned int id)
     {
         TaskList::iterator i, ied;
 
@@ -504,9 +481,9 @@ namespace GTF
     }
 
     //全部なくなっちゃったら、やばいっしょ
-    BOOL CTaskManager::ExEmpty()
+    bool CTaskManager::ExEmpty()
     {
-        return (ex_stack.size() == 0) ? TRUE : FALSE;
+        return (ex_stack.size() == 0) ? true : false;
     }
 
 }
