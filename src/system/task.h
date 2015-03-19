@@ -112,13 +112,13 @@ public:
             
     //! タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CTaskBase* AddTask(CTaskBase *newTask);
+    CTaskBase* AddTask(CTaskBase *newTask);
     //! 排他タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CExclusiveTaskBase* AddTask(CExclusiveTaskBase *newTask);
+    CExclusiveTaskBase* AddTask(CExclusiveTaskBase *newTask);
     //! 常駐タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CBackgroundTaskBase* AddTask(CBackgroundTaskBase *newTask);
+    CBackgroundTaskBase* AddTask(CBackgroundTaskBase *newTask);
     void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
     void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
     CExclusiveTaskBase* GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト

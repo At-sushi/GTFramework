@@ -50,7 +50,7 @@ namespace GTF
     }
 
 
-	CTaskBase* CTaskManager::AddTask(CTaskBase *newTask)
+    CTaskBase* CTaskManager::AddTask(CTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -74,7 +74,7 @@ namespace GTF
         return newTask;
     }
 
-	CExclusiveTaskBase* CTaskManager::AddTask(CExclusiveTaskBase *newTask)
+    CExclusiveTaskBase* CTaskManager::AddTask(CExclusiveTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -90,10 +90,10 @@ namespace GTF
         }
         exNext = pext;
 
-		return pext;
+        return pext;
     }
 
-	CBackgroundTaskBase* CTaskManager::AddTask(CBackgroundTaskBase *newTask)
+    CBackgroundTaskBase* CTaskManager::AddTask(CBackgroundTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
