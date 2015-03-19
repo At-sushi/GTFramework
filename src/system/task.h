@@ -6,6 +6,7 @@
 #include <string>
 #include <list>
 #include <stack>
+#include <memory>
 
 
 
@@ -108,22 +109,26 @@ public:
     CTaskManager();
     ~CTaskManager(){Destroy();}
 
+    typedef std::weak_ptr<CTaskBase> TaskPtr;
+    typedef std::weak_ptr<CExclusiveTaskBase> ExTaskPtr;
+    typedef std::weak_ptr<CBackgroundTaskBase> BgTaskPtr;
+
     void Destroy();
             
     //! タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CTaskBase* AddTask(CTaskBase *newTask);
+    CTaskBase* AddTask(CTaskBase *newTask);
     //! 排他タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CExclusiveTaskBase* AddTask(CExclusiveTaskBase *newTask);
+    CExclusiveTaskBase* AddTask(CExclusiveTaskBase *newTask);
     //! 常駐タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-	CBackgroundTaskBase* AddTask(CBackgroundTaskBase *newTask);
+    CBackgroundTaskBase* AddTask(CBackgroundTaskBase *newTask);
     void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
     void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
-    CExclusiveTaskBase* GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト
-    CBackgroundTaskBase* FindBGTask(unsigned int id);	//!< 指定IDをもつ常駐タスクゲット
-    CTaskBase* FindTask(unsigned int id);				//!< 指定IDをもつ通常タスクゲット
+    ExTaskPtr GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト
+    BgTaskPtr FindBGTask(unsigned int id);	//!< 指定IDをもつ常駐タスクゲット
+    TaskPtr FindTask(unsigned int id);				//!< 指定IDをもつ通常タスクゲット
 
     void Execute(unsigned int time);					//!< 各タスクのExecute関数をコールする
     void Draw();										//!< 各タスクをプライオリティ順に描画する
@@ -133,8 +138,8 @@ public:
     void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
 
 protected:
-    typedef std::list<CTaskBase*> TaskList;
-    typedef std::stack<CExclusiveTaskBase*> ExTaskStack;
+    typedef std::list<std::shared_ptr<CTaskBase>> TaskList;
+    typedef std::stack<std::shared_ptr<CExclusiveTaskBase>> ExTaskStack;
 
     void CleanupAllSubTasks();					//!< 通常タスクを全てTerminate , deleteする
     void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
