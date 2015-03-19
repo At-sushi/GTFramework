@@ -112,7 +112,13 @@ public:
             
     //! タスク追加
     //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-    void AddTask(CTaskBase *newTask);
+	CTaskBase* AddTask(CTaskBase *newTask);
+    //! 排他タスク追加
+    //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+	CExclusiveTaskBase* AddTask(CExclusiveTaskBase *newTask);
+    //! 常駐タスク追加
+    //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+	CBackgroundTaskBase* AddTask(CBackgroundTaskBase *newTask);
     void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
     void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
     CExclusiveTaskBase* GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト
@@ -124,7 +130,7 @@ public:
     bool ExEmpty();										//!< 排他タスクが全部なくなっちゃったかどうか
 
     //デバッグ
-    void DebugOutputTaskList();					//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
+    void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
 
 protected:
     typedef std::list<CTaskBase*> TaskList;

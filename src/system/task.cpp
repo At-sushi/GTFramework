@@ -50,7 +50,7 @@ namespace GTF
     }
 
 
-    void CTaskManager::AddTask(CTaskBase *newTask)
+	CTaskBase* CTaskManager::AddTask(CTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -59,18 +59,28 @@ namespace GTF
         CBackgroundTaskBase *pbgt = dynamic_cast<CBackgroundTaskBase*>(newTask);
         if (pbgt){
             //常駐タスクとしてAdd
-            bg_tasks.push_back(pbgt);
-            pbgt->Initialize();
-            return;
+            return AddTask(pbgt);
         }
 
         CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
-        if (!pext){
-            //通常タスクとしてAdd
-            tasks.push_back(newTask);
-            newTask->Initialize();
-            return;
+        if (pext){
+            //排他タスクとしてAdd
+            return AddTask(pext);
         }
+
+        //通常タスクとしてAdd
+        tasks.push_back(newTask);
+        newTask->Initialize();
+        return newTask;
+    }
+
+	CExclusiveTaskBase* CTaskManager::AddTask(CExclusiveTaskBase *newTask)
+    {
+        if (newTask->GetID() != 0){
+            RemoveTaskByID(newTask->GetID());
+        }
+
+        CExclusiveTaskBase *pext = newTask;
 
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
@@ -79,6 +89,22 @@ namespace GTF
                 typeid(*exNext).name(), typeid(*newTask).name());
         }
         exNext = pext;
+
+		return pext;
+    }
+
+	CBackgroundTaskBase* CTaskManager::AddTask(CBackgroundTaskBase *newTask)
+    {
+        if (newTask->GetID() != 0){
+            RemoveTaskByID(newTask->GetID());
+        }
+
+        CBackgroundTaskBase *pbgt = newTask;
+
+        //常駐タスクとしてAdd
+        bg_tasks.push_back(pbgt);
+        pbgt->Initialize();
+        return pbgt;
     }
 
     void CTaskManager::Execute(unsigned int time)
@@ -95,73 +121,6 @@ namespace GTF
             return;
         }
 #endif
-
-        //通常タスクExecute
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-#ifdef _CATCH_WHILE_EXEC
-            try{
-#endif
-                if ((*i)->Execute(time) == false)
-                {
-                    deleteList.push_back(i);
-                }
-#ifdef _CATCH_WHILE_EXEC
-            }catch(...){
-                if(*i==NULL)g_system.Log("catch while execute1 : NULL",SYSLOG_ERROR);
-                else g_system.LogErr("catch while execute1 : %X , %s",*i,typeid(**i).name());
-                g_system.NotifyExcption();
-                break;
-            }
-#endif
-        }
-        //通常タスクでfalseを返したものを消す
-        if (deleteList.size() != 0){
-            idl = deleteList.begin();
-            idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
-                i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
-                delete delTgt;
-                tasks.erase(i);
-            }
-            deleteList.clear();
-        }
-
-        //常駐タスクExecute
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; i++)
-        {
-#ifdef _CATCH_WHILE_EXEC
-            try{
-#endif
-                if ((*i)->Execute(time) == false){
-                    deleteList.push_back(i);
-                }
-#ifdef _CATCH_WHILE_EXEC
-            }catch(...){
-                if(*i==NULL)g_system.Log("catch while execute2 : NULL",SYSLOG_ERROR);
-                else g_system.LogErr("catch while execute2 : %X %s",*i,typeid(**i).name());
-                g_system.NotifyExcption();
-            }
-#endif
-        }
-        //常駐タスクでfalseを返したものを消す
-        if (deleteList.size() != 0){
-            idl = deleteList.begin();
-            idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
-                i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
-                delete delTgt;
-                bg_tasks.erase(i);
-            }
-            deleteList.clear();
-        }
 
         CExclusiveTaskBase *exTsk;
 
@@ -274,6 +233,73 @@ namespace GTF
             exNext->Initialize();
 
             exNext = NULL;
+        }
+
+        //通常タスクExecute
+        i = tasks.begin();
+        ied = tasks.end();
+        for (; i != ied; i++){
+#ifdef _CATCH_WHILE_EXEC
+            try{
+#endif
+                if ((*i)->Execute(time) == false)
+                {
+                    deleteList.push_back(i);
+                }
+#ifdef _CATCH_WHILE_EXEC
+            }catch(...){
+                if(*i==NULL)g_system.Log("catch while execute1 : NULL",SYSLOG_ERROR);
+                else g_system.LogErr("catch while execute1 : %X , %s",*i,typeid(**i).name());
+                g_system.NotifyExcption();
+                break;
+            }
+#endif
+        }
+        //通常タスクでfalseを返したものを消す
+        if (deleteList.size() != 0){
+            idl = deleteList.begin();
+            idl_ed = deleteList.end();
+            for (; idl != idl_ed; idl++){
+                i = *idl;
+                delTgt = *i;
+                delTgt->Terminate();
+                delete delTgt;
+                tasks.erase(i);
+            }
+            deleteList.clear();
+        }
+
+        //常駐タスクExecute
+        i = bg_tasks.begin();
+        ied = bg_tasks.end();
+        for (; i != ied; i++)
+        {
+#ifdef _CATCH_WHILE_EXEC
+            try{
+#endif
+                if ((*i)->Execute(time) == false){
+                    deleteList.push_back(i);
+                }
+#ifdef _CATCH_WHILE_EXEC
+            }catch(...){
+                if(*i==NULL)g_system.Log("catch while execute2 : NULL",SYSLOG_ERROR);
+                else g_system.LogErr("catch while execute2 : %X %s",*i,typeid(**i).name());
+                g_system.NotifyExcption();
+            }
+#endif
+        }
+        //常駐タスクでfalseを返したものを消す
+        if (deleteList.size() != 0){
+            idl = deleteList.begin();
+            idl_ed = deleteList.end();
+            for (; idl != idl_ed; idl++){
+                i = *idl;
+                delTgt = *i;
+                delTgt->Terminate();
+                delete delTgt;
+                bg_tasks.erase(i);
+            }
+            deleteList.clear();
         }
     }
 
