@@ -116,7 +116,7 @@ namespace GTF
 
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
-			OutputLog("AfxCheckMemory() failed");
+            OutputLog("AfxCheckMemory() failed");
             return;
         }
 #endif
@@ -134,8 +134,8 @@ namespace GTF
                 }
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
-				if(*i==NULL)OutputLog("catch while execute1 : NULL",SYSLOG_ERROR);
-				else OutputLog("catch while execute1 : %X , %s",*i,typeid(**i).name());
+                if(*i==NULL)OutputLog("catch while execute1 : NULL",SYSLOG_ERROR);
+                else OutputLog("catch while execute1 : %X , %s",*i,typeid(**i).name());
                 break;
             }
 #endif
@@ -167,8 +167,8 @@ namespace GTF
                 }
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
-				if(*i==NULL)OutputLog("catch while execute2 : NULL",SYSLOG_ERROR);
-				else OutputLog("catch while execute2 : %X %s",*i,typeid(**i).name());
+                if(*i==NULL)OutputLog("catch while execute2 : NULL",SYSLOG_ERROR);
+                else OutputLog("catch while execute2 : %X %s",*i,typeid(**i).name());
             }
 #endif
         }
@@ -200,8 +200,8 @@ namespace GTF
                 ex_ret = exTsk->Execute(time);
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
-				if (ex_stack.top() == NULL)OutputLog("catch while execute3 : NULL", SYSLOG_ERROR);
-				else OutputLog("catch while execute3 : %X %s",ex_stack.top(),typeid(*ex_stack.top()).name());
+                if (ex_stack.top() == NULL)OutputLog("catch while execute3 : NULL", SYSLOG_ERROR);
+                else OutputLog("catch while execute3 : %X %s",ex_stack.top(),typeid(*ex_stack.top()).name());
             }
 #endif
 
@@ -226,8 +226,8 @@ namespace GTF
 
 #ifdef _CATCH_WHILE_EXEC
                     }catch(...){
-						if ((*i) == NULL)OutputLog("catch while terminate1 : NULL", SYSLOG_ERROR);
-						else OutputLog("catch while terminate1 : %X %s", (*i), typeid(*(*i)).name());
+                        if ((*i) == NULL)OutputLog("catch while terminate1 : NULL", SYSLOG_ERROR);
+                        else OutputLog("catch while terminate1 : %X %s", (*i), typeid(*(*i)).name());
                     }
 #endif
 
@@ -246,8 +246,8 @@ namespace GTF
 
 #ifdef _CATCH_WHILE_EXEC
                     }catch(...){
-						if (exTsk == NULL)OutputLog("catch while terminate2 : NULL", SYSLOG_ERROR);
-						else OutputLog("catch while terminate : %X %s", exTsk, typeid(*exTsk).name());
+                        if (exTsk == NULL)OutputLog("catch while terminate2 : NULL", SYSLOG_ERROR);
+                        else OutputLog("catch while terminate : %X %s", exTsk, typeid(*exTsk).name());
                     }
 #endif
 
@@ -263,8 +263,8 @@ namespace GTF
 
 #ifdef _CATCH_WHILE_EXEC
                     }catch(...){
-						if (exTsk == NULL)OutputLog("catch while activate : NULL", SYSLOG_ERROR);
-						else OutputLog("catch while activate : %X %s", exTsk, typeid(*exTsk).name());
+                        if (exTsk == NULL)OutputLog("catch while activate : NULL", SYSLOG_ERROR);
+                        else OutputLog("catch while activate : %X %s", exTsk, typeid(*exTsk).name());
                    }
 #endif
 
@@ -340,7 +340,7 @@ namespace GTF
                 (*iv)->Draw();
 #ifdef _CATCH_WHILE_RENDER
             }catch(...){
-				OutputLog("catch while draw : %X %s", *iv, typeid(**iv).name());
+                OutputLog("catch while draw : %X %s", *iv, typeid(**iv).name());
             }
 #endif
         }
