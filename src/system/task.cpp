@@ -121,71 +121,6 @@ namespace GTF
         }
 #endif
 
-        //通常タスクExecute
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-#ifdef _CATCH_WHILE_EXEC
-            try{
-#endif
-                if ((*i)->Execute(time) == false)
-                {
-                    deleteList.push_back(i);
-                }
-#ifdef _CATCH_WHILE_EXEC
-            }catch(...){
-                if(*i==NULL)OutputLog("catch while execute1 : NULL",SYSLOG_ERROR);
-                else OutputLog("catch while execute1 : %X , %s",*i,typeid(**i).name());
-                break;
-            }
-#endif
-        }
-        //通常タスクでfalseを返したものを消す
-        if (deleteList.size() != 0){
-            idl = deleteList.begin();
-            idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
-                i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
-                delete delTgt;
-                tasks.erase(i);
-            }
-            deleteList.clear();
-        }
-
-        //常駐タスクExecute
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; i++)
-        {
-#ifdef _CATCH_WHILE_EXEC
-            try{
-#endif
-                if ((*i)->Execute(time) == false){
-                    deleteList.push_back(i);
-                }
-#ifdef _CATCH_WHILE_EXEC
-            }catch(...){
-                if(*i==NULL)OutputLog("catch while execute2 : NULL",SYSLOG_ERROR);
-                else OutputLog("catch while execute2 : %X %s",*i,typeid(**i).name());
-            }
-#endif
-        }
-        //常駐タスクでfalseを返したものを消す
-        if (deleteList.size() != 0){
-            idl = deleteList.begin();
-            idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
-                i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
-                delete delTgt;
-                bg_tasks.erase(i);
-            }
-            deleteList.clear();
-        }
-
         CExclusiveTaskBase *exTsk;
 
         bool ex_ret;
@@ -274,6 +209,72 @@ namespace GTF
             }
         }
 
+        //通常タスクExecute
+        i = tasks.begin();
+        ied = tasks.end();
+        for (; i != ied; i++){
+#ifdef _CATCH_WHILE_EXEC
+            try{
+#endif
+                if ((*i)->Execute(time) == false)
+                {
+                    deleteList.push_back(i);
+                }
+#ifdef _CATCH_WHILE_EXEC
+            }catch(...){
+                if(*i==NULL)OutputLog("catch while execute1 : NULL",SYSLOG_ERROR);
+                else OutputLog("catch while execute1 : %X , %s",*i,typeid(**i).name());
+                break;
+            }
+#endif
+        }
+        //通常タスクでfalseを返したものを消す
+        if (deleteList.size() != 0){
+            idl = deleteList.begin();
+            idl_ed = deleteList.end();
+            for (; idl != idl_ed; idl++){
+                i = *idl;
+                delTgt = *i;
+                delTgt->Terminate();
+                delete delTgt;
+                tasks.erase(i);
+            }
+            deleteList.clear();
+        }
+
+        //常駐タスクExecute
+        i = bg_tasks.begin();
+        ied = bg_tasks.end();
+        for (; i != ied; i++)
+        {
+#ifdef _CATCH_WHILE_EXEC
+            try{
+#endif
+                if ((*i)->Execute(time) == false){
+                    deleteList.push_back(i);
+                }
+#ifdef _CATCH_WHILE_EXEC
+            }catch(...){
+                if(*i==NULL)OutputLog("catch while execute2 : NULL",SYSLOG_ERROR);
+                else OutputLog("catch while execute2 : %X %s",*i,typeid(**i).name());
+            }
+#endif
+        }
+        //常駐タスクでfalseを返したものを消す
+        if (deleteList.size() != 0){
+            idl = deleteList.begin();
+            idl_ed = deleteList.end();
+            for (; idl != idl_ed; idl++){
+                i = *idl;
+                delTgt = *i;
+                delTgt->Terminate();
+                delete delTgt;
+                bg_tasks.erase(i);
+            }
+            deleteList.clear();
+        }
+
+        // 新しいタスクがある場合
         if (exNext){
             //通常タスクを全て破棄する
             CleanupAllSubTasks();
