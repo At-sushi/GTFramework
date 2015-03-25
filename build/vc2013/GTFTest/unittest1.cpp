@@ -48,8 +48,8 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			auto ptr = task.AddTask(new CTekitou<int, CTaskBase>(1));
-			Assert::AreEqual((void*)task.FindTask(ptr->GetID()), (void*)ptr);
+			auto ptr = task.AddTask(new CTekitou<int, CTaskBase>(1)).lock();
+			Assert::AreEqual((void*)task.FindTask(ptr->GetID()).lock().get(), (void*)ptr.get());
 		}
 
 		TEST_METHOD(TestMethod2)
@@ -57,10 +57,10 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1));
-			Assert::AreNotEqual((void*)task.FindTask(ptr->GetID()), (void*)ptr);
-			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1)));
-			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()), (void*)ptr2);
+			auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1)).lock();
+			Assert::AreNotEqual((void*)std::dynamic_pointer_cast<CBackgroundTaskBase>(task.FindTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
+			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
+			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 		}
 
 		TEST_METHOD(TestMethod3)
@@ -68,10 +68,10 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1));
-			Assert::AreNotEqual((void*)task.FindTask(ptr->GetID()), (void*)ptr);
-			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1)));
-			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()), (void*)ptr2);
+			auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
+			Assert::AreNotEqual((void*)std::dynamic_pointer_cast<CExclusiveTaskBase>(task.FindTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
+			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
+			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 		}
 
 		TEST_METHOD(実行順序)
