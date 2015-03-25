@@ -28,7 +28,6 @@ namespace GTF
         ied = tasks.end();
         for (; i != ied; i++){
             (*i)->Terminate();
-            delete (*i);
         }
         tasks.clear();
 
@@ -37,20 +36,18 @@ namespace GTF
         ied = bg_tasks.end();
         for (; i != ied; i++){
             (*i)->Terminate();
-            delete (*i);
         }
         bg_tasks.clear();
 
         //排他タスクTerminate
         while (ex_stack.size() != 0){
             ex_stack.top()->Terminate();
-            delete(ex_stack.top());
             ex_stack.pop();
         }
     }
 
 
-    CTaskBase* CTaskManager::AddTask(CTaskBase *newTask)
+    CTaskManager::TaskPtr CTaskManager::AddTask(CTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -69,18 +66,19 @@ namespace GTF
         }
 
         //通常タスクとしてAdd
-        tasks.push_back(newTask);
+        auto pnew = std::shared_ptr<CTaskBase>(newTask);
+        tasks.push_back(pnew);
         newTask->Initialize();
-        return newTask;
+        return pnew;
     }
 
-    CExclusiveTaskBase* CTaskManager::AddTask(CExclusiveTaskBase *newTask)
+    CTaskManager::ExTaskPtr CTaskManager::AddTask(CExclusiveTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
         }
 
-        CExclusiveTaskBase *pext = newTask;
+        auto pext = std::shared_ptr<CExclusiveTaskBase>(newTask);
 
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
@@ -93,7 +91,7 @@ namespace GTF
         return pext;
     }
 
-    CBackgroundTaskBase* CTaskManager::AddTask(CBackgroundTaskBase *newTask)
+    CTaskManager::BgTaskPtr CTaskManager::AddTask(CBackgroundTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -157,7 +155,6 @@ namespace GTF
                         for (; i != ied; i++){
                             delTgt = (*i);
                             delTgt->Terminate();
-                            delete delTgt;
                         }
                         tasks.clear();
 
@@ -178,8 +175,7 @@ namespace GTF
                         //現在排他タスクの破棄
                         prvID = exTsk->GetID();
                         exTsk->Terminate();
-                        delete exTsk;
-                        exTsk = NULL;
+                        exTsk = nullptr;
                         ex_stack.pop();
 
 #ifdef _CATCH_WHILE_EXEC
@@ -214,27 +210,6 @@ namespace GTF
             }
         }
 
-        if (exNext){
-            //通常タスクを全て破棄する
-            CleanupAllSubTasks();
-
-            //現在排他タスクのInactivate
-            if (ex_stack.size() != 0){
-                exTsk = ex_stack.top();
-                if (!exTsk->Inactivate(exNext->GetID())){
-                    exTsk->Terminate();
-                    delete exTsk;
-                    ex_stack.pop();
-                }
-            }
-
-            //AddされたタスクをInitializeして突っ込む
-            ex_stack.push(exNext);
-            exNext->Initialize();
-
-            exNext = NULL;
-        }
-
         //通常タスクExecute
         i = tasks.begin();
         ied = tasks.end();
@@ -263,7 +238,6 @@ namespace GTF
                 i = *idl;
                 delTgt = *i;
                 delTgt->Terminate();
-                delete delTgt;
                 tasks.erase(i);
             }
             deleteList.clear();
@@ -296,17 +270,36 @@ namespace GTF
                 i = *idl;
                 delTgt = *i;
                 delTgt->Terminate();
-                delete delTgt;
                 bg_tasks.erase(i);
             }
             deleteList.clear();
+        }
+
+        if (exNext){
+            //通常タスクを全て破棄する
+            CleanupAllSubTasks();
+
+            //現在排他タスクのInactivate
+            if (ex_stack.size() != 0){
+                exTsk = ex_stack.top();
+                if (!exTsk->Inactivate(exNext->GetID())){
+                    exTsk->Terminate();
+                    ex_stack.pop();
+                }
+            }
+
+            //AddされたタスクをInitializeして突っ込む
+            ex_stack.push(exNext);
+            exNext->Initialize();
+
+            exNext = NULL;
         }
     }
 
 
     void CTaskManager::Draw()
     {
-        std::vector<CTaskBase*> tmplist;
+        std::vector<std::shared_ptr<CTaskBase>> tmplist;
         TaskList::iterator i, ied;
 
         //通常タスクDraw
@@ -334,11 +327,11 @@ namespace GTF
             }
         }
 
-        std::sort(tmplist.begin(), tmplist.end(), CTaskBase::CompByDrawPriority);//描画プライオリティ順にソート
+        std::sort(tmplist.begin(), tmplist.end(), CompByDrawPriority);//描画プライオリティ順にソート
 
         //描画
-        std::vector<CTaskBase*>::iterator iv = tmplist.begin();
-        std::vector<CTaskBase*>::iterator iedv = tmplist.end();
+        auto iv = tmplist.begin();
+        auto iedv = tmplist.end();
         for (; iv != iedv; iv++)
         {
 #ifdef _CATCH_WHILE_RENDER
@@ -367,7 +360,6 @@ namespace GTF
             for (; i != ied; i++){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
-                    delete (*i);
                     tasks.erase(i);
                     return;
                 }
@@ -382,7 +374,6 @@ namespace GTF
             for (; i != ied; i++){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
-                    delete (*i);
                     bg_tasks.erase(i);
                     return;
                 }
@@ -417,7 +408,6 @@ namespace GTF
                 act = true;
                 CleanupAllSubTasks();
                 task->Terminate();
-                delete task;
                 ex_stack.pop();
             }
         }
@@ -434,7 +424,6 @@ namespace GTF
         for (; i != ied; i++){
             delTgt = (*i);
             delTgt->Terminate();
-            delete delTgt;
         }
         tasks.clear();
     }
