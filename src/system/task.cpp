@@ -279,14 +279,14 @@ namespace GTF
                 if (!exTsk->Inactivate(exNext->GetID())){
                     exTsk->Terminate();
                     ex_stack.pop();
-    }
+                }
             }
 
             //Add‚³‚ê‚½ƒ^ƒXƒN‚ðInitialize‚µ‚Ä“Ë‚Áž‚Þ
             ex_stack.push(exNext);
             exNext->Initialize();
 
-            exNext = NULL;
+            exNext = nullptr;
         }
     }
 
