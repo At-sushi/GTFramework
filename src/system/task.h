@@ -34,13 +34,13 @@ namespace GTF
     {
     public:
         virtual ~CTaskBase(){}
-        virtual void Initialize(){}					//!< ExecuteまたはDrawがコールされる前に1度だけコールされる
+        virtual void Initialize(){}							//!< ExecuteまたはDrawがコールされる前に1度だけコールされる
         virtual bool Execute(unsigned int time)
-                            {return(true);}			//!< 毎フレームコールされる
-        virtual void Terminate(){}					//!< タスクのリストから外されるときにコールされる（その直後、deleteされる）
-        virtual void Draw(){}						//!< 描画時にコールされる
-        virtual unsigned int GetID() const{return 0;}	//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
-        virtual int GetDrawPriority() const{return -1;}	//!< 描画プライオリティ。低いほど手前に（後に）描画。マイナスならば表示しない
+                            {return(true);}					//!< 毎フレームコールされる
+        virtual void Terminate(){}							//!< タスクのリストから外されるときにコールされる（その直後、deleteされる）
+        virtual void Draw(){}								//!< 描画時にコールされる
+		virtual unsigned int GetID() const { return 0; }	//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
+		virtual int GetDrawPriority() const { return -1; }	//!< 描画プライオリティ。低いほど手前に（後に）描画。マイナスならば表示しない
     };
 
 
@@ -60,7 +60,7 @@ namespace GTF
         virtual void Activate(unsigned int prvTaskID){}				//!< Executeが再開されるときに呼ばれる
         virtual bool Inactivate(unsigned int nextTaskID){return false;}//!< 他の排他タスクが開始したときに呼ばれる
     
-        virtual int GetDrawPriority(){return 0;}				//!< 描画プライオリティ取得メソッド
+        virtual int GetDrawPriority() const {return 0;}				//!< 描画プライオリティ取得メソッド
     };
 
 
