@@ -6,7 +6,6 @@
 
 ==============================================================================*/
 
-#include <vector>
 #include <algorithm>
 #include <typeinfo>
 #include "task.h"
@@ -293,8 +292,9 @@ namespace GTF
 
     void CTaskManager::Draw()
     {
-        std::vector<std::shared_ptr<CTaskBase>> tmplist;
         TaskList::iterator i, ied;
+
+        tmplist.reserve(tasks.size());
 
         //通常タスクDraw
         i = tasks.begin();
@@ -339,6 +339,8 @@ namespace GTF
 #endif
         }
 
+        // 一時リスト破棄
+        tmplist.clear();
     }
 
     void CTaskManager::RemoveTaskByID(unsigned int id)

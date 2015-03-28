@@ -3,6 +3,7 @@
 *	@brief タスク(?)管理・定義
 */
 #pragma once
+#include <vector>
 #include <string>
 #include <list>
 #include <stack>
@@ -112,20 +113,15 @@ namespace GTF
 
      void Destroy();
             
-        //! タスク追加
         //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        TaskPtr AddTask(CTaskBase *newTask);
-        //! 排他タスク追加
-        //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        ExTaskPtr AddTask(CExclusiveTaskBase *newTask);
-        //! 常駐タスク追加
-        //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        BgTaskPtr AddTask(CBackgroundTaskBase *newTask);
+        TaskPtr AddTask(CTaskBase *newTask);		        //!< タスク追加
+        ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< 排他タスク追加
+        BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< 常駐タスク追加
         void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
         void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
-        ExTaskPtr GetTopExclusiveTask();			//!< 最上位にあるエクスクルーシブタスクをゲト
-        BgTaskPtr FindBGTask(unsigned int id);	//!< 指定IDをもつ常駐タスクゲット
-        TaskPtr FindTask(unsigned int id);				//!< 指定IDをもつ通常タスクゲット
+        ExTaskPtr GetTopExclusiveTask();					//!< 最上位にあるエクスクルーシブタスクをゲト
+        BgTaskPtr FindBGTask(unsigned int id);				//!< 指定IDをもつ常駐タスクゲット
+        TaskPtr FindTask(unsigned int id);					//!< 指定IDをもつ通常タスクゲット
 
         void Execute(unsigned int time);					//!< 各タスクのExecute関数をコールする
         void Draw();										//!< 各タスクをプライオリティ順に描画する
@@ -157,6 +153,7 @@ namespace GTF
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
         std::shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
+        std::vector<std::shared_ptr<CTaskBase>> tmplist;	//!< テンポラリ用配列
     };
 
 
