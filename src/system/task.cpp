@@ -6,6 +6,7 @@
 
 ==============================================================================*/
 
+#include <assert.h>
 #include <algorithm>
 #include <typeinfo>
 #include "task.h"
@@ -68,6 +69,8 @@ namespace GTF
         auto pnew = std::shared_ptr<CTaskBase>(newTask);
         tasks.push_back(pnew);
         newTask->Initialize();
+        if (newTask->GetID() != 0)
+            indices[newTask->GetID()] = pnew;
         return pnew;
     }
 
@@ -101,6 +104,8 @@ namespace GTF
         //常駐タスクとしてAdd
         bg_tasks.push_back(pbgt);
         pbgt->Initialize();
+        if (newTask->GetID() != 0)
+            bg_indices[newTask->GetID()] = pbgt;
         return pbgt;
     }
 
@@ -109,7 +114,6 @@ namespace GTF
         TaskList::iterator i, ied;
         std::list<TaskList::iterator> deleteList;
         std::list<TaskList::iterator>::iterator idl, idl_ed;
-        std::shared_ptr<CTaskBase> delTgt;
 
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
@@ -118,17 +122,13 @@ namespace GTF
         }
 #endif
 
-        std::shared_ptr<CExclusiveTaskBase> exTsk;
-
-        bool ex_ret;
-
         //排他タスク、topのみExecute
         if (ex_stack.size() != 0){
-            exTsk = ex_stack.top();
+            std::shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.top();
+            bool ex_ret = true;
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                ex_ret = true;
                 ex_ret = exTsk->Execute(time);
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
@@ -150,8 +150,7 @@ namespace GTF
                         i = tasks.begin();
                         ied = tasks.end();
                         for (; i != ied; i++){
-                            delTgt = (*i);
-                            delTgt->Terminate();
+                            (*i)->Terminate();
                         }
                         tasks.clear();
 
@@ -229,8 +228,7 @@ namespace GTF
             idl_ed = deleteList.end();
             for (; idl != idl_ed; idl++){
                 i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
+                (*i)->Terminate();
                 tasks.erase(i);
             }
             deleteList.clear();
@@ -260,8 +258,7 @@ namespace GTF
             idl_ed = deleteList.end();
             for (; idl != idl_ed; idl++){
                 i = *idl;
-                delTgt = *i;
-                delTgt->Terminate();
+                (*i)->Terminate();
                 bg_tasks.erase(i);
             }
             deleteList.clear();
@@ -274,7 +271,7 @@ namespace GTF
 
             //現在排他タスクのInactivate
             if (ex_stack.size() != 0){
-                exTsk = ex_stack.top();
+                auto exTsk = ex_stack.top();
                 if (!exTsk->Inactivate(exNext->GetID())){
                     exTsk->Terminate();
                     ex_stack.pop();
@@ -294,6 +291,7 @@ namespace GTF
     {
         TaskList::iterator i, ied;
 
+        assert(tmplist.empty());
         tmplist.reserve(tasks.size());
 
         //通常タスクDraw
@@ -463,31 +461,13 @@ namespace GTF
     //指定IDの常駐タスク取得
     CTaskManager::BgTaskPtr CTaskManager::FindBGTask(unsigned int id)
     {
-        TaskList::iterator i, ied;
-
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; i++){
-            if ((*i)->GetID() == id){//ハケーソ
-                return std::dynamic_pointer_cast<CBackgroundTaskBase>(*i);
-            }
-        }
-        return BgTaskPtr();
+       return bg_indices[id];
     }
 
     //指定IDの通常タスク取得
     CTaskManager::TaskPtr CTaskManager::FindTask(unsigned int id)
     {
-        TaskList::iterator i, ied;
-
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-            if ((*i)->GetID() == id){//ハケーソ
-                return (*i);
-            }
-        }
-        return TaskPtr();
+        return indices[id];
     }
 
     //全部なくなっちゃったら、やばいっしょ

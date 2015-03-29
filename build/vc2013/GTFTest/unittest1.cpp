@@ -41,6 +41,7 @@ namespace GTFTest
 			{}
 
 			T hogehoge;
+			unsigned int GetID()const{ return 1; }
 		};
 
 		TEST_METHOD(TestMethod1)
@@ -59,8 +60,10 @@ namespace GTFTest
 
 			auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1)).lock();
 			Assert::AreNotEqual((void*)std::dynamic_pointer_cast<CBackgroundTaskBase>(task.FindTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
+			Assert::AreEqual((void*)std::dynamic_pointer_cast<CBackgroundTaskBase>(task.FindBGTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
 			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
 			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
+			Assert::AreEqual((void*)task.FindBGTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 		}
 
 		TEST_METHOD(TestMethod3)
@@ -109,6 +112,18 @@ namespace GTFTest
 			task.Execute(1);
 			Assert::AreEqual(1, veve[0]);
 			Assert::AreEqual(2, veve[1]);
+		}
+
+		TEST_METHOD(TestMethod4)
+		{
+			// TODO: テスト コードをここに挿入します
+			CTaskManager task;
+
+			auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
+			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
+			task.Draw();
+			task.Draw();
+			task.Draw();
 		}
 
 	};
