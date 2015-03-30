@@ -88,9 +88,9 @@ namespace GTF
             OutputLog("Å°ALERTÅ° îrëºÉ^ÉXÉNÇ™2Ç¬à»è„AddÇ≥ÇÍÇΩ : %s / %s",
                 typeid(*exNext).name(), typeid(*newTask).name());
         }
-        exNext = pext;
+        exNext = std::move(pext);
 
-        return pext;
+        return exNext;
     }
 
     CTaskManager::BgTaskPtr CTaskManager::AddTask(CBackgroundTaskBase *newTask)
