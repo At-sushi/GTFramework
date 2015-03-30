@@ -41,7 +41,6 @@ namespace GTFTest
 			{}
 
 			T hogehoge;
-			unsigned int GetID()const{ return 1; }
 		};
 
 		TEST_METHOD(TestMethod1)
