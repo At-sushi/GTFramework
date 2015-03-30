@@ -6,7 +6,7 @@
 
 ==============================================================================*/
 
-#include <assert.h>
+#include <cassert>
 #include <algorithm>
 #include <typeinfo>
 #include "task.h"

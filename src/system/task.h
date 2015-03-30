@@ -155,8 +155,8 @@ namespace GTF
 
         std::shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
         std::vector<std::shared_ptr<CTaskBase>> tmplist;	//!< テンポラリ用配列
-		std::unordered_map<unsigned int, TaskPtr> indices;
-		std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
+        std::unordered_map<unsigned int, TaskPtr> indices;
+        std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };
 
 
