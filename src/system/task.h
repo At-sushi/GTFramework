@@ -121,8 +121,18 @@ namespace GTF
         void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
         void ReturnExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
         ExTaskPtr GetTopExclusiveTask();					//!< 最上位にあるエクスクルーシブタスクをゲト
-        BgTaskPtr FindBGTask(unsigned int id);				//!< 指定IDをもつ常駐タスクゲット
-        TaskPtr FindTask(unsigned int id);					//!< 指定IDをもつ通常タスクゲット
+
+        //!指定IDの常駐タスク取得
+        BgTaskPtr FindBGTask(unsigned int id)
+        {
+           return bg_indices[id];
+        }
+
+        //!指定IDの通常タスク取得
+        TaskPtr FindTask(unsigned int id)
+        {
+            return indices[id];
+        }
 
         void Execute(unsigned int time);					//!< 各タスクのExecute関数をコールする
         void Draw();										//!< 各タスクをプライオリティ順に描画する

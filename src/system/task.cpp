@@ -66,8 +66,8 @@ namespace GTF
         }
 
         //通常タスクとしてAdd
-        auto pnew = std::shared_ptr<CTaskBase>(newTask);
-        tasks.push_back(pnew);
+        tasks.emplace_back(newTask);
+        auto& pnew = tasks.back();
         newTask->Initialize();
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
@@ -99,10 +99,10 @@ namespace GTF
             RemoveTaskByID(newTask->GetID());
         }
 
-        auto pbgt = std::shared_ptr<CBackgroundTaskBase>(newTask);
+        bg_tasks.emplace_back(newTask);
+        auto& pbgt = std::dynamic_pointer_cast<CBackgroundTaskBase>(bg_tasks.back());
 
         //常駐タスクとしてAdd
-        bg_tasks.push_back(pbgt);
         pbgt->Initialize();
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
@@ -455,19 +455,6 @@ namespace GTF
 
 
         OutputLog("\n\n■CTaskManager::DebugOutputTaskList() - end\n\n");
-    }
-
-
-    //指定IDの常駐タスク取得
-    CTaskManager::BgTaskPtr CTaskManager::FindBGTask(unsigned int id)
-    {
-       return bg_indices[id];
-    }
-
-    //指定IDの通常タスク取得
-    CTaskManager::TaskPtr CTaskManager::FindTask(unsigned int id)
-    {
-        return indices[id];
     }
 
     //全部なくなっちゃったら、やばいっしょ

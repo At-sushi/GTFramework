@@ -119,11 +119,13 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
-			task.Draw();
-			task.Draw();
-			task.Draw();
+			for (int i = 0; i < 256;i++)
+			{
+				task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1));
+				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1)));
+			}
+			for (int i = 0; i < 256;i++)
+				task.Draw();
 		}
 
 	};
