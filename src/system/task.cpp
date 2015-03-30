@@ -86,7 +86,7 @@ namespace GTF
             OutputLog("¡ALERT¡ ”r‘¼ƒ^ƒXƒN‚ª2‚ÂˆÈãAdd‚³‚ê‚½ : %s / %s",
                 typeid(*exNext).name(), typeid(*newTask).name());
         }
-        exNext = std::move(std::shared_ptr<CExclusiveTaskBase>(newTask));
+        exNext = std::shared_ptr<CExclusiveTaskBase>(newTask);
 
         return exNext;
     }
