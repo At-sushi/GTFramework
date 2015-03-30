@@ -69,7 +69,8 @@ namespace GTF
         auto pnew = std::shared_ptr<CTaskBase>(newTask);
         tasks.push_back(pnew);
         newTask->Initialize();
-        indices[newTask->GetID()] = pnew;
+        if (newTask->GetID() != 0)
+            indices[newTask->GetID()] = pnew;
         return pnew;
     }
 
@@ -103,7 +104,8 @@ namespace GTF
         //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
         bg_tasks.push_back(pbgt);
         pbgt->Initialize();
-        bg_indices[newTask->GetID()] = pbgt;
+        if (newTask->GetID() != 0)
+            bg_indices[newTask->GetID()] = pbgt;
         return pbgt;
     }
 
