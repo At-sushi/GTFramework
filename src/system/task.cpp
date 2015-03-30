@@ -269,7 +269,7 @@ namespace GTF
 
             //現在排他タスクのInactivate
             if (ex_stack.size() != 0){
-                auto exTsk = ex_stack.top();
+                auto& exTsk = ex_stack.top();
                 if (!exTsk->Inactivate(exNext->GetID())){
                     exTsk->Terminate();
                     ex_stack.pop();
@@ -277,8 +277,8 @@ namespace GTF
             }
 
             //AddされたタスクをInitializeして突っ込む
-            ex_stack.push(exNext);
-            exNext->Initialize();
+            ex_stack.push(std::move(exNext));
+            ex_stack.top()->Initialize();
 
             exNext = nullptr;
         }
