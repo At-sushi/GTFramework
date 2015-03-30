@@ -80,13 +80,15 @@ namespace GTF
             RemoveTaskByID(newTask->GetID());
         }
 
+        auto pext = std::shared_ptr<CExclusiveTaskBase>(newTask);
+
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
         if (exNext){
             OutputLog("■ALERT■ 排他タスクが2つ以上Addされた : %s / %s",
                 typeid(*exNext).name(), typeid(*newTask).name());
         }
-        exNext.reset(newTask);
+        exNext = std::move(pext);
 
         return exNext;
     }
