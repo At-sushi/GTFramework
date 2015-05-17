@@ -98,7 +98,9 @@ namespace GTF
         }
 
         bg_tasks.emplace_back(newTask);
-        auto& pbgt = std::dynamic_pointer_cast<CBackgroundTaskBase>(bg_tasks.back());
+        // Žb’è“I‚ÈŒ^•ÏŠ·
+        auto& pbgt = std::static_pointer_cast<CBackgroundTaskBase>(bg_tasks.back());
+        assert(std::dynamic_pointer_cast<CBackgroundTaskBase>(pbgt).get());
 
         //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
         pbgt->Initialize();
