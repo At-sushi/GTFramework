@@ -134,6 +134,18 @@ namespace GTF
             return indices[id];
         }
 
+        //! 任意のクラス型の通常タスクを取得
+        template<class T> std::shared_ptr<T> FindTask(unsigned int id)
+        {
+            return std::dynamic_pointer_cast<T>(FindTask(id).lock());
+        }
+
+        //! 任意のクラス型の常駐タスクを取得
+        template<class T> std::shared_ptr<T> FindBGTask(unsigned int id)
+        {
+            return std::dynamic_pointer_cast<T>(FindBGTask(id).lock());
+        }
+
         void Execute(unsigned int time);					//!< 各タスクのExecute関数をコールする
         void Draw();										//!< 各タスクをプライオリティ順に描画する
         bool ExEmpty();										//!< 排他タスクが全部なくなっちゃったかどうか

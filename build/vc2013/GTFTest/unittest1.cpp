@@ -59,8 +59,8 @@ namespace GTFTest
 			CTaskManager task;
 
 			auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1)).lock();
-			Assert::AreNotEqual((void*)std::dynamic_pointer_cast<CBackgroundTaskBase>(task.FindTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
-			Assert::AreEqual((void*)std::dynamic_pointer_cast<CBackgroundTaskBase>(task.FindBGTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
+			Assert::AreNotEqual((void*)(task.FindTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
+			Assert::AreEqual((void*)(task.FindBGTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
 			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
 			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 			Assert::AreEqual((void*)task.FindBGTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
@@ -72,7 +72,7 @@ namespace GTFTest
 			CTaskManager task;
 
 			auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-			Assert::AreNotEqual((void*)std::dynamic_pointer_cast<CExclusiveTaskBase>(task.FindTask(ptr->GetID()).lock()).get(), (void*)ptr.get());
+			Assert::AreNotEqual((void*)(task.FindTask<CExclusiveTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
 			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
 			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 		}
