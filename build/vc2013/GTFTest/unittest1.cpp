@@ -21,6 +21,7 @@ public:
 	T hogehoge;
 
 	bool Execute(unsigned int e){ veve.push_back(hogehoge); return true; }
+	unsigned int GetID()const{ return hogehoge; }
 };
 
 namespace GTFTest
@@ -126,6 +127,47 @@ namespace GTFTest
 			}
 			for (int i = 0; i < 256;i++)
 				task.Draw();
+		}
+
+		TEST_METHOD(タスクの依存関係)
+		{
+			// TODO: テスト コードをここに挿入します
+			static CTaskManager task;
+			class ct : public CTekitou2 < int, CExclusiveTaskBase >
+			{
+			public:
+				ct(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+				{
+
+				}
+				void Initialize()
+				{
+					task.AddTask(new CTekitou2<int, CTaskBase>(hogehoge+20));
+				}
+				virtual bool Inactivate(unsigned int nextTaskID){ return true; }//!< 他の排他タスクが開始したときに呼ばれる
+			};
+
+			veve.clear();
+			auto ptr = task.AddTask(new ct(1));
+			task.Execute(0);
+			auto ptr2 = task.AddTask(new ct(3));
+			task.Execute(1);
+			Assert::AreEqual(1, veve[0]);
+			Assert::AreEqual(1+20, veve[1]);
+			task.Execute(2);
+			Assert::AreEqual(3, veve[2]);
+			Assert::AreEqual(3+20, veve[3]);
+			task.ReturnExclusiveTaskByID(1);
+			task.Execute(3);
+			Assert::AreEqual(1, veve[4]);
+			Assert::AreEqual(1+20, veve[5]);
+			ptr2 = task.AddTask(new ct(4));
+			task.Execute(4);
+			task.RemoveTaskByID(21);
+			task.Execute(5);
+			Assert::AreEqual(4, veve[8]);
+			Assert::AreEqual(4+20, veve[9]);
+
 		}
 
 	};

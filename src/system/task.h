@@ -155,9 +155,19 @@ namespace GTF
 
     protected:
         typedef std::list<std::shared_ptr<CTaskBase>> TaskList;
-        typedef std::stack<std::shared_ptr<CExclusiveTaskBase>> ExTaskStack;
+        struct ExTaskInfo {
+            const std::shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
+            const TaskList::iterator SubTaskStartPos;				//!< 依存する通常タスクの開始地点
+
+            ExTaskInfo(std::shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
+                : value(source), SubTaskStartPos(startPos)
+            {
+            }
+        };
+        typedef std::stack<ExTaskInfo> ExTaskStack;
 
         void CleanupAllSubTasks();					//!< 通常タスクを全てTerminate , deleteする
+        void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
         void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
 
         void OutputLog(std::string s, ...)			//!< ログ出力
