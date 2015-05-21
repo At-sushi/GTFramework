@@ -60,7 +60,7 @@ namespace GTF
     public:
         virtual ~CExclusiveTaskBase(){}
         virtual void Activate(unsigned int prvTaskID){}				//!< Executeが再開されるときに呼ばれる
-        virtual bool Inactivate(unsigned int nextTaskID){return false;}//!< 他の排他タスクが開始したときに呼ばれる
+        virtual bool Inactivate(unsigned int nextTaskID){return true;}//!< 他の排他タスクが開始したときに呼ばれる
     
         virtual int GetDrawPriority() const {return 0;}				//!< 描画プライオリティ取得メソッド
     };
