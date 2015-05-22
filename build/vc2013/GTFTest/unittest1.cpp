@@ -157,7 +157,7 @@ namespace GTFTest
 			task.Execute(2);
 			Assert::AreEqual(3, veve[2]);
 			Assert::AreEqual(3+20, veve[3]);
-			task.ReturnExclusiveTaskByID(1);
+			task.RevertExclusiveTaskByID(1);
 			task.Execute(3);
 			Assert::AreEqual(1, veve[4]);
 			Assert::AreEqual(1+20, veve[5]);

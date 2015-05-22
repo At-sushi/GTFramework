@@ -49,6 +49,12 @@ namespace GTF
 
     CTaskManager::TaskPtr CTaskManager::AddTask(CTaskBase *newTask)
     {
+        CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
+        if (pext){
+            //排他タスクとしてAdd
+            return AddTask(pext);
+        }
+
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
         }
@@ -57,12 +63,6 @@ namespace GTF
         if (pbgt){
             //常駐タスクとしてAdd
             return AddTask(pbgt);
-        }
-
-        CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
-        if (pext){
-            //排他タスクとしてAdd
-            return AddTask(pext);
         }
 
         //通常タスクとしてAdd
@@ -76,10 +76,6 @@ namespace GTF
 
     CTaskManager::ExTaskPtr CTaskManager::AddTask(CExclusiveTaskBase *newTask)
     {
-        if (newTask->GetID() != 0){
-            RemoveTaskByID(newTask->GetID());
-        }
-
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
         if (exNext){
@@ -379,7 +375,7 @@ namespace GTF
     }
 
     //指定IDの排他タスクまでTerminate/popする
-    void CTaskManager::ReturnExclusiveTaskByID(unsigned int id)
+    void CTaskManager::RevertExclusiveTaskByID(unsigned int id)
     {
         bool act = false;
         unsigned int previd = 0;
