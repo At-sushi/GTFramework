@@ -405,15 +405,7 @@ namespace GTF
     //通常タスクを全て破棄する
     void CTaskManager::CleanupAllSubTasks()
     {
-        TaskList::iterator i, ied;
-
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-            std::shared_ptr<CTaskBase>& delTgt = (*i);
-            delTgt->Terminate();
-        }
-        tasks.clear();
+        CleanupPartialSubTasks(tasks.begin());
     }
 
     //通常タスクを一部だけ破棄する
