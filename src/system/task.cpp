@@ -342,7 +342,7 @@ namespace GTF
         TaskList::iterator i, ied;
 
         //通常タスクをチェック
-        if (!tasks.empty())
+        if (indices.find(id) != indices.end())
         {
             i = tasks.begin();
             ied = tasks.end();
@@ -356,7 +356,7 @@ namespace GTF
         }
 
         //バックグラウンドタスクTerminate
-        if (!bg_tasks.empty())
+        if (bg_indices.find(id) != bg_indices.end())
         {
             i = bg_tasks.begin();
             ied = bg_tasks.end();
