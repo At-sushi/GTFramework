@@ -12,7 +12,7 @@ systemフォルダ以下をプロジェクト内にコピーして使用して�
 
     class CNewTask : CTaskBase
     {
-        virtual bool Execute(unsigned int time) override					// 実行時の処理
+        virtual bool Execute(double elapsedTime) override					// 実行時の処理
         {
             // do something
             return true;

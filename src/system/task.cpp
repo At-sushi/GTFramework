@@ -105,7 +105,7 @@ namespace GTF
         return pbgt;
     }
 
-    void CTaskManager::Execute(unsigned int time)
+    void CTaskManager::Execute(double elapsedTime)
     {
         TaskList::iterator i, ied;
         std::list<TaskList::iterator> deleteList;
@@ -125,7 +125,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                ex_ret = exTsk->Execute(time);
+                ex_ret = exTsk->Execute(elapsedTime);
 #ifdef _CATCH_WHILE_EXEC
             }catch(...){
                 if (ex_stack.top() == NULL)OutputLog("catch while execute3 : NULL", SYSLOG_ERROR);
@@ -201,7 +201,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                if ((*i)->Execute(time) == false)
+                if ((*i)->Execute(elapsedTime) == false)
                 {
                     deleteList.push_back(i);
                 }
@@ -233,7 +233,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
-                if ((*i)->Execute(time) == false){
+                if ((*i)->Execute(elapsedTime) == false){
                     deleteList.push_back(i);
                 }
 #ifdef _CATCH_WHILE_EXEC

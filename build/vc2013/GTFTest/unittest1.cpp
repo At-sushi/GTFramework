@@ -20,8 +20,8 @@ public:
 
 	T hogehoge;
 
-	bool Execute(unsigned int e){ veve.push_back(hogehoge); return true; }
-	unsigned int GetID()const{ return hogehoge; }
+	bool Execute(double e) override{ veve.push_back(hogehoge); return true; }
+	unsigned int GetID()const override{ return hogehoge; }
 };
 
 namespace GTFTest
