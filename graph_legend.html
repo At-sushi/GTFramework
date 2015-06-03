@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>GTFramework: グラフの凡例</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+<link href="tabs.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- 作成： Doxygen 1.5.3 -->
+<div class="tabs">
+  <ul>
+    <li><a href="main.html"><span>メインページ</span></a></li>
+    <li><a href="modules.html"><span>モジュール</span></a></li>
+    <li><a href="annotated.html"><span>クラス</span></a></li>
+    <li><a href="files.html"><span>ファイル</span></a></li>
+  </ul>
+</div>
+<h1>グラフの凡例</h1>このページでは、doxygen で生成されたグラフをどのようにみたらよいかを説明します。<p>
+次の例を考えてみます。 <div class="fragment"><pre class="fragment"><span class="comment">/*! 省略されて見えないクラス */</span>
+<span class="keyword">class </span>Invisible { };
+<span class="comment"></span>
+<span class="comment">/*! 省略されたクラス(継承関係は隠されている) */</span>
+<span class="keyword">class </span>Truncated : <span class="keyword">public</span> Invisible { };
+
+<span class="comment">/* doxygen コメントによるドキュメントがないクラス */</span>
+<span class="keyword">class </span>Undocumented { };
+<span class="comment"></span>
+<span class="comment">/*! public で継承されたクラス */</span>
+<span class="keyword">class </span>PublicBase : <span class="keyword">public</span> Truncated { };
+<span class="comment"></span>
+<span class="comment">/*! A template class */</span>
+<span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt; <span class="keyword">class </span>Templ { };
+<span class="comment"></span>
+<span class="comment">/*! protected で継承されたクラス */</span>
+<span class="keyword">class </span>ProtectedBase { };
+<span class="comment"></span>
+<span class="comment">/*! private で継承されたクラス */</span>
+<span class="keyword">class </span>PrivateBase { };
+<span class="comment"></span>
+<span class="comment">/*! 継承されたクラスで使われているクラス */</span>
+<span class="keyword">class </span>Used { };
+<span class="comment"></span>
+<span class="comment">/*! 複数のクラスを継承している上位クラス */</span>
+<span class="keyword">class </span>Inherited : <span class="keyword">public</span> PublicBase,
+                  <span class="keyword">protected</span> ProtectedBase,
+                  <span class="keyword">private</span> PrivateBase,
+                  <span class="keyword">public</span> Undocumented,
+                  <span class="keyword">public</span> Templ&lt;int&gt;
+{
+  <span class="keyword">private</span>:
+    Used *m_usedClass;
+};
+</pre></div> 設定ファイル中で、タグ <code>MAX_DOT_GRAPH_HEIGHT</code> が 200 にセットされた場合、次のようなグラフとなります。<p>
+<center><div align="center">
+<img src="graph_legend.png" alt="graph_legend.png">
+</div>
+</center> <p>
+上のグラフ内のボックスには次のような意味があります。 <ul>
+<li>
+黒く塗りつぶされたボックスは、このグラフに対応する構造体やクラスを表します。 </li>
+<li>
+黒枠のボックスはドキュメントがある構造体やクラスを表します。 </li>
+<li>
+灰色の枠のボックスはドキュメントがない構造体やクラスを表します。 </li>
+<li>
+赤枠のボックスはドキュメントがある構造体やクラスを表しますが、指定されたサイズに収まらないために継承・包含関係をすべて図示することができなかったことを示します。</li>
+</ul>
+矢印には次のような意味があります。 <ul>
+<li>
+青い矢印は二つのクラス間の public 継承関係を示します。 </li>
+<li>
+緑の矢印は protected 継承関係を示します。 </li>
+<li>
+赤の矢印は private 継承関係を示します。 </li>
+<li>
+紫の破線矢印は、そのクラスが他のクラスに含まれていたり、利用されていることを示します。また、矢印が指しているクラスや構造体をどの変数でアクセスできるかを矢印のラベルとして示しています。 </li>
+</ul>
+<hr size="1"><address style="text-align: right;"><small>GTFrameworkに対してWed May 27 17:05:06 2015に生成されました。&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.3 </small></address>
+</body>
+</html>

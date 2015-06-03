@@ -1,0 +1,11 @@
+digraph G
+{
+  edge [fontname="FreeSans.ttf",fontsize=10,labelfontname="FreeSans.ttf",labelfontsize=10];
+  node [fontname="FreeSans.ttf",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="GTF::CTaskBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_g_t_f_1_1_c_task_base.html",tooltip="a?oa?Å a??a?1a?ÅP"];
+  Node1 -> Node2 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node2 [label="GTF::CBackgroundTaskBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_g_t_f_1_1_c_background_task_base.html",tooltip="aÅCÅCeÅò?a??a?1a?ÅP"];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans.ttf"];
+  Node3 [label="GTF::CExclusiveTaskBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_g_t_f_1_1_c_exclusive_task_base.html",tooltip="a??aÅ‚?a??a?1a?ÅP"];
+}
