@@ -270,7 +270,7 @@ namespace GTF
             }
 
             //AddされたタスクをInitializeして突っ込む
-            i = tasks.emplace(tasks.end(), new CTaskBase());				// ダミータスク挿入
+            i = tasks.emplace(tasks.end(), std::make_shared<CTaskBase>());				// ダミータスク挿入
             ex_stack.emplace(std::move(exNext), i);
             ex_stack.top().value->Initialize();
 
