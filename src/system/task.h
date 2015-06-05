@@ -14,7 +14,7 @@
 
 /*!
 *	@defgroup Tasks
-*	@brief タスク? =ゲームのシーンと考えてください。
+*	@brief タスク
 *
 *	CTaskBaseを継承したクラスは、メインループから呼ばれる更新・描画処理関数を持っています。
 *	システムはこのクラスのリストを持っています。
@@ -30,7 +30,7 @@ namespace GTF
     *	@brief	基本タスク
     *
     *	・Executeでfalseを返すと破棄される
-    *	・排他タスクが変更されたとき、破棄される
+    *	・親の排他タスクが変更されたとき、破棄される
     */
     class CTaskBase
     {
@@ -48,13 +48,14 @@ namespace GTF
 
     /*! 
     *	@ingroup Tasks
-    *	@brief 排他タスク
+    *	@brief 排他タスク? =ゲームのシーンと考えてください。
     *
     *	・他の排他タスクと一緒には動作(Execute)しない
     *	・他の排他タスクが追加された場合、Inactivateがコールされ、そこでfalseを返すと
     *		破棄される。trueを返すとExecute、WndMessageがコールされない状態になり、
     *		新規の排他タスクが全て破棄されたときにActivateが呼ばれ、処理が再開する。
-    */
+	*	・通常タスクとの親子関係を持つ。AddTask後、一度Executeが実行されるまでは追加が保留される。その後に追加された通常クラスは子タスクとなる。
+	*/
     class CExclusiveTaskBase : public CTaskBase
     {
     public:
