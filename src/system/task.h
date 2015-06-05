@@ -54,8 +54,8 @@ namespace GTF
     *	・他の排他タスクが追加された場合、Inactivateがコールされ、そこでfalseを返すと
     *		破棄される。trueを返すとExecute、WndMessageがコールされない状態になり、
     *		新規の排他タスクが全て破棄されたときにActivateが呼ばれ、処理が再開する。
-	*	・通常タスクとの親子関係を持つ。AddTask後、一度Executeが実行されるまでは追加が保留される。その後に追加された通常クラスは子タスクとなる。
-	*/
+    *	・通常タスクとの親子関係を持つ。AddTask後、一度Executeが実行されるまでは追加が保留される。その後に追加された通常クラスは子タスクとなる。
+    */
     class CExclusiveTaskBase : public CTaskBase
     {
     public:
