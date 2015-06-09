@@ -5,10 +5,12 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
 #include <list>
 #include <unordered_map>
 #include <stack>
 #include <memory>
+#include <functional>
 
 
 
@@ -82,7 +84,7 @@ namespace GTF
         virtual ~CBackgroundTaskBase(){}
         CBackgroundTaskBase(){m_isEnabled=true;}
 
-        bool IsEnabled(){return m_isEnabled;}
+        bool IsEnabled() const {return m_isEnabled;}
         void Enable(){m_isEnabled = true;}
         void Disable(){m_isEnabled = false;}
 
@@ -177,18 +179,13 @@ namespace GTF
             // Not Implemented
         }
 
-        static bool CompByDrawPriority(const std::shared_ptr<CTaskBase>& arg1, const std::shared_ptr<CTaskBase>& arg2)	//!< 描画プライオリティでソートするための比較演算
-        {
-            return arg1->GetDrawPriority() > arg2->GetDrawPriority();
-        }
-
     private:
         TaskList tasks;								//!< 現在動作ちゅうのタスクリスト
         TaskList bg_tasks;							//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
         std::shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
-        std::vector<std::shared_ptr<CTaskBase>> tmplist;	//!< テンポラリ用配列
+        std::multimap<int, TaskPtr, std::greater<int>> tmplist;	//!< テンポラリ用配列
         std::unordered_map<unsigned int, TaskPtr> indices;
         std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };

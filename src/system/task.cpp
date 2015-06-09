@@ -71,6 +71,7 @@ namespace GTF
         newTask->Initialize();
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
+        tmplist.insert(std::make_pair(pnew->GetDrawPriority(), pnew));
         return pnew;
     }
 
@@ -102,6 +103,7 @@ namespace GTF
         pbgt->Initialize();
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
+        tmplist.insert(std::make_pair(pbgt->GetDrawPriority(), pbgt));
         return pbgt;
     }
 
@@ -282,55 +284,48 @@ namespace GTF
     void CTaskManager::Draw()
     {
         TaskList::iterator i, ied;
+        std::shared_ptr<CExclusiveTaskBase> pex;
 
-        assert(tmplist.empty());
-        tmplist.reserve(tasks.size());
-
-        //通常タスクDraw
-        i = tasks.begin();
-        ied = tasks.end();
-        for (; i != ied; i++){
-            if ((*i)->GetDrawPriority() >= 0){
-                tmplist.push_back(*i);
-            }
-        }
-
-        //バックグラウンドタスクDraw
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; i++){
-            if ((*i)->GetDrawPriority() >= 0){
-                tmplist.push_back(*i);
-            }
-        }
-
-        //排他タスクDraw
+        //排他タスクを取得
         if (ex_stack.size() != 0){
             if (ex_stack.top().value->GetDrawPriority() >= 0){
-                tmplist.push_back(ex_stack.top().value);
+                pex = ex_stack.top().value;
             }
         }
 
-        std::sort(tmplist.begin(), tmplist.end(), CompByDrawPriority);//描画プライオリティ順にソート
+        auto iv = tmplist.begin();
+        auto iedv = pex ? tmplist.upper_bound(pex->GetDrawPriority()) : tmplist.end();
+        auto DrawAll = [&]()		// 描画関数
+        {
+            for (; iv != iedv; iv++)
+            {
+                auto is = iv->second.lock();
+
+#ifdef _CATCH_WHILE_RENDER
+                try{
+#endif
+                    if (is)
+                        (is)->Draw();
+                    else
+                        tmplist.erase(iv--);
+#ifdef _CATCH_WHILE_RENDER
+                }catch(...){
+                    OutputLog("catch while draw : %X %s", *iv, typeid(*(*iv).lock()).name());
+                }
+#endif
+            }
+        };
+        //描画
+        DrawAll();
+
+        // 排他タスクDraw
+        if (pex)
+            pex->Draw();
 
         //描画
-        auto iv = tmplist.begin();
-        auto iedv = tmplist.end();
-        for (; iv != iedv; iv++)
-        {
-#ifdef _CATCH_WHILE_RENDER
-            try{
-#endif
-                (*iv)->Draw();
-#ifdef _CATCH_WHILE_RENDER
-            }catch(...){
-                OutputLog("catch while draw : %X %s", *iv, typeid(**iv).name());
-            }
-#endif
-        }
-
-        // 一時リスト破棄
-        tmplist.clear();
+        iv = iedv;
+        iedv = tmplist.end();
+        DrawAll();
     }
 
     void CTaskManager::RemoveTaskByID(unsigned int id)
