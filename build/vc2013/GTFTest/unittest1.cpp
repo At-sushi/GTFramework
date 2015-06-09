@@ -125,7 +125,7 @@ namespace GTFTest
 				task.AddTask(new CTekitou<int, CExclusiveTaskBase>(i));
 				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1)));
 			}
-			task.RemoveTaskByID(32);
+			task.RemoveTaskByID(16);
 			for (int i = 0; i < 256;i++)
 				task.Draw();
 		}
