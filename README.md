@@ -1,5 +1,7 @@
 # GTF
-Goluah Task Framework　 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
+Goluah Task Framework ver0.99b
+
+「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
 ## 導入方法
 systemフォルダ以下をプロジェクト内にコピーして使用してください。
@@ -53,7 +55,7 @@ AddTaskメソッドにnew生成したタスクをわたすと自動で生成～�
     auto p = taskManager.FindTask<CNewTask>(12);
     auto pbg = taskManager.FindBGTask<CNewBGTask>(33);
 
-FindTaskメソッドを使用すると、指定したIDの通常タスクのポインタが手に入ります。
+FindTaskメソッドを使用すると、指定したIDの通常タスクのスマートポインタが手に入ります。
 常駐タスクと、メソッドが分かれてることに注意してください（常駐タスクのはFindBGTask）。
 
 排他タスクの検索は出来ません。

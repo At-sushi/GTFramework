@@ -44,7 +44,7 @@ namespace GTF
         virtual void Terminate(){}							//!< タスクのリストから外されるときにコールされる（その直後、deleteされる）
         virtual void Draw(){}								//!< 描画時にコールされる
         virtual unsigned int GetID() const { return 0; }	//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
-        virtual int GetDrawPriority() const { return -1; }	//!< 描画プライオリティ。低いほど手前に（後に）描画。マイナスならば表示しない
+        virtual int GetDrawPriority() const { return -1; }	//!< 描画プライオリティ。低いほど手前に（後順に）描画。マイナスならば表示しない
     };
 
 

@@ -43,6 +43,7 @@ namespace GTFTest
 
 			T hogehoge;
 			unsigned int GetID()const{ return 1; }
+			int GetDrawPriority()const{ return 1; }
 		};
 
 		TEST_METHOD(TestMethod1)
@@ -120,12 +121,12 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			for (int i = 0; i < 256;i++)
+			for (int i = 1; i < 257;i++)
 			{
-				task.AddTask(new CTekitou<int, CExclusiveTaskBase>(i));
-				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1)));
+				task.AddTask(new CTekitou2<int, CExclusiveTaskBase>(i));
+				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(2)));
 			}
-			task.RemoveTaskByID(16);
+			task.RemoveTaskByID(1);
 			for (int i = 0; i < 256;i++)
 				task.Draw();
 		}

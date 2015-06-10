@@ -26,7 +26,7 @@ namespace GTF
         //通常タスクTerminate
         i = tasks.begin();
         ied = tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
             (*i)->Terminate();
         }
         tasks.clear();
@@ -34,7 +34,7 @@ namespace GTF
         //バックグラウンドタスクTerminate
         i = bg_tasks.begin();
         ied = bg_tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
             (*i)->Terminate();
         }
         bg_tasks.clear();
@@ -201,7 +201,7 @@ namespace GTF
         //通常タスクExecute
         i = ex_stack.empty() ? tasks.begin() : ex_stack.top().SubTaskStartPos;
         ied = tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
 #ifdef _CATCH_WHILE_EXEC
             try{
 #endif
@@ -221,7 +221,7 @@ namespace GTF
         if (deleteList.size() != 0){
             idl = deleteList.begin();
             idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
+            for (; idl != idl_ed; ++idl){
                 i = *idl;
                 (*i)->Terminate();
                 tasks.erase(i);
@@ -232,7 +232,7 @@ namespace GTF
         //常駐タスクExecute
         i = bg_tasks.begin();
         ied = bg_tasks.end();
-        for (; i != ied; i++)
+        for (; i != ied; ++i)
         {
 #ifdef _CATCH_WHILE_EXEC
             try{
@@ -251,7 +251,7 @@ namespace GTF
         if (deleteList.size() != 0){
             idl = deleteList.begin();
             idl_ed = deleteList.end();
-            for (; idl != idl_ed; idl++){
+            for (; idl != idl_ed; ++idl){
                 i = *idl;
                 (*i)->Terminate();
                 bg_tasks.erase(i);
@@ -299,7 +299,7 @@ namespace GTF
         auto iedv = pex ? tmplist.upper_bound(pex->GetDrawPriority()) : tmplist.end();
         auto DrawAll = [&]()		// 描画関数
         {
-            for (; iv != iedv; iv++)
+            while (iv != iedv)
             {
                 auto is = iv->second.lock();
 
@@ -307,9 +307,12 @@ namespace GTF
                 try{
 #endif
                     if (is)
-                        (is)->Draw();
+                    {
+                        is->Draw();
+                        ++iv;
+                    }
                     else
-                        tmplist.erase(iv--);
+                        tmplist.erase(iv++);
 #ifdef _CATCH_WHILE_RENDER
                 }catch(...){
                     OutputLog("catch while draw : %X %s", *iv, typeid(*(*iv).lock()).name());
@@ -325,7 +328,7 @@ namespace GTF
             pex->Draw();
 
         //描画
-        iv = iedv;
+        assert(iv == iedv);
         iedv = tmplist.end();
         DrawAll();
     }
@@ -339,7 +342,7 @@ namespace GTF
         {
             i = tasks.begin();
             ied = tasks.end();
-            for (; i != ied; i++){
+            for (; i != ied; ++i){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
                     tasks.erase(i);
@@ -353,7 +356,7 @@ namespace GTF
         {
             i = bg_tasks.begin();
             ied = bg_tasks.end();
-            for (; i != ied; i++){
+            for (; i != ied; ++i){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
                     bg_tasks.erase(i);
@@ -408,7 +411,7 @@ namespace GTF
 
         i = it_task;
         ied = tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
             std::shared_ptr<CTaskBase>& delTgt = (*i);
             delTgt->Terminate();
         }
@@ -427,7 +430,7 @@ namespace GTF
         //通常タスク
         i = tasks.begin();
         ied = tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
             OutputLog(typeid(**i).name());
         }
 
@@ -435,7 +438,7 @@ namespace GTF
         //バックグラウンドタスク
         i = bg_tasks.begin();
         ied = bg_tasks.end();
-        for (; i != ied; i++){
+        for (; i != ied; ++i){
             OutputLog(typeid(**i).name());
         }
 
