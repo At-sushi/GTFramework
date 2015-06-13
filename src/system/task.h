@@ -185,7 +185,7 @@ namespace GTF
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
         std::shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
-        std::multimap<int, TaskPtr, std::greater<int>> tmplist;	//!< テンポラリ用配列
+        std::multimap<int, TaskPtr, std::greater<int>> drawList;	//!< 描画順ソート用コンテナ
         std::unordered_map<unsigned int, TaskPtr> indices;
         std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };

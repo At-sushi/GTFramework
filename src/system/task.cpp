@@ -49,6 +49,8 @@ namespace GTF
 
     CTaskManager::TaskPtr CTaskManager::AddTask(CTaskBase *newTask)
     {
+        assert(newTask);
+
         CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
         if (pext){
             //îrëºÉ^ÉXÉNÇ∆ÇµÇƒAdd
@@ -72,7 +74,7 @@ namespace GTF
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
         if (pnew->GetDrawPriority() >= 0)
-            tmplist.insert(std::make_pair(pnew->GetDrawPriority(), pnew));
+            drawList.insert(std::make_pair(pnew->GetDrawPriority(), pnew));
         return pnew;
     }
 
@@ -105,7 +107,7 @@ namespace GTF
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
         if (pbgt->GetDrawPriority() >= 0)
-            tmplist.insert(std::make_pair(pbgt->GetDrawPriority(), pbgt));
+            drawList.insert(std::make_pair(pbgt->GetDrawPriority(), pbgt));
         return pbgt;
     }
 
@@ -295,8 +297,8 @@ namespace GTF
             }
         }
 
-        auto iv = tmplist.begin();
-        auto iedv = pex ? tmplist.upper_bound(pex->GetDrawPriority()) : tmplist.end();
+        auto iv = drawList.begin();
+        auto iedv = pex ? drawList.upper_bound(pex->GetDrawPriority()) : drawList.end();
         auto DrawAll = [&]()		// ï`âÊä÷êî
         {
             while (iv != iedv)
@@ -312,7 +314,7 @@ namespace GTF
                         ++iv;
                     }
                     else
-                        tmplist.erase(iv++);
+                        drawList.erase(iv++);
 #ifdef _CATCH_WHILE_RENDER
                 }catch(...){
                     OutputLog("catch while draw : %X %s", *iv, typeid(*(*iv).lock()).name());
@@ -329,7 +331,7 @@ namespace GTF
 
         //ï`âÊ
         assert(iv == iedv);
-        iedv = tmplist.end();
+        iedv = drawList.end();
         DrawAll();
     }
 

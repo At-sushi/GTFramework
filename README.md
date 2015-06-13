@@ -4,7 +4,7 @@ Goluah Task Framework ver0.99b
 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
 ## 導入方法
-systemフォルダ以下をプロジェクト内にコピーして使用してください。
+src/systemフォルダ以下をプロジェクト内にコピーして使用してください。
 
 ライブラリを作るMakefile等は今のところありません。
 
@@ -12,6 +12,10 @@ systemフォルダ以下をプロジェクト内にコピーして使用して�
 ### タスク用クラスの定義
 タスク用の基礎クラスを継承することで、GTFrameworkで管理することの出来るタスククラスを生成することが出来ます。
 
+    #include "task.h"
+    
+    using namespace GTF;
+    
     class CNewTask : CTaskBase
     {
         virtual bool Execute(double elapsedTime) override					// 実行時の処理
@@ -39,6 +43,8 @@ GTFrameworkには3種類の基礎クラスがあります。
 GetIDメソッドは、タスクに個別のIDを付けたいときに使えます（0にすると未設定となりますのでご注意ください。）
 
 ### 初期化・実行
+    using namespace GTF;
+    
     CTaskManager taskManager;
     
     taskManager.AddTask(new CNewTask());
