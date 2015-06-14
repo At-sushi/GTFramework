@@ -52,10 +52,9 @@ GetIDメソッドは、タスクに個別のIDを付けたいときに使えま�
 CTaskManagerクラスをインスタンス化するとタスクを管理できるようになります。
 AddTaskメソッドにnew生成したタスクをわたすと自動で生成～破棄まで管理してくれます。
 
-タスクをすべて実行するにはExecuteメソッドかDrawメソッド（描画用）を使います。
+タスクをすべて実行するにはExecuteメソッドを使います。
 
     taskManager.Execute(0);
-    taskManager.Draw();
 
 ### 検索
     auto p = taskManager.FindTask<CNewTask>(12);
