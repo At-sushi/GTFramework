@@ -74,7 +74,7 @@ namespace GTF
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
         if (pnew->GetDrawPriority() >= 0)
-            drawList.insert(std::make_pair(pnew->GetDrawPriority(), pnew));
+            drawList.emplace(pnew->GetDrawPriority(), pnew);
         return pnew;
     }
 
@@ -107,7 +107,7 @@ namespace GTF
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
         if (pbgt->GetDrawPriority() >= 0)
-            drawList.insert(std::make_pair(pbgt->GetDrawPriority(), pbgt));
+            drawList.emplace(pbgt->GetDrawPriority(), pbgt);
         return pbgt;
     }
 
