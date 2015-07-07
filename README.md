@@ -75,12 +75,11 @@ FindTaskメソッドを使用すると、指定したIDの通常タスクのス�
         virtual void Draw() override					// Draw実行時の処理
         {
             // do something
-            return true;
         }
         
-        virtual unsigned int GetDrawPriority() const override
+        virtual int GetDrawPriority() const override
         {
-            return 0;	// 描画の優先度。数値の大きいものから先に処理される。-1で無効
+            return 0;	// 描画の優先度。数値の大きいものから先に処理される。-1で無効。
         }
     };
     
