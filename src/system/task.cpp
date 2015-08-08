@@ -114,8 +114,8 @@ namespace GTF
     void CTaskManager::Execute(double elapsedTime)
     {
         TaskList::iterator i, ied;
-        std::list<TaskList::iterator> deleteList;
-        std::list<TaskList::iterator>::iterator idl, idl_ed;
+        std::deque<TaskList::iterator> deleteList;
+        std::deque<TaskList::iterator>::iterator idl, idl_ed;
 
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
