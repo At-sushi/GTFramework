@@ -26,6 +26,7 @@
 
 namespace GTF
 {
+	using namespace std;
 
     /*! 
     *	@ingroup Tasks
@@ -112,9 +113,9 @@ namespace GTF
         CTaskManager();
         ~CTaskManager(){Destroy();}
 
-        typedef std::weak_ptr<CTaskBase> TaskPtr;
-        typedef std::weak_ptr<CExclusiveTaskBase> ExTaskPtr;
-        typedef std::weak_ptr<CBackgroundTaskBase> BgTaskPtr;
+        typedef weak_ptr<CTaskBase> TaskPtr;
+        typedef weak_ptr<CExclusiveTaskBase> ExTaskPtr;
+        typedef weak_ptr<CBackgroundTaskBase> BgTaskPtr;
 
      void Destroy();
             
@@ -139,42 +140,50 @@ namespace GTF
         }
 
         //! 任意のクラス型の通常タスクを取得
-        template<class T> std::shared_ptr<T> FindTask(unsigned int id)
+        template<class T> shared_ptr<T> FindTask(unsigned int id)
         {
-            return std::dynamic_pointer_cast<T>(FindTask(id).lock());
+            return dynamic_pointer_cast<T>(FindTask(id).lock());
         }
 
         //! 任意のクラス型の常駐タスクを取得
-        template<class T> std::shared_ptr<T> FindBGTask(unsigned int id)
+        template<class T> shared_ptr<T> FindBGTask(unsigned int id)
         {
-            return std::dynamic_pointer_cast<T>(FindBGTask(id).lock());
+            return dynamic_pointer_cast<T>(FindBGTask(id).lock());
         }
 
         void Execute(double elapsedTime);					//!< 各タスクのExecute関数をコールする
         void Draw();										//!< 各タスクをプライオリティ順に描画する
-        bool ExEmpty();										//!< 排他タスクが全部なくなっちゃったかどうか
+
+		//!< 排他タスクが全部なくなっちゃったかどうか
+		bool ExEmpty() const    {
+			return ex_stack.empty();
+		}
 
         //デバッグ
-        void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
+        void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する(Not Imlemented)
 
     protected:
-        typedef std::list<std::shared_ptr<CTaskBase>> TaskList;
+        typedef list<shared_ptr<CTaskBase>> TaskList;
         struct ExTaskInfo {
-            const std::shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
+            const shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
             const TaskList::iterator SubTaskStartPos;				//!< 依存する通常タスクの開始地点
 
-            ExTaskInfo(std::shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
+            ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
                 : value(source), SubTaskStartPos(startPos)
             {
             }
         };
-        typedef std::stack<ExTaskInfo> ExTaskStack;
+        typedef stack<ExTaskInfo> ExTaskStack;
 
-        void CleanupAllSubTasks();					//!< 通常タスクを全てTerminate , deleteする
+		//! 通常タスクを全てTerminate , deleteする
+		void CleanupAllSubTasks()    {
+			CleanupPartialSubTasks(tasks.begin());
+		}
+
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
         void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
 
-        void OutputLog(std::string s, ...)			//!< ログ出力
+        void OutputLog(string s, ...)			//!< ログ出力
         {
             // Not Implemented
         }
@@ -184,10 +193,10 @@ namespace GTF
         TaskList bg_tasks;							//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
-        std::shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
-        std::multimap<int, TaskPtr, std::greater<int>> drawList;	//!< 描画順ソート用コンテナ
-        std::unordered_map<unsigned int, TaskPtr> indices;
-        std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
+        shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
+        multimap<int, TaskPtr, greater<int>> drawList;	//!< 描画順ソート用コンテナ
+        unordered_map<unsigned int, TaskPtr> indices;
+        unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };
 
 
