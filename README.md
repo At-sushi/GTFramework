@@ -3,7 +3,7 @@ Goluah Task Framework ver0.99b
 
 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
-タスクのリスト式管理・検索・優先度つきの描画などが出来ます。
+タスクのリスト式管理・検索などが出来ます。
 
 ## 導入方法
 src/systemフォルダ以下をプロジェクト内にコピーして使用してください。
@@ -66,33 +66,6 @@ FindTaskメソッドを使用すると、指定したIDの通常タスクのス�
 常駐タスクと、メソッドが分かれてることに注意してください（常駐タスクのはFindBGTask）。
 
 排他タスクの検索は出来ません。
-
-### 描画(優先度付き)
-    #include "task.h"
-    
-    using namespace GTF;
-    
-    class CNewTask : CTaskBase
-    {
-        virtual void Draw() override					// Draw実行時の処理
-        {
-            // do something
-        }
-        
-        virtual int GetDrawPriority() const override
-        {
-            return 0;	// 描画の優先度。数値の大きいものから先に処理される。-1で無効。
-        }
-    };
-    
-Drawメソッドを使うには、GetDrawPriorityメソッドをオーバーライドして、
-あらかじめ優先度を定義しておく必要があります。
-
-描画は(別に描画処理でなくてもいいのですが)優先度の数値が大きい順に処理され、-1のものは処理されません。
-
-すべてのタスクのDrawメソッドを実行するには、CTaskManagerクラスのDrawメソッドを使います。
-
-    taskManager.Draw();
 
 ## リファレンス：
 http://at-sushi.github.io/GTFramework/
