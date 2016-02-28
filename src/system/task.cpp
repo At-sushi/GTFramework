@@ -287,7 +287,7 @@ namespace GTF
         tmplist.reserve(tasks.size());
 
         //’Êíƒ^ƒXƒNDraw
-        i = tasks.begin();
+        i = ex_stack.empty() ? tasks.begin() : ex_stack.top().SubTaskStartPos;
         ied = tasks.end();
         for (; i != ied; i++){
             if ((*i)->GetDrawPriority() >= 0){
