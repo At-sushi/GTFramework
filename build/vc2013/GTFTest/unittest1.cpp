@@ -147,6 +147,36 @@ namespace GTFTest
 			Assert::AreEqual(513, veve[0]);
 		}
 
+		TEST_METHOD(描画2)
+		{
+			// TODO: テスト コードをここに挿入します
+			static CTaskManager task;
+			class ct2 : public CTekitou2 < int, CExclusiveTaskBase >
+			{
+			public:
+				ct2(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+				{
+
+				}
+				void Initialize()
+				{
+					task.AddTask(new CTekitou<int, CBackgroundTaskBase>(hogehoge + 1));
+				}
+			};
+
+			for (int i = 1; i < 257; i++)
+			{
+				task.AddTask(new ct2(i * 2));
+				task.Execute(0);
+			}
+			veve.clear();
+			task.RemoveTaskByID(1);
+			for (int i = 0; i < 256; i++)
+				task.Draw();
+
+			Assert::AreEqual(3, veve[0]);
+		}
+
 		TEST_METHOD(タスクの依存関係)
 		{
 			// TODO: テスト コードをここに挿入します
