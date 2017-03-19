@@ -42,8 +42,9 @@ namespace GTFTest
 			{}
 
 			T hogehoge;
-			unsigned int GetID()const{ return 1; }
+			unsigned int GetID()const{ return hogehoge; }
 			int GetDrawPriority()const{ return 1; }
+			void Draw() override{ veve.push_back(hogehoge); }
 		};
 
 		TEST_METHOD(TestMethod1)
@@ -116,19 +117,34 @@ namespace GTFTest
 			Assert::AreEqual(2, veve[1]);
 		}
 
-		TEST_METHOD(TestMethod4)
+		TEST_METHOD(描画)
 		{
 			// TODO: テスト コードをここに挿入します
-			CTaskManager task;
+			static CTaskManager task;
+			class ct2 : public CTekitou2 < int, CExclusiveTaskBase >
+			{
+			public:
+				ct2(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+				{
+
+				}
+				void Initialize()
+				{
+					task.AddTask(new CTekitou<int, CTaskBase>(hogehoge+1));
+				}
+			};
 
 			for (int i = 1; i < 257;i++)
 			{
-				task.AddTask(new CTekitou2<int, CExclusiveTaskBase>(i));
-				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(2)));
+				task.AddTask(new ct2(i*2));
+				task.Execute(0);
 			}
+			veve.clear();
 			task.RemoveTaskByID(1);
 			for (int i = 0; i < 256;i++)
 				task.Draw();
+
+			Assert::AreEqual(513, veve[0]);
 		}
 
 		TEST_METHOD(タスクの依存関係)
