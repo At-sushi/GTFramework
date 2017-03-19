@@ -25,11 +25,11 @@ public:
 };
 
 namespace GTFTest
-{		
+{
 	TEST_CLASS(UnitTest1)
 	{
 	public:
-		
+
 		template<typename T, class B>
 		class CTekitou : public B
 		{
@@ -42,8 +42,9 @@ namespace GTFTest
 			{}
 
 			T hogehoge;
-			unsigned int GetID()const{ return 1; }
+			unsigned int GetID()const{ return hogehoge; }
 			int GetDrawPriority()const{ return 1; }
+			void Draw() override{ veve.push_back(hogehoge); }
 		};
 
 		TEST_METHOD(TestMethod1)
@@ -116,19 +117,34 @@ namespace GTFTest
 			Assert::AreEqual(2, veve[1]);
 		}
 
-		TEST_METHOD(TestMethod4)
+		TEST_METHOD(描画)
 		{
 			// TODO: テスト コードをここに挿入します
-			CTaskManager task;
-
-			for (int i = 1; i < 257;i++)
+			static CTaskManager task;
+			class ct2 : public CTekitou2 < int, CExclusiveTaskBase >
 			{
-				task.AddTask(new CTekitou2<int, CExclusiveTaskBase>(i));
-				task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(2)));
+			public:
+				ct2(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+				{
+
+				}
+				void Initialize()
+				{
+					task.AddTask(new CTekitou<int, CTaskBase>(hogehoge + 1));
+				}
+			};
+
+			for (int i = 1; i < 257; i++)
+			{
+				task.AddTask(new ct2(i * 2));
+				task.Execute(0);
 			}
+			veve.clear();
 			task.RemoveTaskByID(1);
-			for (int i = 0; i < 256;i++)
+			for (int i = 0; i < 256; i++)
 				task.Draw();
+
+			Assert::AreEqual(513, veve[0]);
 		}
 
 		TEST_METHOD(タスクの依存関係)
@@ -144,7 +160,7 @@ namespace GTFTest
 				}
 				void Initialize()
 				{
-					task.AddTask(new CTekitou2<int, CTaskBase>(hogehoge+20));
+					task.AddTask(new CTekitou2<int, CTaskBase>(hogehoge + 20));
 				}
 				virtual bool Inactivate(unsigned int nextTaskID){ return true; }//!< 他の排他タスクが開始したときに呼ばれる
 			};
@@ -155,20 +171,20 @@ namespace GTFTest
 			auto ptr2 = task.AddTask(new ct(3));
 			task.Execute(1);
 			Assert::AreEqual(1, veve[0]);
-			Assert::AreEqual(1+20, veve[1]);
+			Assert::AreEqual(1 + 20, veve[1]);
 			task.Execute(2);
 			Assert::AreEqual(3, veve[2]);
-			Assert::AreEqual(3+20, veve[3]);
+			Assert::AreEqual(3 + 20, veve[3]);
 			task.RevertExclusiveTaskByID(1);
 			task.Execute(3);
 			Assert::AreEqual(1, veve[4]);
-			Assert::AreEqual(1+20, veve[5]);
+			Assert::AreEqual(1 + 20, veve[5]);
 			ptr2 = task.AddTask(new ct(4));
 			task.Execute(4);
 			task.RemoveTaskByID(21);
 			task.Execute(5);
 			Assert::AreEqual(4, veve[8]);
-			Assert::AreEqual(4+20, veve[9]);
+			Assert::AreEqual(4 + 20, veve[9]);
 
 		}
 
