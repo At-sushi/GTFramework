@@ -13,11 +13,15 @@
 
 namespace GTF
 {
-	using namespace std;
+    using namespace std;
 
     CTaskManager::CTaskManager()
     {
         exNext = nullptr;
+
+        // ダミーデータ挿入
+		const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
+		ex_stack.emplace(exNext, it);
     }
 
     void CTaskManager::Destroy()
@@ -41,7 +45,7 @@ namespace GTF
         bg_tasks.clear();
 
         //排他タスクTerminate
-        while (ex_stack.size() != 0){
+        while (ex_stack.size() != 0 && ex_stack.top().value){
             ex_stack.top().value->Terminate();
             ex_stack.pop();
         }
@@ -75,7 +79,7 @@ namespace GTF
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
         if (pnew->GetDrawPriority() >= 0)
-            drawList.emplace(pnew->GetDrawPriority(), pnew);
+            ex_stack.top().drawList.emplace(pnew->GetDrawPriority(), pnew);
         return pnew;
     }
 
@@ -108,45 +112,45 @@ namespace GTF
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
         if (pbgt->GetDrawPriority() >= 0)
-            drawList.emplace(pbgt->GetDrawPriority(), pbgt);
+            drawListBG.emplace(pbgt->GetDrawPriority(), pbgt);
         return pbgt;
     }
 
     void CTaskManager::Execute(double elapsedTime)
     {
-		// タスクExecute
-		auto taskExecute = [this, elapsedTime](TaskList::iterator i, TaskList::iterator ied){
-			deque<TaskList::iterator> deleteList;
-			deque<TaskList::iterator>::iterator idl, idl_ed;
+        // タスクExecute
+        auto taskExecute = [this, elapsedTime](TaskList::iterator i, TaskList::iterator ied){
+            deque<TaskList::iterator> deleteList;
+            deque<TaskList::iterator>::iterator idl, idl_ed;
 
-			for (; i != ied; ++i){
+            for (; i != ied; ++i){
 #ifdef _CATCH_WHILE_EXEC
-				try{
+                try{
 #endif
-					if ((*i)->Execute(elapsedTime) == false)
-					{
-						deleteList.push_back(i);
-					}
+                    if ((*i)->Execute(elapsedTime) == false)
+                    {
+                        deleteList.push_back(i);
+                    }
 #ifdef _CATCH_WHILE_EXEC
-		}
-				catch (...){
-					if (*i == NULL)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
-					else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
-					break;
-				}
+        }
+                catch (...){
+                    if (*i == NULL)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
+                    else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
+                    break;
+                }
 #endif
-	}
-			//タスクでfalseを返したものを消す
-			if (deleteList.size() != 0){
-				idl = deleteList.begin();
-				idl_ed = deleteList.end();
-				for (; idl != idl_ed; ++idl){
-					i = *idl;
-					(*i)->Terminate();
-					tasks.erase(i);
-				}
-			}
-		};
+    }
+            //タスクでfalseを返したものを消す
+            if (deleteList.size() != 0){
+                idl = deleteList.begin();
+                idl_ed = deleteList.end();
+                for (; idl != idl_ed; ++idl){
+                    i = *idl;
+                    (*i)->Terminate();
+                    tasks.erase(i);
+                }
+            }
+        };
 
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
@@ -156,8 +160,11 @@ namespace GTF
 #endif
 
         //排他タスク、topのみExecute
-        if (ex_stack.size() != 0){
-            shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.top().value;
+        assert(ex_stack.size() != 0);
+        shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.top().value;
+
+        if (exTsk)
+        {
             bool ex_ret = true;
 #ifdef _CATCH_WHILE_EXEC
             try{
@@ -214,9 +221,10 @@ namespace GTF
 #endif
 
                         //次の排他タスクをActivateする
-                        if (ex_stack.size() == 0)return;
+                        assert(ex_stack.size() != 0);
                         exTsk = ex_stack.top().value;
-                        exTsk->Activate(prvID);
+                        if (exTsk)
+                            exTsk->Activate(prvID);
 
 #ifdef _CATCH_WHILE_EXEC
                     }catch(...){
@@ -232,7 +240,8 @@ namespace GTF
         }
 
         //通常タスクExecute
-        taskExecute(ex_stack.empty() ? tasks.begin() : ex_stack.top().SubTaskStartPos, tasks.end());
+        assert(!ex_stack.empty());
+        taskExecute(ex_stack.top().SubTaskStartPos, tasks.end());
 
         //常駐タスクExecute
         taskExecute(bg_tasks.begin(), bg_tasks.end());
@@ -240,15 +249,14 @@ namespace GTF
         // 新しいタスクがある場合
         if (exNext){
             //現在排他タスクのInactivate
-            if (ex_stack.size() != 0){
-                auto& exTsk = ex_stack.top().value;
-                if (!exTsk->Inactivate(exNext->GetID())){
-                    //通常タスクを全て破棄する
-                    CleanupPartialSubTasks(ex_stack.top().SubTaskStartPos);
+            assert(ex_stack.size() != 0);
+            auto& exTsk = ex_stack.top().value;
+            if (exTsk && !exTsk->Inactivate(exNext->GetID())){
+                //通常タスクを全て破棄する
+                CleanupPartialSubTasks(ex_stack.top().SubTaskStartPos);
 
-                    exTsk->Terminate();
-                    ex_stack.pop();
-                }
+                exTsk->Terminate();
+                ex_stack.pop();
             }
 
             //AddされたタスクをInitializeして突っ込む
@@ -265,25 +273,22 @@ namespace GTF
     {
         TaskList::iterator i, ied;
         shared_ptr<CExclusiveTaskBase> pex;
+        auto& drawList = ex_stack.top().drawList;
 
         //排他タスクを取得
-        if (ex_stack.size() != 0){
-            if (ex_stack.top().value->GetDrawPriority() >= 0){
-                pex = ex_stack.top().value;
-            }
+        assert(ex_stack.size() != 0);
+        if (ex_stack.top().value && ex_stack.top().value->GetDrawPriority() >= 0){
+            pex = ex_stack.top().value;
         }
 
         auto iv = drawList.begin();
         auto iedv = pex ? drawList.upper_bound(pex->GetDrawPriority()) : drawList.end();
-        auto DrawAll = [&]()		// 描画関数
+        auto ivBG = drawListBG.begin();
+        const auto iedvBG = drawListBG.end();
+        auto DrawAndProceed = [&](DrawPriorityMap::iterator& iv)
         {
-            while (iv != iedv)
-            {
-                auto is = iv->second.lock();
+                    auto is = iv->second.lock();
 
-#ifdef _CATCH_WHILE_RENDER
-                try{
-#endif
                     if (is)
                     {
                         is->Draw();
@@ -291,6 +296,17 @@ namespace GTF
                     }
                     else
                         drawList.erase(iv++);
+        };
+        auto DrawAll = [&]()		// 描画関数
+        {
+            while (iv != iedv)
+            {
+#ifdef _CATCH_WHILE_RENDER
+                try{
+#endif
+                    while (ivBG != iedvBG && ivBG->first <= iv->first)
+                        DrawAndProceed(ivBG);
+                    DrawAndProceed(iv);
 #ifdef _CATCH_WHILE_RENDER
                 }catch(...){
                     OutputLog("catch while draw : %X %s", *iv, typeid(*(*iv).lock()).name());
@@ -309,6 +325,10 @@ namespace GTF
         assert(iv == iedv);
         iedv = drawList.end();
         DrawAll();
+
+        // 書き残した常駐タスク処理
+        while (ivBG != iedvBG)
+            DrawAndProceed(ivBG);
     }
 
     void CTaskManager::RemoveTaskByID(unsigned int id)
@@ -348,7 +368,6 @@ namespace GTF
     //最上位にあるエクスクルーシブタスクをゲト
     CTaskManager::ExTaskPtr CTaskManager::GetTopExclusiveTask()
     {
-        if (ex_stack.size() == 0)return ExTaskPtr();
         return ex_stack.top().value;
     }
 
@@ -358,7 +377,8 @@ namespace GTF
         bool act = false;
         unsigned int previd = 0;
 
-        while (ex_stack.size() != 0){
+        assert(ex_stack.size() != 0);
+        while (ex_stack.top().value){
             const shared_ptr<CExclusiveTaskBase>& task = ex_stack.top().value;
             if (task->GetID() == id){
                 if (act){
@@ -372,6 +392,7 @@ namespace GTF
                 CleanupPartialSubTasks(ex_stack.top().SubTaskStartPos);
                 task->Terminate();
                 ex_stack.pop();
+                assert(ex_stack.size() != 0);
             }
         }
     }

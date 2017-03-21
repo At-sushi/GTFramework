@@ -26,7 +26,7 @@
 
 namespace GTF
 {
-	using namespace std;
+    using namespace std;
 
     /*! 
     *	@ingroup Tasks
@@ -154,19 +154,22 @@ namespace GTF
         void Execute(double elapsedTime);					//!< 各タスクのExecute関数をコールする
         void Draw();										//!< 各タスクをプライオリティ順に描画する
 
-		//!< 排他タスクが全部なくなっちゃったかどうか
-		bool ExEmpty() const    {
-			return ex_stack.empty();
-		}
+        //!< 排他タスクが全部なくなっちゃったかどうか
+        bool ExEmpty() const    {
+            return ex_stack.empty();
+        }
 
         //デバッグ
         void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する(Not Imlemented)
 
     protected:
         typedef list<shared_ptr<CTaskBase>> TaskList;
+        typedef multimap<int, TaskPtr, greater<int>> DrawPriorityMap;
+
         struct ExTaskInfo {
             const shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
-            const TaskList::iterator SubTaskStartPos;				//!< 依存する通常タスクの開始地点
+            const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
+            DrawPriorityMap drawList;						//!< 描画順ソート用コンテナ
 
             ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
                 : value(source), SubTaskStartPos(startPos)
@@ -175,15 +178,15 @@ namespace GTF
         };
         typedef stack<ExTaskInfo> ExTaskStack;
 
-		//! 通常タスクを全てTerminate , deleteする
-		void CleanupAllSubTasks()    {
-			CleanupPartialSubTasks(tasks.begin());
-		}
+        //! 通常タスクを全てTerminate , deleteする
+        void CleanupAllSubTasks()    {
+            CleanupPartialSubTasks(tasks.begin());
+        }
 
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
         void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
 
-        void OutputLog(string s, ...)			//!< ログ出力
+        void OutputLog(string s, ...)				//!< ログ出力
         {
             // Not Implemented
         }
@@ -193,8 +196,8 @@ namespace GTF
         TaskList bg_tasks;							//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
-        shared_ptr<CExclusiveTaskBase> exNext;	//!< 現在フレームでAddされた排他タスク
-        multimap<int, TaskPtr, greater<int>> drawList;	//!< 描画順ソート用コンテナ
+        shared_ptr<CExclusiveTaskBase> exNext;		//!< 現在フレームでAddされた排他タスク
+        DrawPriorityMap drawListBG;					//!< 描画順ソート用コンテナ（常駐タスク）
         unordered_map<unsigned int, TaskPtr> indices;
         unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };
