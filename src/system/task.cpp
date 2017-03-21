@@ -20,8 +20,8 @@ namespace GTF
         exNext = nullptr;
 
         // ダミーデータ挿入
-		const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
-		ex_stack.emplace(exNext, it);
+        const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
+        ex_stack.emplace(exNext, it);
     }
 
     void CTaskManager::Destroy()
