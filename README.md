@@ -60,12 +60,9 @@ AddTaskメソッドにnew生成したタスクをわたすと自動で生成～�
 
 ### 検索
     auto p = taskManager.FindTask<CNewTask>(12);
-    auto pbg = taskManager.FindBGTask<CNewBGTask>(33);
 
-FindTaskメソッドを使用すると、指定したIDの通常タスクのスマートポインタが手に入ります。
-常駐タスクと、メソッドが分かれてることに注意してください（常駐タスクのはFindBGTask）。
-
-排他タスクの検索は出来ません。
+FindTaskメソッドを使用すると、指定したIDのタスクのスマートポインタが手に入ります。
+ただし排他タスクの検索は出来ません。
 
 ### 描画(優先度付き)
     #include "task.h"

@@ -11,6 +11,7 @@
 #include <stack>
 #include <memory>
 #include <functional>
+#include <type_traits>
 
 
 
@@ -127,28 +128,22 @@ namespace GTF
         void RevertExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
         ExTaskPtr GetTopExclusiveTask();					//!< 最上位にあるエクスクルーシブタスクをゲト
 
-        //!指定IDの常駐タスク取得
-        BgTaskPtr FindBGTask(unsigned int id)
-        {
-           return bg_indices[id];
-        }
-
         //!指定IDの通常タスク取得
         TaskPtr FindTask(unsigned int id)
         {
             return indices[id];
         }
 
-        //! 任意のクラス型の通常タスクを取得
-        template<class T> shared_ptr<T> FindTask(unsigned int id)
+        //!指定IDの常駐タスク取得
+        BgTaskPtr FindBGTask(unsigned int id)
         {
-            return dynamic_pointer_cast<T>(FindTask(id).lock());
+           return bg_indices[id];
         }
 
-        //! 任意のクラス型の常駐タスクを取得
-        template<class T> shared_ptr<T> FindBGTask(unsigned int id)
+        //! 任意のクラス型のタスクを取得（通常・常駐兼用）
+        template<class T> shared_ptr<T> FindTask(unsigned int id)
         {
-            return dynamic_pointer_cast<T>(FindBGTask(id).lock());
+            return dynamic_pointer_cast<T>(FindTask_intl<T>(id).lock());
         }
 
         void Execute(double elapsedTime);					//!< 各タスクのExecute関数をコールする
@@ -192,6 +187,17 @@ namespace GTF
         }
 
     private:
+        template<class T, class = typename enable_if<!is_base_of<CBackgroundTaskBase, T>::value>::type>
+        TaskPtr FindTask_intl(unsigned int id)
+        {
+            return FindTask(id);
+        }
+        template<class T, class = typename enable_if<is_base_of<CBackgroundTaskBase, T>::value>::type>
+        BgTaskPtr FindTask_intl(unsigned int id)
+        {
+            return FindBGTask(id);
+        }
+
         TaskList tasks;								//!< 現在動作ちゅうのタスクリスト
         TaskList bg_tasks;							//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない

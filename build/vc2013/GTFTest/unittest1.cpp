@@ -54,6 +54,7 @@ namespace GTFTest
 
 			auto ptr = task.AddTask(new CTekitou<int, CTaskBase>(1)).lock();
 			Assert::AreEqual((void*)task.FindTask(ptr->GetID()).lock().get(), (void*)ptr.get());
+			Assert::AreEqual((void*)task.FindTask<CTaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 		}
 
 		TEST_METHOD(TestMethod2)
@@ -62,8 +63,7 @@ namespace GTFTest
 			CTaskManager task;
 
 			auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1)).lock();
-			Assert::AreNotEqual((void*)(task.FindTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
-			Assert::AreEqual((void*)(task.FindBGTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
+			Assert::AreEqual((void*)(task.FindTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
 			auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
 			Assert::AreNotEqual((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 			Assert::AreEqual((void*)task.FindBGTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
