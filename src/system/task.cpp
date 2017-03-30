@@ -273,7 +273,6 @@ namespace GTF
     {
         TaskList::iterator i, ied;
         shared_ptr<CExclusiveTaskBase> pex;
-        auto& drawList = ex_stack.top().drawList;
 
         //排他タスクを取得
         assert(ex_stack.size() != 0);
@@ -281,11 +280,11 @@ namespace GTF
             pex = ex_stack.top().value;
         }
 
-        auto iv = drawList.begin();
-        auto iedv = pex ? drawList.upper_bound(pex->GetDrawPriority()) : drawList.end();
+        auto iv = ex_stack.top().drawList.begin();
+        auto iedv = pex ? ex_stack.top().drawList.upper_bound(pex->GetDrawPriority()) : ex_stack.top().drawList.end();
         auto ivBG = drawListBG.begin();
         const auto iedvBG = drawListBG.end();
-        auto DrawAndProceed = [&](DrawPriorityMap::iterator& iv)
+        auto DrawAndProceed = [](DrawPriorityMap::iterator& iv, DrawPriorityMap& drawList)
         {
                     auto is = iv->second.lock();
 
@@ -305,8 +304,8 @@ namespace GTF
                 try{
 #endif
                     while (ivBG != iedvBG && ivBG->first <= iv->first)
-                        DrawAndProceed(ivBG);
-                    DrawAndProceed(iv);
+                        DrawAndProceed(ivBG, drawListBG);
+                    DrawAndProceed(iv, ex_stack.top().drawList);
 #ifdef _CATCH_WHILE_RENDER
                 }catch(...){
                     OutputLog("catch while draw : %X %s", *iv, typeid(*(*iv).lock()).name());
@@ -323,12 +322,12 @@ namespace GTF
 
         //描画
         assert(iv == iedv);
-        iedv = drawList.end();
+        iedv = ex_stack.top().drawList.end();
         DrawAll();
 
         // 書き残した常駐タスク処理
         while (ivBG != iedvBG)
-            DrawAndProceed(ivBG);
+            DrawAndProceed(ivBG, drawListBG);
     }
 
     void CTaskManager::RemoveTaskByID(unsigned int id)
@@ -364,12 +363,6 @@ namespace GTF
         }
     }
 
-
-    //最上位にあるエクスクルーシブタスクをゲト
-    CTaskManager::ExTaskPtr CTaskManager::GetTopExclusiveTask()
-    {
-        return ex_stack.top().value;
-    }
 
     //指定IDの排他タスクまでTerminate/popする
     void CTaskManager::RevertExclusiveTaskByID(unsigned int id)

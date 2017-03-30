@@ -1,5 +1,5 @@
 # GTFramework
-Goluah Task Framework ver0.99c
+Goluah Task Framework ver0.99d
 
 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
