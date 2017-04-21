@@ -118,7 +118,7 @@ namespace GTF
         typedef weak_ptr<CExclusiveTaskBase> ExTaskPtr;
         typedef weak_ptr<CBackgroundTaskBase> BgTaskPtr;
 
-     void Destroy();
+        void Destroy();
             
         //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
         TaskPtr AddTask(CTaskBase *newTask);		        //!< タスク追加
@@ -162,6 +162,7 @@ namespace GTF
 
     protected:
         typedef list<shared_ptr<CTaskBase>> TaskList;
+        typedef list<shared_ptr<CBackgroundTaskBase>> BgTaskList;
         typedef multimap<int, TaskPtr, greater<int>> DrawPriorityMap;
 
         struct ExTaskInfo {
@@ -200,9 +201,44 @@ namespace GTF
         {
             return FindBGTask(id);
         }
+        //! タスクExecute
+        template<class T, typename I = T::iterator>
+			void taskExecute(T& tasks, I i, I ied, double elapsedTime)
+        {
+            deque<I> deleteList;
+            deque<I>::iterator idl, idl_ed;
+
+            for (; i != ied; ++i){
+#ifdef _CATCH_WHILE_EXEC
+                try{
+#endif
+                    if ((*i)->Execute(elapsedTime) == false)
+                    {
+                        deleteList.push_back(i);
+                    }
+#ifdef _CATCH_WHILE_EXEC
+                }
+                catch (...){
+                    if (*i == NULL)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
+                    else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
+                    break;
+                }
+#endif
+            }
+            //タスクでfalseを返したものを消す
+            if (deleteList.size() != 0){
+                idl = deleteList.begin();
+                idl_ed = deleteList.end();
+                for (; idl != idl_ed; ++idl){
+                    i = *idl;
+                    (*i)->Terminate();
+                    tasks.erase(i);
+                }
+            }
+        }
 
         TaskList tasks;								//!< 現在動作ちゅうのタスクリスト
-        TaskList bg_tasks;							//!< 常駐タスクリスト
+        BgTaskList bg_tasks;						//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
         shared_ptr<CExclusiveTaskBase> exNext;		//!< 現在フレームでAddされた排他タスク

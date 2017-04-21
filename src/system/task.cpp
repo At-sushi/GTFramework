@@ -26,21 +26,19 @@ namespace GTF
 
     void CTaskManager::Destroy()
     {
-        TaskList::iterator i, ied;
-
         //通常タスクTerminate
-        i = tasks.begin();
-        ied = tasks.end();
+        auto i = tasks.begin();
+        const auto ied = tasks.end();
         for (; i != ied; ++i){
             (*i)->Terminate();
         }
         tasks.clear();
 
         //バックグラウンドタスクTerminate
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; ++i){
-            (*i)->Terminate();
+        auto ib = bg_tasks.begin();
+        const auto ibed = bg_tasks.end();
+        for (; ib != ibed; ++ib){
+            (*ib)->Terminate();
         }
         bg_tasks.clear();
 
@@ -118,40 +116,6 @@ namespace GTF
 
     void CTaskManager::Execute(double elapsedTime)
     {
-        // タスクExecute
-        auto taskExecute = [this, elapsedTime](TaskList::iterator i, TaskList::iterator ied){
-            deque<TaskList::iterator> deleteList;
-            deque<TaskList::iterator>::iterator idl, idl_ed;
-
-            for (; i != ied; ++i){
-#ifdef _CATCH_WHILE_EXEC
-                try{
-#endif
-                    if ((*i)->Execute(elapsedTime) == false)
-                    {
-                        deleteList.push_back(i);
-                    }
-#ifdef _CATCH_WHILE_EXEC
-        }
-                catch (...){
-                    if (*i == NULL)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
-                    else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
-                    break;
-                }
-#endif
-    }
-            //タスクでfalseを返したものを消す
-            if (deleteList.size() != 0){
-                idl = deleteList.begin();
-                idl_ed = deleteList.end();
-                for (; idl != idl_ed; ++idl){
-                    i = *idl;
-                    (*i)->Terminate();
-                    tasks.erase(i);
-                }
-            }
-        };
-
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
             OutputLog("AfxCheckMemory() failed");
@@ -241,10 +205,10 @@ namespace GTF
 
         //通常タスクExecute
         assert(!ex_stack.empty());
-        taskExecute(ex_stack.top().SubTaskStartPos, tasks.end());
+        taskExecute(tasks, ex_stack.top().SubTaskStartPos, tasks.end(), elapsedTime);
 
         //常駐タスクExecute
-        taskExecute(bg_tasks.begin(), bg_tasks.end());
+        taskExecute(bg_tasks, bg_tasks.begin(), bg_tasks.end(), elapsedTime);
 
         // 新しいタスクがある場合
         if (exNext){
@@ -332,13 +296,11 @@ namespace GTF
 
     void CTaskManager::RemoveTaskByID(unsigned int id)
     {
-        TaskList::iterator i, ied;
-
         //通常タスクをチェック
         if (indices.find(id) != indices.end())
         {
-            i = tasks.begin();
-            ied = tasks.end();
+            auto i = tasks.begin();
+            const auto ied = tasks.end();
             for (; i != ied; ++i){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
@@ -351,8 +313,8 @@ namespace GTF
         //バックグラウンドタスクTerminate
         if (bg_indices.find(id) != bg_indices.end())
         {
-            i = bg_tasks.begin();
-            ied = bg_tasks.end();
+            auto i = bg_tasks.begin();
+            const auto ied = bg_tasks.end();
             for (; i != ied; ++i){
                 if (id == (*i)->GetID()){
                     (*i)->Terminate();
@@ -410,22 +372,20 @@ namespace GTF
     {
         OutputLog("\n\n■CTaskManager::DebugOutputTaskList() - start");
 
-        TaskList::iterator i, ied;
-
         OutputLog("□通常タスク一覧□");
         //通常タスク
-        i = tasks.begin();
-        ied = tasks.end();
+        auto i = tasks.begin();
+        const auto ied = tasks.end();
         for (; i != ied; ++i){
             OutputLog(typeid(**i).name());
         }
 
         OutputLog("□常駐タスク一覧□");
         //バックグラウンドタスク
-        i = bg_tasks.begin();
-        ied = bg_tasks.end();
-        for (; i != ied; ++i){
-            OutputLog(typeid(**i).name());
+        auto ib = bg_tasks.begin();
+        const auto ibed = bg_tasks.end();
+        for (; ib != ibed; ++ib){
+            OutputLog(typeid(**ib).name());
         }
 
         //排他タスク	
