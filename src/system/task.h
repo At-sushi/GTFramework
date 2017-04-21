@@ -126,25 +126,27 @@ namespace GTF
         BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< 常駐タスク追加
         void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
         void RevertExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
-        ExTaskPtr GetTopExclusiveTask()						//!< 最上位にあるエクスクルーシブタスクをゲト
+
+        //! 最上位にあるエクスクルーシブタスクをゲト
+        ExTaskPtr GetTopExclusiveTask() const
         {
             return ex_stack.top().value;
         }
 
         //!指定IDの通常タスク取得
-        TaskPtr FindTask(unsigned int id)
+        TaskPtr FindTask(unsigned int id) const
         {
-            return indices[id];
+            return indices.at(id);
         }
 
         //!指定IDの常駐タスク取得
-        BgTaskPtr FindBGTask(unsigned int id)
+        BgTaskPtr FindBGTask(unsigned int id) const
         {
-           return bg_indices[id];
+           return bg_indices.at(id);
         }
 
         //! 任意のクラス型のタスクを取得（通常・常駐兼用）
-        template<class T> shared_ptr<T> FindTask(unsigned int id)
+        template<class T> shared_ptr<T> FindTask(unsigned int id) const
         {
             return dynamic_pointer_cast<T>(FindTask_impl<T>(id).lock());
         }
@@ -158,7 +160,7 @@ namespace GTF
         }
 
         //デバッグ
-        void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する(Not Imlemented)
+        void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
 
     protected:
         using TaskList = list<shared_ptr<CTaskBase>>;
@@ -183,21 +185,21 @@ namespace GTF
         }
 
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
-        void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
 
-        void OutputLog(string s, ...)				//!< ログ出力
+        //! ログ出力
+        void OutputLog(string s, ...)
         {
             // Not Implemented
         }
 
     private:
         template<class T, class = typename enable_if_t<!is_base_of<CBackgroundTaskBase, T>::value>>
-            TaskPtr FindTask_impl(unsigned int id)
+            TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
         template<class T, class = typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value>>
-            BgTaskPtr FindTask_impl(unsigned int id)
+            BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);
         }
