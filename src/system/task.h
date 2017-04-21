@@ -203,7 +203,7 @@ namespace GTF
         }
         //! É^ÉXÉNExecute
         template<class T, typename I = T::iterator>
-			void taskExecute(T& tasks, I i, I ied, double elapsedTime)
+            void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
             deque<I> deleteList;
             deque<I>::iterator idl, idl_ed;
