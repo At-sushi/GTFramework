@@ -219,7 +219,7 @@ namespace GTF
 #ifdef _CATCH_WHILE_EXEC
                 }
                 catch (...){
-                    if (*i == NULL)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
+                    if (*i == nullptr)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
                     else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
                     break;
                 }
