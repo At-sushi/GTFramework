@@ -201,12 +201,12 @@ namespace GTF
         {
             return FindBGTask(id);
         }
+
         //! タスクExecute
-        template<class T, typename I = T::iterator>
+        template<class T, typename I = T::iterator, class QI = deque<I>, class I_QI = QI::iterator>
             void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
-            deque<I> deleteList;
-            deque<I>::iterator idl, idl_ed;
+            QI deleteList;
 
             for (; i != ied; ++i){
 #ifdef _CATCH_WHILE_EXEC
@@ -225,15 +225,15 @@ namespace GTF
                 }
 #endif
             }
+
             //タスクでfalseを返したものを消す
-            if (deleteList.size() != 0){
-                idl = deleteList.begin();
-                idl_ed = deleteList.end();
-                for (; idl != idl_ed; ++idl){
-                    i = *idl;
-                    (*i)->Terminate();
-                    tasks.erase(i);
-                }
+            I_QI idl = deleteList.begin();
+            const I_QI idl_ed = deleteList.end();
+
+            for (; idl != idl_ed; ++idl){
+                i = *idl;
+                (*i)->Terminate();
+                tasks.erase(i);
             }
         }
 
