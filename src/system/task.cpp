@@ -297,7 +297,7 @@ namespace GTF
     void CTaskManager::RemoveTaskByID(unsigned int id)
     {
         //通常タスクをチェック
-        if (indices.find(id) != indices.end())
+        if (indices.count(id) != 0)
         {
             auto i = tasks.begin();
             const auto ied = tasks.end();
@@ -311,7 +311,7 @@ namespace GTF
         }
 
         //バックグラウンドタスクTerminate
-        if (bg_indices.find(id) != bg_indices.end())
+        if (bg_indices.count(id) != 0)
         {
             auto i = bg_tasks.begin();
             const auto ied = bg_tasks.end();
