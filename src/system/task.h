@@ -114,9 +114,9 @@ namespace GTF
         CTaskManager();
         ~CTaskManager(){Destroy();}
 
-        typedef weak_ptr<CTaskBase> TaskPtr;
-        typedef weak_ptr<CExclusiveTaskBase> ExTaskPtr;
-        typedef weak_ptr<CBackgroundTaskBase> BgTaskPtr;
+        using TaskPtr = weak_ptr<CTaskBase>;
+        using ExTaskPtr = weak_ptr<CExclusiveTaskBase>;
+        using BgTaskPtr = weak_ptr<CBackgroundTaskBase>;
 
         void Destroy();
             
@@ -161,9 +161,9 @@ namespace GTF
         void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する(Not Imlemented)
 
     protected:
-        typedef list<shared_ptr<CTaskBase>> TaskList;
-        typedef list<shared_ptr<CBackgroundTaskBase>> BgTaskList;
-        typedef multimap<int, TaskPtr, greater<int>> DrawPriorityMap;
+        using TaskList = list<shared_ptr<CTaskBase>>;
+        using BgTaskList = list<shared_ptr<CBackgroundTaskBase>>;
+        using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
 
         struct ExTaskInfo {
             const shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
@@ -175,7 +175,7 @@ namespace GTF
             {
             }
         };
-        typedef stack<ExTaskInfo> ExTaskStack;
+        using ExTaskStack = stack<ExTaskInfo>;
 
         //! 通常タスクを全てTerminate , deleteする
         void CleanupAllSubTasks()    {
