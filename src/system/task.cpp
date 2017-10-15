@@ -17,8 +17,6 @@ namespace GTF
 
     CTaskManager::CTaskManager()
     {
-        exNext = nullptr;
-
         // ダミーデータ挿入
         const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
         ex_stack.emplace(exNext, it);
@@ -160,14 +158,12 @@ namespace GTF
                     }
 #endif
 
-                    unsigned int prvID;
-
 #ifdef _CATCH_WHILE_EXEC
                     try{
 #endif
 
                         //現在排他タスクの破棄
-                        prvID = exTsk->GetID();
+                        unsigned int prvID = exTsk->GetID();
                         exTsk->Terminate();
                         exTsk = nullptr;
                         ex_stack.pop();
@@ -235,8 +231,7 @@ namespace GTF
 
     void CTaskManager::Draw()
     {
-        TaskList::iterator i, ied;
-        shared_ptr<CExclusiveTaskBase> pex;
+         shared_ptr<CExclusiveTaskBase> pex = nullptr;
 
         //排他タスクを取得
         assert(ex_stack.size() != 0);
@@ -355,10 +350,8 @@ namespace GTF
     //通常タスクを一部だけ破棄する
     void CTaskManager::CleanupPartialSubTasks(TaskList::iterator it_task)
     {
-        TaskList::iterator i, ied;
+        TaskList::iterator i = it_task, ied = tasks.end();
 
-        i = it_task;
-        ied = tasks.end();
         for (; i != ied; ++i){
             shared_ptr<CTaskBase>& delTgt = (*i);
             delTgt->Terminate();

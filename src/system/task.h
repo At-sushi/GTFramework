@@ -241,7 +241,7 @@ namespace GTF
         BgTaskList bg_tasks;						//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
-        shared_ptr<CExclusiveTaskBase> exNext;		//!< 現在フレームでAddされた排他タスク
+        shared_ptr<CExclusiveTaskBase> exNext = nullptr;		//!< 現在フレームでAddされた排他タスク
         DrawPriorityMap drawListBG;					//!< 描画順ソート用コンテナ（常駐タスク）
         unordered_map<unsigned int, TaskPtr> indices;
         unordered_map<unsigned int, BgTaskPtr> bg_indices;
