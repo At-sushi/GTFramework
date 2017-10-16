@@ -130,7 +130,7 @@ namespace GTFTest
 				}
 				void Initialize()
 				{
-					task.AddTask(new CTekitou<int, CTaskBase>(hogehoge + 1));
+					task.AddNewTask< CTekitou<int, CTaskBase> >(hogehoge + 1);
 				}
 			};
 
@@ -160,7 +160,7 @@ namespace GTFTest
 				}
 				void Initialize()
 				{
-					task.AddTask(new CTekitou<int, CBackgroundTaskBase>(hogehoge + 1));
+					task.AddNewTask< CTekitou<int, CBackgroundTaskBase> >(hogehoge + 1);
 				}
 			};
 
