@@ -52,8 +52,9 @@ GetIDメソッドは、タスクに個別のIDを付けたいときに使えま�
     taskManager.AddNewTask<CNewTask>();
 
 CTaskManagerクラスをインスタンス化するとタスクを管理できるようになります。
-AddNewTaskメソッドにクラスをわたすと、タスクが自動で生成されます。
-括弧の中に引数を記述すると、コンストラクタ引数として初期化時に渡すことが出来ます。
+
+AddNewTaskメソッドにテンプレート引数としてクラスをわたすと、タスクが自動で生成されます。
+括弧の中に引数を記述すると、タスクのコンストラクタ引数として初期化時に渡すことが出来ます。
     
     taskManager.AddNewTask<CNewArgumentTask>(12, 2, "String");
 

@@ -100,8 +100,7 @@ namespace GTF
 
         bg_tasks.emplace_back(newTask);
         // Žb’è“I‚ÈŒ^•ÏŠ·
-        auto& pbgt = static_pointer_cast<CBackgroundTaskBase>(bg_tasks.back());
-        assert(dynamic_pointer_cast<CBackgroundTaskBase>(pbgt).get());
+        auto& pbgt = bg_tasks.back();
 
         //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
         pbgt->Initialize();

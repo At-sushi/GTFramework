@@ -131,7 +131,7 @@ namespace GTF
             return ex_stack.top().value;
         }
 
-        //!タスクの自動生成追加（暫定）
+        //!タスクの自動生成（暫定）
         template <class C, typename... A, class PC = weak_ptr<C>>
             PC AddNewTask(A... args)
         {
