@@ -70,7 +70,7 @@ namespace GTF
 
         //’Êíƒ^ƒXƒN‚Æ‚µ‚ÄAdd
         tasks.emplace_back(newTask);
-        auto& pnew = tasks.back();
+        auto pnew = tasks.back();
         newTask->Initialize();
         if (newTask->GetID() != 0)
             indices[newTask->GetID()] = pnew;
