@@ -52,7 +52,7 @@ namespace GTFTest
 			// TODO: テスト コードをここに挿入します
 			CTaskManager task;
 
-			auto ptr = task.AddTask(new CTekitou<int, CTaskBase>(1)).lock();
+			auto ptr = task.AddNewTask< CTekitou<int, CTaskBase> >(1).lock();
 			Assert::AreEqual((void*)task.FindTask(ptr->GetID()).lock().get(), (void*)ptr.get());
 			Assert::AreEqual((void*)task.FindTask<CTaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 		}
@@ -86,8 +86,8 @@ namespace GTFTest
 			CTaskManager task;
 
 			veve.clear();
-			auto ptr = task.AddTask(new CTekitou2<int, CExclusiveTaskBase>(1));
-			auto ptr2 = task.AddTask(new CTekitou2<int, CTaskBase>(2));
+			auto ptr = task.AddNewTask< CTekitou2<int, CExclusiveTaskBase> >(1);
+			auto ptr2 = task.AddNewTask< CTekitou2<int, CTaskBase> >(2);
 			task.Execute(0);
 			Assert::AreEqual(2, veve[0]);
 		}
@@ -110,7 +110,7 @@ namespace GTFTest
 			};
 
 			veve.clear();
-			auto ptr = task.AddTask(new ct(1));
+			auto ptr = task.AddNewTask<ct>(1);
 			task.Execute(0);
 			task.Execute(1);
 			Assert::AreEqual(1, veve[0]);
@@ -136,7 +136,7 @@ namespace GTFTest
 
 			for (int i = 1; i < 257; i++)
 			{
-				task.AddTask(new ct2(i * 2));
+				task.AddNewTask<ct2>(i * 2);
 				task.Execute(0);
 			}
 			veve.clear();
@@ -166,7 +166,7 @@ namespace GTFTest
 
 			for (int i = 1; i < 257; i++)
 			{
-				task.AddTask(new ct2(i * 2));
+				task.AddNewTask<ct2>(i * 2);
 				task.Execute(0);
 			}
 			veve.clear();
@@ -190,15 +190,15 @@ namespace GTFTest
 				}
 				void Initialize()
 				{
-					task.AddTask(new CTekitou2<int, CTaskBase>(hogehoge + 20));
+					task.AddNewTask< CTekitou2<int, CTaskBase> >(hogehoge + 20);
 				}
 				virtual bool Inactivate(unsigned int nextTaskID){ return true; }//!< 他の排他タスクが開始したときに呼ばれる
 			};
 
 			veve.clear();
-			auto ptr = task.AddTask(new ct(1));
+			auto ptr = task.AddNewTask<ct>(1);
 			task.Execute(0);
-			auto ptr2 = task.AddTask(new ct(3));
+			auto ptr2 = task.AddNewTask<ct>(3);
 			task.Execute(1);
 			Assert::AreEqual(1, veve[0]);
 			Assert::AreEqual(1 + 20, veve[1]);
@@ -209,7 +209,7 @@ namespace GTFTest
 			task.Execute(3);
 			Assert::AreEqual(1, veve[4]);
 			Assert::AreEqual(1 + 20, veve[5]);
-			ptr2 = task.AddTask(new ct(4));
+			ptr2 = task.AddNewTask<ct>(4);
 			task.Execute(4);
 			task.RemoveTaskByID(21);
 			task.Execute(5);

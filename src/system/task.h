@@ -131,6 +131,13 @@ namespace GTF
             return ex_stack.top().value;
         }
 
+        //!タスクの自動生成追加（暫定）
+        template <class C, typename... A, class PC = weak_ptr<C>>
+            PC AddNewTask(A... args)
+        {
+            return dynamic_pointer_cast<C>(AddTask(new C(args...)).lock());
+        }
+
         //!指定IDの通常タスク取得
         TaskPtr FindTask(unsigned int id)
         {
