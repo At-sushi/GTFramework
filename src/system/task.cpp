@@ -99,7 +99,7 @@ namespace GTF
         }
 
         bg_tasks.emplace_back(newTask);
-        // 暫定的な型変換
+
         auto pbgt = bg_tasks.back();
 
         //常駐タスクとしてAdd
