@@ -100,7 +100,7 @@ namespace GTF
 
         bg_tasks.emplace_back(newTask);
         // Žb’è“I‚ÈŒ^•ÏŠ·
-        auto& pbgt = bg_tasks.back();
+        auto pbgt = bg_tasks.back();
 
         //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
         pbgt->Initialize();
