@@ -136,7 +136,7 @@ namespace GTF
         //! タスクの自動生成（暫定）
         template <class C, typename... A, class PC = weak_ptr<C>,
         typename enable_if_t<
-            std::integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
+            integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
             is_base_of<CExclusiveTaskBase, C>::value
             >::value> *& = enabler>
             PC AddNewTask(A... args)
@@ -145,7 +145,7 @@ namespace GTF
         }
         template <class C, typename... A, class PC = weak_ptr<C>,
         typename enable_if_t<
-            std::integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
+            integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
             !is_base_of<CExclusiveTaskBase, C>::value
             >::value> *& = enabler>
             PC AddNewTask(A... args)

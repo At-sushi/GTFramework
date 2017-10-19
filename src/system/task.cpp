@@ -58,10 +58,6 @@ namespace GTF
             return AddTask(pext);
         }
 
-        if (newTask->GetID() != 0){
-            RemoveTaskByID(newTask->GetID());
-        }
-
         CBackgroundTaskBase *pbgt = dynamic_cast<CBackgroundTaskBase*>(newTask);
         if (pbgt){
             //常駐タスクとしてAdd
@@ -75,6 +71,12 @@ namespace GTF
     CTaskManager::TaskPtr CTaskManager::AddTask_intl(CTaskBase *newTask)
     {
         assert(newTask);
+        assert(dynamic_cast<CExclusiveTaskBase*>(newTask) == nullptr);
+        assert(dynamic_cast<CBackgroundTaskBase*>(newTask) == nullptr);
+
+        if (newTask->GetID() != 0){
+            RemoveTaskByID(newTask->GetID());
+        }
 
         //通常タスクとしてAdd
         tasks.emplace_back(newTask);
