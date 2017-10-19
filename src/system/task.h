@@ -134,19 +134,19 @@ namespace GTF
 
         //! タスクの自動生成（暫定）
         template <class C, typename... A, class PC = weak_ptr<C>,
-        typename enable_if_t<
-            integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
-            is_base_of<CExclusiveTaskBase, C>::value
-            >::value> *& = enabler>
+            typename enable_if_t<
+                integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
+                is_base_of<CExclusiveTaskBase, C>::value
+                >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
             return dynamic_pointer_cast<C>(AddTask(new C(args...)).lock());
         }
         template <class C, typename... A, class PC = weak_ptr<C>,
-        typename enable_if_t<
-            integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
-            !is_base_of<CExclusiveTaskBase, C>::value
-            >::value> *& = enabler>
+            typename enable_if_t<
+                integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
+                !is_base_of<CExclusiveTaskBase, C>::value
+                >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
             return dynamic_pointer_cast<C>(AddTask_intl(new C(args...)).lock());
