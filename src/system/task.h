@@ -136,13 +136,15 @@ namespace GTF
         //!指定IDの通常タスク取得
         TaskPtr FindTask(unsigned int id) const
         {
-            return indices.at(id);
+            const auto result = indices.find(id);
+            return (result != indices.end()) ? result->second : TaskPtr();
         }
 
         //!指定IDの常駐タスク取得
         BgTaskPtr FindBGTask(unsigned int id) const
         {
-           return bg_indices.at(id);
+            const auto result = bg_indices.find(id);
+            return (result != bg_indices.end()) ? result->second : BgTaskPtr();
         }
 
         //! 任意のクラス型のタスクを取得（通常・常駐兼用）
