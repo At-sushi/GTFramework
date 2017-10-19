@@ -69,6 +69,14 @@ namespace GTF
         }
 
         //通常タスクとしてAdd
+       return AddTask_intl(newTask);
+    }
+
+    CTaskManager::TaskPtr CTaskManager::AddTask_intl(CTaskBase *newTask)
+    {
+        assert(newTask);
+
+        //通常タスクとしてAdd
         tasks.emplace_back(newTask);
         auto pnew = tasks.back();
         newTask->Initialize();

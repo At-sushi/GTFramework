@@ -28,6 +28,8 @@
 namespace GTF
 {
     using namespace std;
+    // Never defined
+    extern void * enabler;
 
     /*! 
     *	@ingroup Tasks
@@ -131,11 +133,24 @@ namespace GTF
             return ex_stack.top().value;
         }
 
-        //!タスクの自動生成（暫定）
-        template <class C, typename... A, class PC = weak_ptr<C>>
+        //! タスクの自動生成（暫定）
+        template <class C, typename... A, class PC = weak_ptr<C>,
+        typename enable_if_t<
+            std::integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
+            is_base_of<CExclusiveTaskBase, C>::value
+            >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
             return dynamic_pointer_cast<C>(AddTask(new C(args...)).lock());
+        }
+        template <class C, typename... A, class PC = weak_ptr<C>,
+        typename enable_if_t<
+            std::integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
+            !is_base_of<CExclusiveTaskBase, C>::value
+            >::value> *& = enabler>
+            PC AddNewTask(A... args)
+        {
+            return dynamic_pointer_cast<C>(AddTask_intl(new C(args...)).lock());
         }
 
         //!指定IDの通常タスク取得
@@ -189,6 +204,7 @@ namespace GTF
             CleanupPartialSubTasks(tasks.begin());
         }
 
+        TaskPtr AddTask_intl(CTaskBase *newTask);		        //!< タスク追加（エラー検出無し）
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
         void SortTask(TaskList *ptgt);				//!< タスクを描画プライオリティ順に並べる
 
@@ -198,12 +214,12 @@ namespace GTF
         }
 
     private:
-        template<class T, class = typename enable_if_t<!is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if_t<!is_base_of<CBackgroundTaskBase, T>::value> *& = enabler>
             TaskPtr FindTask_impl(unsigned int id)
         {
             return FindTask(id);
         }
-        template<class T, class = typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value> *& = enabler>
             BgTaskPtr FindTask_impl(unsigned int id)
         {
             return FindBGTask(id);
