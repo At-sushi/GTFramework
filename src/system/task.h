@@ -86,14 +86,13 @@ namespace GTF
     {
     public:
         virtual ~CBackgroundTaskBase(){}
-        CBackgroundTaskBase(){m_isEnabled=true;}
 
         bool IsEnabled() const {return m_isEnabled;}
         void Enable(){m_isEnabled = true;}
         void Disable(){m_isEnabled = false;}
 
     protected:
-        bool m_isEnabled;
+        bool m_isEnabled=true;
     };
 
 
@@ -219,7 +218,7 @@ namespace GTF
         {
             return FindTask(id);
         }
-        template<class T, typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value> *& = enabler>
+        template<class T, typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value> *& = enabler> 
             BgTaskPtr FindTask_impl(unsigned int id)
         {
             return FindBGTask(id);
