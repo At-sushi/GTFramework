@@ -142,7 +142,7 @@ namespace GTF
                 >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
-            return dynamic_pointer_cast<C>(AddTask(new C(args...)).lock());
+            return static_pointer_cast<C>(AddTask(new C(args...)).lock());
         }
         template <class C, typename... A, class PC = weak_ptr<C>,
             typename enable_if_t<
@@ -151,7 +151,7 @@ namespace GTF
                 >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
-            return dynamic_pointer_cast<C>(AddTask_intl(new C(args...)).lock());
+            return static_pointer_cast<C>(AddTask_intl(new C(args...)).lock());
         }
 
         //!指定IDの通常タスク取得
