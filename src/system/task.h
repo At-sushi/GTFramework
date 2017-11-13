@@ -151,7 +151,7 @@ namespace GTF
                 >::value> *& = enabler>
             PC AddNewTask(A... args)
         {
-            return static_pointer_cast<C>(AddTask_intl(new C(args...)).lock());
+            return static_pointer_cast<C>(AddTaskGuaranteed(new C(args...)).lock());
         }
 
         //!指定IDの通常タスク取得
@@ -207,7 +207,7 @@ namespace GTF
             CleanupPartialSubTasks(tasks.begin());
         }
 
-        TaskPtr AddTask_intl(CTaskBase *newTask);		        //!< タスク追加（エラー検出無し）
+        TaskPtr AddTaskGuaranteed(CTaskBase *newTask);		        //!< タスク追加（エラー検出無し）
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
 
         //! ログ出力

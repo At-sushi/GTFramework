@@ -65,10 +65,10 @@ namespace GTF
         }
 
         //’Êíƒ^ƒXƒN‚Æ‚µ‚ÄAdd
-       return AddTask_intl(newTask);
+        return AddTaskGuaranteed(newTask);
     }
 
-    CTaskManager::TaskPtr CTaskManager::AddTask_intl(CTaskBase *newTask)
+    CTaskManager::TaskPtr CTaskManager::AddTaskGuaranteed(CTaskBase *newTask)
     {
         assert(newTask);
         assert(dynamic_cast<CExclusiveTaskBase*>(newTask) == nullptr);
