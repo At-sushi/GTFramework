@@ -13,7 +13,11 @@
 #include <functional>
 #include <type_traits>
 
-
+#if (_MSC_VER <= 1800)
+#define NOEXCEPT _NOEXCEPT
+#else
+#define NOEXCEPT noexcept
+#endif
 
 /*!
 *	@defgroup Tasks
@@ -87,9 +91,9 @@ namespace GTF
     public:
         virtual ~CBackgroundTaskBase(){}
 
-        bool IsEnabled() const {return m_isEnabled;}
-        void Enable(){m_isEnabled = true;}
-        void Disable(){m_isEnabled = false;}
+        bool IsEnabled() const NOEXCEPT { return m_isEnabled; }
+        void Enable() NOEXCEPT { m_isEnabled = true; }
+        void Disable() NOEXCEPT { m_isEnabled = false; }
 
     protected:
         bool m_isEnabled=true;
