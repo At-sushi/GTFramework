@@ -13,8 +13,14 @@
 #include <functional>
 #include <type_traits>
 
-#if (_MSC_VER <= 1800)
-#define NOEXCEPT _NOEXCEPT
+#ifdef __clang__
+#   if !__has_feature(cxx_noexcept)
+#       define NOEXCEPT
+#   else
+#       define NOEXCEPT noexcept
+#   endif
+#elif (defined(_MSC_FULL_VER) && _MSC_FULL_VER < 190023026) || (defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6) || !defined(__GXX_EXPERIMENTAL_CXX0X__)))
+#define NOEXCEPT
 #else
 #define NOEXCEPT noexcept
 #endif
