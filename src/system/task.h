@@ -207,6 +207,11 @@ namespace GTF
                 : value(source), SubTaskStartPos(startPos)
             {
             }
+            ExTaskInfo(shared_ptr<CExclusiveTaskBase>&& source, TaskList::iterator startPos)
+                : value(move(source)), SubTaskStartPos(startPos)
+            {
+            }
+
         };
         using ExTaskStack = stack<ExTaskInfo>;
 
