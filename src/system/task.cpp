@@ -390,7 +390,7 @@ namespace GTF
             OutputLog(typeid(**ib).name());
         }
 
-        //排他タスク	
+        //排他タスク
         OutputLog("\n");
         OutputLog("□現在のタスク：");
         if (ex_stack.empty())

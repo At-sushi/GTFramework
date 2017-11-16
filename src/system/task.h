@@ -33,7 +33,7 @@ namespace GTF
 {
     using namespace std;
 
-    /*! 
+    /*!
     *	@ingroup Tasks
     *	@brief	基本タスク
     *
@@ -54,7 +54,7 @@ namespace GTF
     };
 
 
-    /*! 
+    /*!
     *	@ingroup Tasks
     *	@brief 排他タスク? =ゲームのシーンと考えてください。
     *
@@ -71,7 +71,7 @@ namespace GTF
         virtual ~CExclusiveTaskBase(){}
         virtual void Activate(unsigned int prvTaskID){}				//!< Executeが再開されるときに呼ばれる
         virtual bool Inactivate(unsigned int nextTaskID){return true;}//!< 他の排他タスクが開始したときに呼ばれる
-    
+
         virtual int GetDrawPriority() const override {return 0;}				//!< 描画プライオリティ取得メソッド
     };
 
@@ -122,7 +122,7 @@ namespace GTF
         using BgTaskPtr = weak_ptr<CBackgroundTaskBase>;
 
         void Destroy();
-            
+
         //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
         TaskPtr AddTask(CTaskBase *newTask);		        //!< タスク追加
         ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< 排他タスク追加
