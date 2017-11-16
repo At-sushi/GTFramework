@@ -25,19 +25,11 @@ namespace GTF
     void CTaskManager::Destroy()
     {
         //通常タスクTerminate
-        auto i = tasks.begin();
-        const auto ied = tasks.end();
-        for (; i != ied; ++i){
-            (*i)->Terminate();
-        }
+        for(auto&& i : tasks) i->Terminate();
         tasks.clear();
 
         //バックグラウンドタスクTerminate
-        auto ib = bg_tasks.begin();
-        const auto ibed = bg_tasks.end();
-        for (; ib != ibed; ++ib){
-            (*ib)->Terminate();
-        }
+        for(auto&& ib : bg_tasks) ib->Terminate();
         bg_tasks.clear();
 
         //排他タスクTerminate
@@ -376,19 +368,11 @@ namespace GTF
 
         OutputLog("□通常タスク一覧□");
         //通常タスク
-        auto i = tasks.begin();
-        const auto ied = tasks.end();
-        for (; i != ied; ++i){
-            OutputLog(typeid(**i).name());
-        }
+        for(auto&& i : tasks) OutputLog(typeid(i).name());
 
         OutputLog("□常駐タスク一覧□");
         //バックグラウンドタスク
-        auto ib = bg_tasks.begin();
-        const auto ibed = bg_tasks.end();
-        for (; ib != ibed; ++ib){
-            OutputLog(typeid(**ib).name());
-        }
+        for(auto&& ib : bg_tasks) OutputLog(typeid(ib).name());
 
         //排他タスク
         OutputLog("\n");
