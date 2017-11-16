@@ -1,4 +1,4 @@
-# Compiled Object files
+﻿# Compiled Object files
 *.slo
 *.lo
 *.o
@@ -29,3 +29,28 @@
 
 # Visual Studio Code
 .vscode/
+
+# Other
+
+build*/
+
+### https://raw.github.com/github/gitignore/fad779220742a6d54ccfc0c1a0e5b3d820253de6/CMake.gitignore
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+
+
+### https://raw.github.com/github/gitignore/fad779220742a6d54ccfc0c1a0e5b3d820253de6/Global/VisualStudioCode.gitignore
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
