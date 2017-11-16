@@ -32,8 +32,6 @@
 namespace GTF
 {
     using namespace std;
-    // Never defined
-    extern void * enabler;
 
     /*! 
     *	@ingroup Tasks
@@ -140,19 +138,19 @@ namespace GTF
 
         //! タスクの自動生成（暫定）
         template <class C, typename... A, class PC = weak_ptr<C>,
-            typename enable_if_t<
+            typename enable_if<
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
                 is_base_of<CExclusiveTaskBase, C>::value
-                >::value> *& = enabler>
+                >::value, std::nullptr_t> = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTask(new C(args...)).lock());
         }
         template <class C, typename... A, class PC = weak_ptr<C>,
-            typename enable_if_t<
+            typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
                 !is_base_of<CExclusiveTaskBase, C>::value
-                >::value> *& = enabler>
+                >::value, std::nullptr_t> = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(args...)).lock());
@@ -221,12 +219,12 @@ namespace GTF
         }
 
     private:
-        template<class T, class = typename enable_if_t<!is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if<!is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t> = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
-        template<class T, class = typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if<is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t> = nullptr>
             BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);
