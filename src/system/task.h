@@ -147,7 +147,7 @@ namespace GTF
             typename enable_if<
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
                 is_base_of<CExclusiveTaskBase, C>::value
-                >::value, std::nullptr_t> = nullptr>
+                >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTask(new C(args...)).lock());
@@ -156,7 +156,7 @@ namespace GTF
             typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
                 !is_base_of<CExclusiveTaskBase, C>::value
-                >::value, std::nullptr_t> = nullptr>
+                >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(args...)).lock());
@@ -225,19 +225,19 @@ namespace GTF
         }
 
     private:
-        template<class T, typename enable_if<!is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t> = nullptr>
+        template<class T, typename enable_if<!is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
-        template<class T, typename enable_if<is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t> = nullptr>
+        template<class T, typename enable_if<is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);
         }
 
         //! タスクExecute
-        template<class T, typename I = T::iterator, class QI = deque<I>, typename I_QI = QI::iterator>
+        template<class T, typename I = typename T::iterator, class QI = deque<I>, typename I_QI = typename QI::iterator>
             void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
             QI deleteList;
