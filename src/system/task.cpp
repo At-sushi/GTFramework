@@ -86,8 +86,10 @@ namespace GTF
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
         if (exNext){
+            auto t1 = *exNext;
+            auto t2 = *newTask;
             OutputLog("■ALERT■ 排他タスクが2つ以上Addされた : %s / %s",
-                typeid(*exNext).name(), typeid(*newTask).name());
+                typeid(t1).name(), typeid(t2).name());
         }
         exNext = shared_ptr<CExclusiveTaskBase>(newTask);
 
@@ -379,9 +381,10 @@ namespace GTF
         OutputLog("□現在のタスク：");
         if (ex_stack.empty())
             OutputLog("なし");
-        else
-            OutputLog(typeid(*ex_stack.top().value).name());
-
+        else {
+            auto s_top_v = *ex_stack.top().value;
+            OutputLog(typeid(s_top_v).name());
+        }
 
         OutputLog("\n\n■CTaskManager::DebugOutputTaskList() - end\n\n");
     }
