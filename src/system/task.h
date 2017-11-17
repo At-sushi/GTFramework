@@ -288,3 +288,7 @@ namespace GTF
 
 
 }
+
+#ifdef GTF_HEADER_ONLY
+#   include "task.cpp"
+#endif
