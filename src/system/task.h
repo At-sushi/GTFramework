@@ -1,6 +1,6 @@
-/*!
+ï»¿/*!
 *	@file
-*	@brief ƒ^ƒXƒN(?)ŠÇ—E’è‹`
+*	@brief ã‚¿ã‚¹ã‚¯(?)ç®¡ç†ãƒ»å®šç¾©
 */
 #pragma once
 #include <vector>
@@ -13,78 +13,82 @@
 #include <functional>
 #include <type_traits>
 
-#if (_MSC_VER <= 1800)
-#define NOEXCEPT _NOEXCEPT
+#ifdef __clang__
+#   if !__has_feature(cxx_noexcept)
+#       define NOEXCEPT
+#   else
+#       define NOEXCEPT noexcept
+#   endif
+#elif (defined(_MSC_FULL_VER) && _MSC_FULL_VER < 190023026) || (defined(__GNUC__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 6) || !defined(__GXX_EXPERIMENTAL_CXX0X__)))
+#define NOEXCEPT
 #else
 #define NOEXCEPT noexcept
 #endif
 
 /*!
 *	@defgroup Tasks
-*	@brief ƒ^ƒXƒN
+*	@brief ã‚¿ã‚¹ã‚¯
 *
-*	CTaskBase‚ğŒp³‚µ‚½ƒNƒ‰ƒX‚ÍAƒƒCƒ“ƒ‹[ƒv‚©‚çŒÄ‚Î‚ê‚éXVE•`‰æˆ—ŠÖ”‚ğ‚Á‚Ä‚¢‚Ü‚·B
-*	ƒVƒXƒeƒ€‚Í‚±‚ÌƒNƒ‰ƒX‚ÌƒŠƒXƒg‚ğ‚Á‚Ä‚¢‚Ü‚·B
-*	ƒ^ƒCƒgƒ‹EƒLƒƒƒ‰ƒZƒŒE‡ ‚È‚Ç‚ÌƒQ[ƒ€‚Ìó‘Ô‚Ì•ÏX‚ÍA
-*	‚±‚ê‚çƒ^ƒXƒNƒNƒ‰ƒX‚ÌØ‚è‘Ö‚¦‚É‚æ‚Á‚Äs‚í‚ê‚Ü‚·B
+*	CTaskBaseã‚’ç¶™æ‰¿ã—ãŸã‚¯ãƒ©ã‚¹ã¯ã€ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ã‹ã‚‰å‘¼ã°ã‚Œã‚‹æ›´æ–°ãƒ»æç”»å‡¦ç†é–¢æ•°ã‚’æŒã£ã¦ã„ã¾ã™ã€‚
+*	ã‚·ã‚¹ãƒ†ãƒ ã¯ã“ã®ã‚¯ãƒ©ã‚¹ã®ãƒªã‚¹ãƒˆã‚’æŒã£ã¦ã„ã¾ã™ã€‚
+*	ã‚¿ã‚¤ãƒˆãƒ«ãƒ»ã‚­ãƒ£ãƒ©ã‚»ãƒ¬ãƒ»è©¦åˆ ãªã©ã®ã‚²ãƒ¼ãƒ ã®çŠ¶æ…‹ã®å¤‰æ›´ã¯ã€
+*	ã“ã‚Œã‚‰ã‚¿ã‚¹ã‚¯ã‚¯ãƒ©ã‚¹ã®åˆ‡ã‚Šæ›¿ãˆã«ã‚ˆã£ã¦è¡Œã‚ã‚Œã¾ã™ã€‚
 */
 
 namespace GTF
 {
     using namespace std;
-    // Never defined
-    extern void * enabler;
 
-    /*! 
+    /*!
     *	@ingroup Tasks
-    *	@brief	Šî–{ƒ^ƒXƒN
+    *	@brief	åŸºæœ¬ã‚¿ã‚¹ã‚¯
     *
-    *	EExecute‚Åfalse‚ğ•Ô‚·‚Æ”jŠü‚³‚ê‚é
-    *	Ee‚Ì”r‘¼ƒ^ƒXƒN‚ª•ÏX‚³‚ê‚½‚Æ‚«A”jŠü‚³‚ê‚é
+    *	ãƒ»Executeã§falseã‚’è¿”ã™ã¨ç ´æ£„ã•ã‚Œã‚‹
+    *	ãƒ»è¦ªã®æ’ä»–ã‚¿ã‚¹ã‚¯ãŒå¤‰æ›´ã•ã‚ŒãŸã¨ãã€ç ´æ£„ã•ã‚Œã‚‹
     */
     class CTaskBase
     {
     public:
         virtual ~CTaskBase(){}
-        virtual void Initialize(){}							//!< Execute‚Ü‚½‚ÍDraw‚ªƒR[ƒ‹‚³‚ê‚é‘O‚É1“x‚¾‚¯ƒR[ƒ‹‚³‚ê‚é
-        virtual bool Execute(double elapsedTime)
-                            {return(true);}					//!< –ˆƒtƒŒ[ƒ€ƒR[ƒ‹‚³‚ê‚é
-        virtual void Terminate(){}							//!< ƒ^ƒXƒN‚ÌƒŠƒXƒg‚©‚çŠO‚³‚ê‚é‚Æ‚«‚ÉƒR[ƒ‹‚³‚ê‚éi‚»‚Ì’¼ŒãAdelete‚³‚ê‚éj
-        virtual void Draw(){}								//!< •`‰æ‚ÉƒR[ƒ‹‚³‚ê‚é
-        virtual unsigned int GetID() const { return 0; }	//!< 0ˆÈŠO‚ğ•Ô‚·‚æ‚¤‚É‚µ‚½ê‡Aƒ}ƒl[ƒWƒƒ‚É“¯‚¶ID‚ğ‚Âƒ^ƒXƒN‚ªAdd‚³‚ê‚½‚Æ‚«”jŠü‚³‚ê‚é
-        virtual int GetDrawPriority() const { return -1; }	//!< •`‰æƒvƒ‰ƒCƒIƒŠƒeƒBB’á‚¢‚Ù‚Çè‘O‚ÉiŒã‡‚Éj•`‰æBƒ}ƒCƒiƒX‚È‚ç‚Î•\¦‚µ‚È‚¢
+        virtual void Initialize(){}							//!< Executeã¾ãŸã¯DrawãŒã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹å‰ã«1åº¦ã ã‘ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
+        virtual bool Execute(double /* elapsedTime */)
+                            {return(true);}					//!< æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
+        virtual void Terminate(){}							//!< ã‚¿ã‚¹ã‚¯ã®ãƒªã‚¹ãƒˆã‹ã‚‰å¤–ã•ã‚Œã‚‹ã¨ãã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹ï¼ˆãã®ç›´å¾Œã€deleteã•ã‚Œã‚‹ï¼‰
+        virtual void Draw(){}								//!< æç”»æ™‚ã«ã‚³ãƒ¼ãƒ«ã•ã‚Œã‚‹
+        virtual unsigned int GetID() const { return 0; }	//!< 0ä»¥å¤–ã‚’è¿”ã™ã‚ˆã†ã«ã—ãŸå ´åˆã€ãƒãƒãƒ¼ã‚¸ãƒ£ã«åŒã˜IDã‚’æŒã¤ã‚¿ã‚¹ã‚¯ãŒAddã•ã‚ŒãŸã¨ãç ´æ£„ã•ã‚Œã‚‹
+        virtual int GetDrawPriority() const { return -1; }	//!< æç”»ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£ã€‚ä½ã„ã»ã©æ‰‹å‰ã«ï¼ˆå¾Œé †ã«ï¼‰æç”»ã€‚ãƒã‚¤ãƒŠã‚¹ãªã‚‰ã°è¡¨ç¤ºã—ãªã„
     };
 
 
-    /*! 
+    /*!
     *	@ingroup Tasks
-    *	@brief ”r‘¼ƒ^ƒXƒN? =ƒQ[ƒ€‚ÌƒV[ƒ“‚Æl‚¦‚Ä‚­‚¾‚³‚¢B
+    *	@brief æ’ä»–ã‚¿ã‚¹ã‚¯? =ã‚²ãƒ¼ãƒ ã®ã‚·ãƒ¼ãƒ³ã¨è€ƒãˆã¦ãã ã•ã„ã€‚
     *
-    *	E‘¼‚Ì”r‘¼ƒ^ƒXƒN‚Æˆê‚É‚Í“®ì(Execute)‚µ‚È‚¢
-    *	E‘¼‚Ì”r‘¼ƒ^ƒXƒN‚ª’Ç‰Á‚³‚ê‚½ê‡AInactivate‚ªƒR[ƒ‹‚³‚êA‚»‚±‚Åfalse‚ğ•Ô‚·‚Æ
-    *		”jŠü‚³‚ê‚éBtrue‚ğ•Ô‚·‚ÆExecuteAWndMessage‚ªƒR[ƒ‹‚³‚ê‚È‚¢ó‘Ô‚É‚È‚èA
-    *		V‹K‚Ì”r‘¼ƒ^ƒXƒN‚ª‘S‚Ä”jŠü‚³‚ê‚½‚Æ‚«‚ÉActivate‚ªŒÄ‚Î‚êAˆ—‚ªÄŠJ‚·‚éB
-    *	E’Êíƒ^ƒXƒN‚Æ‚ÌeqŠÖŒW‚ğ‚ÂB
-    *	EAddTaskÀsŒãAˆê“xExecute‚ªÀs‚³‚ê‚é‚Ü‚Å’Ç‰Á‚ª•Û—¯‚³‚ê‚éB‚»‚ÌŒã‚É’Ç‰Á‚³‚ê‚½’Êíƒ^ƒXƒN‚Íqƒ^ƒXƒN‚Æ‚È‚éB
+    *	ãƒ»ä»–ã®æ’ä»–ã‚¿ã‚¹ã‚¯ã¨ä¸€ç·’ã«ã¯å‹•ä½œ(Execute)ã—ãªã„
+    *	ãƒ»ä»–ã®æ’ä»–ã‚¿ã‚¹ã‚¯ãŒè¿½åŠ ã•ã‚ŒãŸå ´åˆã€InactivateãŒã‚³ãƒ¼ãƒ«ã•ã‚Œã€ãã“ã§falseã‚’è¿”ã™ã¨
+    *		ç ´æ£„ã•ã‚Œã‚‹ã€‚trueã‚’è¿”ã™ã¨Executeã€WndMessageãŒã‚³ãƒ¼ãƒ«ã•ã‚Œãªã„çŠ¶æ…‹ã«ãªã‚Šã€
+    *		æ–°è¦ã®æ’ä»–ã‚¿ã‚¹ã‚¯ãŒå…¨ã¦ç ´æ£„ã•ã‚ŒãŸã¨ãã«ActivateãŒå‘¼ã°ã‚Œã€å‡¦ç†ãŒå†é–‹ã™ã‚‹ã€‚
+    *	ãƒ»é€šå¸¸ã‚¿ã‚¹ã‚¯ã¨ã®è¦ªå­é–¢ä¿‚ã‚’æŒã¤ã€‚
+    *	ãƒ»AddTaskå®Ÿè¡Œå¾Œã€ä¸€åº¦ExecuteãŒå®Ÿè¡Œã•ã‚Œã‚‹ã¾ã§è¿½åŠ ãŒä¿ç•™ã•ã‚Œã‚‹ã€‚ãã®å¾Œã«è¿½åŠ ã•ã‚ŒãŸé€šå¸¸ã‚¿ã‚¹ã‚¯ã¯å­ã‚¿ã‚¹ã‚¯ã¨ãªã‚‹ã€‚
     */
     class CExclusiveTaskBase : public CTaskBase
     {
     public:
         virtual ~CExclusiveTaskBase(){}
-        virtual void Activate(unsigned int prvTaskID){}				//!< Execute‚ªÄŠJ‚³‚ê‚é‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
-        virtual bool Inactivate(unsigned int nextTaskID){return true;}//!< ‘¼‚Ì”r‘¼ƒ^ƒXƒN‚ªŠJn‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
-    
-        virtual int GetDrawPriority() const override {return 0;}				//!< •`‰æƒvƒ‰ƒCƒIƒŠƒeƒBæ“¾ƒƒ\ƒbƒh
+        virtual void Activate(unsigned int /* prvTaskID */){}				//!< ExecuteãŒå†é–‹ã•ã‚Œã‚‹ã¨ãã«å‘¼ã°ã‚Œã‚‹
+        virtual bool Inactivate(unsigned int /* nextTaskID */){return true;}//!< ä»–ã®æ’ä»–ã‚¿ã‚¹ã‚¯ãŒé–‹å§‹ã—ãŸã¨ãã«å‘¼ã°ã‚Œã‚‹
+
+        virtual int GetDrawPriority() const override {return 0;}				//!< æç”»ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£å–å¾—ãƒ¡ã‚½ãƒƒãƒ‰
     };
 
 
 
     /*!
     *	@ingroup Tasks
-    *	@brief í’“ƒ^ƒXƒN
+    *	@brief å¸¸é§ã‚¿ã‚¹ã‚¯
     *
-    *	EŠî–{ƒ^ƒXƒN‚Æˆá‚¢A”r‘¼ƒ^ƒXƒN‚ª•ÏX‚³‚ê‚Ä‚à”jŠü‚³‚ê‚È‚¢
-    *	EEnabled‚Å‚È‚¢‚Æ‚«‚É‚Í Execute , WndMessage ‚ğƒR[ƒ‹‚µ‚È‚¢
+    *	ãƒ»åŸºæœ¬ã‚¿ã‚¹ã‚¯ã¨é•ã„ã€æ’ä»–ã‚¿ã‚¹ã‚¯ãŒå¤‰æ›´ã•ã‚Œã¦ã‚‚ç ´æ£„ã•ã‚Œãªã„
+    *	ãƒ»Enabledã§ãªã„ã¨ãã«ã¯ Execute , WndMessage ã‚’ã‚³ãƒ¼ãƒ«ã—ãªã„
     */
     class CBackgroundTaskBase : public CTaskBase
     {
@@ -104,13 +108,13 @@ namespace GTF
 
     /*!
     *	@ingroup System
-    *	@brief ƒ^ƒXƒNŠÇ—ƒNƒ‰ƒX
+    *	@brief ã‚¿ã‚¹ã‚¯ç®¡ç†ã‚¯ãƒ©ã‚¹
     *
-    *	ƒ^ƒXƒNŒp³ƒNƒ‰ƒX‚ÌƒŠƒXƒg‚ğŠÇ—‚µA•`‰æAXVAƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW“™‚Ì”zM‚ğs‚¤B
+    *	ã‚¿ã‚¹ã‚¯ç¶™æ‰¿ã‚¯ãƒ©ã‚¹ã®ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã—ã€æç”»ã€æ›´æ–°ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç­‰ã®é…ä¿¡ã‚’è¡Œã†ã€‚
     *
-    *	Às’†‚É—áŠO‚ª‹N‚±‚Á‚½‚Æ‚«A‚Ç‚ÌƒNƒ‰ƒX‚ª—áŠO‚ğ‹N‚±‚µ‚½‚Ì‚©‚ğƒƒO‚É“f‚«o‚·B
-    *	‚»‚ÌÛ‚ÉÀsŒ^î•ñ‚©‚çƒNƒ‰ƒX–¼‚ğæ“¾‚µ‚Ä‚¢‚é‚Ì‚ÅAƒRƒ“ƒpƒCƒ‹‚ÌÛ‚É‚Í
-    *	ÀsŒ^î•ñ(RTTI‚Æ•\‹L‚³‚ê‚éê‡‚à‚ ‚é)‚ğON‚É‚·‚é‚±‚ÆB
+    *	å®Ÿè¡Œä¸­ã«ä¾‹å¤–ãŒèµ·ã“ã£ãŸã¨ãã€ã©ã®ã‚¯ãƒ©ã‚¹ãŒä¾‹å¤–ã‚’èµ·ã“ã—ãŸã®ã‹ã‚’ãƒ­ã‚°ã«åãå‡ºã™ã€‚
+    *	ãã®éš›ã«å®Ÿè¡Œæ™‚å‹æƒ…å ±ã‹ã‚‰ã‚¯ãƒ©ã‚¹åã‚’å–å¾—ã—ã¦ã„ã‚‹ã®ã§ã€ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã®éš›ã«ã¯
+    *	å®Ÿè¡Œæ™‚å‹æƒ…å ±(RTTIã¨è¡¨è¨˜ã•ã‚Œã‚‹å ´åˆã‚‚ã‚ã‚‹)ã‚’ONã«ã™ã‚‹ã“ã¨ã€‚
     */
 
     class CTaskManager
@@ -124,70 +128,70 @@ namespace GTF
         using BgTaskPtr = weak_ptr<CBackgroundTaskBase>;
 
         void Destroy();
-            
-        //! ’Ç‰Á‚µ‚½ƒ^ƒXƒN‚ÍCTaskManager“à•”‚Å©“®“I‚É”jŠü‚³‚ê‚é‚Ì‚ÅAŒÄ‚Ño‚µ‘¤‚Ådelete‚µ‚È‚¢‚±‚ÆB
-        TaskPtr AddTask(CTaskBase *newTask);		        //!< ƒ^ƒXƒN’Ç‰Á
-        ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< ”r‘¼ƒ^ƒXƒN’Ç‰Á
-        BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< í’“ƒ^ƒXƒN’Ç‰Á
-        void RemoveTaskByID(unsigned int id);				//!< w’èID‚ğ‚Âƒ^ƒXƒN‚Ìœ‹@¦’FExclusiveƒ^ƒXƒN‚Íƒ`ƒFƒbƒN‚µ‚È‚¢
-        void RevertExclusiveTaskByID(unsigned int id);		//!< w’èID‚Ì”r‘¼ƒ^ƒXƒN‚Ü‚ÅTerminate/pop‚·‚é
 
-        //! ÅãˆÊ‚É‚ ‚éƒGƒNƒXƒNƒ‹[ƒVƒuƒ^ƒXƒN‚ğƒQƒg
+        //! è¿½åŠ ã—ãŸã‚¿ã‚¹ã‚¯ã¯CTaskManagerå†…éƒ¨ã§è‡ªå‹•çš„ã«ç ´æ£„ã•ã‚Œã‚‹ã®ã§ã€å‘¼ã³å‡ºã—å´ã§deleteã—ãªã„ã“ã¨ã€‚
+        TaskPtr AddTask(CTaskBase *newTask);		        //!< ã‚¿ã‚¹ã‚¯è¿½åŠ 
+        ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< æ’ä»–ã‚¿ã‚¹ã‚¯è¿½åŠ 
+        BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< å¸¸é§ã‚¿ã‚¹ã‚¯è¿½åŠ 
+        void RemoveTaskByID(unsigned int id);				//!< æŒ‡å®šIDã‚’æŒã¤ã‚¿ã‚¹ã‚¯ã®é™¤å»ã€€â€»æ³¨ï¼šExclusiveã‚¿ã‚¹ã‚¯ã¯ãƒã‚§ãƒƒã‚¯ã—ãªã„
+        void RevertExclusiveTaskByID(unsigned int id);		//!< æŒ‡å®šIDã®æ’ä»–ã‚¿ã‚¹ã‚¯ã¾ã§Terminate/popã™ã‚‹
+
+        //! æœ€ä¸Šä½ã«ã‚ã‚‹ã‚¨ã‚¯ã‚¹ã‚¯ãƒ«ãƒ¼ã‚·ãƒ–ã‚¿ã‚¹ã‚¯ã‚’ã‚²ãƒˆ
         ExTaskPtr GetTopExclusiveTask() const
         {
             return ex_stack.top().value;
         }
 
-        //! ƒ^ƒXƒN‚Ì©“®¶¬ib’èj
+        //! ã‚¿ã‚¹ã‚¯ã®è‡ªå‹•ç”Ÿæˆï¼ˆæš«å®šï¼‰
         template <class C, typename... A, class PC = weak_ptr<C>,
-            typename enable_if_t<
+            typename enable_if<
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
                 is_base_of<CExclusiveTaskBase, C>::value
-                >::value> *& = enabler>
+                >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTask(new C(args...)).lock());
         }
         template <class C, typename... A, class PC = weak_ptr<C>,
-            typename enable_if_t<
+            typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
                 !is_base_of<CExclusiveTaskBase, C>::value
-                >::value> *& = enabler>
+                >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A... args)
         {
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(args...)).lock());
         }
 
-        //!w’èID‚Ì’Êíƒ^ƒXƒNæ“¾
+        //!æŒ‡å®šIDã®é€šå¸¸ã‚¿ã‚¹ã‚¯å–å¾—
         TaskPtr FindTask(unsigned int id) const
         {
             const auto result = indices.find(id);
             return (result != indices.end()) ? result->second : TaskPtr();
         }
 
-        //!w’èID‚Ìí’“ƒ^ƒXƒNæ“¾
+        //!æŒ‡å®šIDã®å¸¸é§ã‚¿ã‚¹ã‚¯å–å¾—
         BgTaskPtr FindBGTask(unsigned int id) const
         {
             const auto result = bg_indices.find(id);
             return (result != bg_indices.end()) ? result->second : BgTaskPtr();
         }
 
-        //! ”CˆÓ‚ÌƒNƒ‰ƒXŒ^‚Ìƒ^ƒXƒN‚ğæ“¾i’ÊíEí’“Œ“—pj
+        //! ä»»æ„ã®ã‚¯ãƒ©ã‚¹å‹ã®ã‚¿ã‚¹ã‚¯ã‚’å–å¾—ï¼ˆé€šå¸¸ãƒ»å¸¸é§å…¼ç”¨ï¼‰
         template<class T> shared_ptr<T> FindTask(unsigned int id) const
         {
             return dynamic_pointer_cast<T>(FindTask_impl<T>(id).lock());
         }
 
-        void Execute(double elapsedTime);					//!< Šeƒ^ƒXƒN‚ÌExecuteŠÖ”‚ğƒR[ƒ‹‚·‚é
-        void Draw();										//!< Šeƒ^ƒXƒN‚ğƒvƒ‰ƒCƒIƒŠƒeƒB‡‚É•`‰æ‚·‚é
+        void Execute(double elapsedTime);					//!< å„ã‚¿ã‚¹ã‚¯ã®Executeé–¢æ•°ã‚’ã‚³ãƒ¼ãƒ«ã™ã‚‹
+        void Draw();										//!< å„ã‚¿ã‚¹ã‚¯ã‚’ãƒ—ãƒ©ã‚¤ã‚ªãƒªãƒ†ã‚£é †ã«æç”»ã™ã‚‹
 
-        //!< ”r‘¼ƒ^ƒXƒN‚ª‘S•”‚È‚­‚È‚Á‚¿‚á‚Á‚½‚©‚Ç‚¤‚©
+        //!< æ’ä»–ã‚¿ã‚¹ã‚¯ãŒå…¨éƒ¨ãªããªã£ã¡ã‚ƒã£ãŸã‹ã©ã†ã‹
         bool ExEmpty() const    {
             return ex_stack.empty();
         }
 
-        //ƒfƒoƒbƒO
-        void DebugOutputTaskList();							//!< Œ»İƒŠƒXƒg‚É•Û‚³‚ê‚Ä‚¢‚éƒNƒ‰ƒX‚ÌƒNƒ‰ƒX–¼‚ğƒfƒoƒbƒOo—Í‚·‚é
+        //ãƒ‡ãƒãƒƒã‚°
+        void DebugOutputTaskList();							//!< ç¾åœ¨ãƒªã‚¹ãƒˆã«ä¿æŒã•ã‚Œã¦ã„ã‚‹ã‚¯ãƒ©ã‚¹ã®ã‚¯ãƒ©ã‚¹åã‚’ãƒ‡ãƒãƒƒã‚°å‡ºåŠ›ã™ã‚‹
 
     protected:
         using TaskList = list<shared_ptr<CTaskBase>>;
@@ -195,45 +199,50 @@ namespace GTF
         using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
 
         struct ExTaskInfo {
-            const shared_ptr<CExclusiveTaskBase> value;		//!< ”r‘¼ƒ^ƒXƒN‚Ìƒ|ƒCƒ“ƒ^
-            const TaskList::iterator SubTaskStartPos;		//!< ˆË‘¶‚·‚é’Êíƒ^ƒXƒN‚ÌŠJn’n“_
-            DrawPriorityMap drawList;						//!< •`‰æ‡ƒ\[ƒg—pƒRƒ“ƒeƒi
+            const shared_ptr<CExclusiveTaskBase> value;		//!< æ’ä»–ã‚¿ã‚¹ã‚¯ã®ãƒã‚¤ãƒ³ã‚¿
+            const TaskList::iterator SubTaskStartPos;		//!< ä¾å­˜ã™ã‚‹é€šå¸¸ã‚¿ã‚¹ã‚¯ã®é–‹å§‹åœ°ç‚¹
+            DrawPriorityMap drawList;						//!< æç”»é †ã‚½ãƒ¼ãƒˆç”¨ã‚³ãƒ³ãƒ†ãƒŠ
 
             ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
                 : value(source), SubTaskStartPos(startPos)
             {
             }
+            ExTaskInfo(shared_ptr<CExclusiveTaskBase>&& source, TaskList::iterator startPos)
+                : value(move(source)), SubTaskStartPos(startPos)
+            {
+            }
+
         };
         using ExTaskStack = stack<ExTaskInfo>;
 
-        //! ’Êíƒ^ƒXƒN‚ğ‘S‚ÄTerminate , delete‚·‚é
+        //! é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’å…¨ã¦Terminate , deleteã™ã‚‹
         void CleanupAllSubTasks()    {
             CleanupPartialSubTasks(tasks.begin());
         }
 
-        TaskPtr AddTaskGuaranteed(CTaskBase *newTask);		        //!< ƒ^ƒXƒN’Ç‰ÁiƒGƒ‰[ŒŸo–³‚µj
-        void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< ˆê•”‚Ì’Êíƒ^ƒXƒN‚ğTerminate , delete‚·‚é
+        TaskPtr AddTaskGuaranteed(CTaskBase *newTask);		        //!< ã‚¿ã‚¹ã‚¯è¿½åŠ ï¼ˆã‚¨ãƒ©ãƒ¼æ¤œå‡ºç„¡ã—ï¼‰
+        void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< ä¸€éƒ¨ã®é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’Terminate , deleteã™ã‚‹
 
-        //! ƒƒOo—Í
-        void OutputLog(string s, ...)
+        //! ãƒ­ã‚°å‡ºåŠ›
+        void OutputLog(string /* s */, ...)
         {
             // Not Implemented
         }
 
     private:
-        template<class T, class = typename enable_if_t<!is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if<!is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
-        template<class T, class = typename enable_if_t<is_base_of<CBackgroundTaskBase, T>::value>>
+        template<class T, typename enable_if<is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);
         }
 
-        //! ƒ^ƒXƒNExecute
-        template<class T, typename I = T::iterator, class QI = deque<I>, typename I_QI = QI::iterator>
+        //! ã‚¿ã‚¹ã‚¯Execute
+        template<class T, typename I = typename T::iterator, class QI = deque<I>, typename I_QI = typename QI::iterator>
             void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
             QI deleteList;
@@ -256,7 +265,7 @@ namespace GTF
 #endif
             }
 
-            //ƒ^ƒXƒN‚Åfalse‚ğ•Ô‚µ‚½‚à‚Ì‚ğÁ‚·
+            //ã‚¿ã‚¹ã‚¯ã§falseã‚’è¿”ã—ãŸã‚‚ã®ã‚’æ¶ˆã™
             I_QI idl = deleteList.begin();
             const I_QI idl_ed = deleteList.end();
 
@@ -267,12 +276,12 @@ namespace GTF
             }
         }
 
-        TaskList tasks;								//!< Œ»İ“®ì‚¿‚ã‚¤‚Ìƒ^ƒXƒNƒŠƒXƒg
-        BgTaskList bg_tasks;						//!< í’“ƒ^ƒXƒNƒŠƒXƒg
-        ExTaskStack ex_stack;						//!< ”r‘¼ƒ^ƒXƒN‚ÌƒXƒ^ƒbƒNBtop‚µ‚©Às‚µ‚È‚¢
+        TaskList tasks;								//!< ç¾åœ¨å‹•ä½œã¡ã‚…ã†ã®ã‚¿ã‚¹ã‚¯ãƒªã‚¹ãƒˆ
+        BgTaskList bg_tasks;						//!< å¸¸é§ã‚¿ã‚¹ã‚¯ãƒªã‚¹ãƒˆ
+        ExTaskStack ex_stack;						//!< æ’ä»–ã‚¿ã‚¹ã‚¯ã®ã‚¹ã‚¿ãƒƒã‚¯ã€‚topã—ã‹å®Ÿè¡Œã—ãªã„
 
-        shared_ptr<CExclusiveTaskBase> exNext = nullptr;		//!< Œ»İƒtƒŒ[ƒ€‚ÅAdd‚³‚ê‚½”r‘¼ƒ^ƒXƒN
-        DrawPriorityMap drawListBG;					//!< •`‰æ‡ƒ\[ƒg—pƒRƒ“ƒeƒiií’“ƒ^ƒXƒNj
+        shared_ptr<CExclusiveTaskBase> exNext = nullptr;		//!< ç¾åœ¨ãƒ•ãƒ¬ãƒ¼ãƒ ã§Addã•ã‚ŒãŸæ’ä»–ã‚¿ã‚¹ã‚¯
+        DrawPriorityMap drawListBG;					//!< æç”»é †ã‚½ãƒ¼ãƒˆç”¨ã‚³ãƒ³ãƒ†ãƒŠï¼ˆå¸¸é§ã‚¿ã‚¹ã‚¯ï¼‰
         unordered_map<unsigned int, TaskPtr> indices;
         unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };

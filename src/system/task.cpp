@@ -1,8 +1,8 @@
-
+ï»¿
 
 /*============================================================================
 
-    ƒ^ƒXƒNŠÇ—(?)
+    ã‚¿ã‚¹ã‚¯ç®¡ç†(?)
 
 ==============================================================================*/
 
@@ -17,30 +17,22 @@ namespace GTF
 
     CTaskManager::CTaskManager()
     {
-        // ƒ_ƒ~[ƒf[ƒ^‘}“ü
+        // ãƒ€ãƒŸãƒ¼ãƒ‡ãƒ¼ã‚¿æŒ¿å…¥
         const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
         ex_stack.emplace(exNext, it);
     }
 
     void CTaskManager::Destroy()
     {
-        //’Êíƒ^ƒXƒNTerminate
-        auto i = tasks.begin();
-        const auto ied = tasks.end();
-        for (; i != ied; ++i){
-            (*i)->Terminate();
-        }
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯Terminate
+        for(auto&& i : tasks) i->Terminate();
         tasks.clear();
 
-        //ƒoƒbƒNƒOƒ‰ƒEƒ“ƒhƒ^ƒXƒNTerminate
-        auto ib = bg_tasks.begin();
-        const auto ibed = bg_tasks.end();
-        for (; ib != ibed; ++ib){
-            (*ib)->Terminate();
-        }
+        //ãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã‚¿ã‚¹ã‚¯Terminate
+        for(auto&& ib : bg_tasks) ib->Terminate();
         bg_tasks.clear();
 
-        //”r‘¼ƒ^ƒXƒNTerminate
+        //æ’ä»–ã‚¿ã‚¹ã‚¯Terminate
         while (ex_stack.size() != 0 && ex_stack.top().value){
             ex_stack.top().value->Terminate();
             ex_stack.pop();
@@ -54,17 +46,17 @@ namespace GTF
 
         CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
         if (pext){
-            //”r‘¼ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
+            //æ’ä»–ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
             return AddTask(pext);
         }
 
         CBackgroundTaskBase *pbgt = dynamic_cast<CBackgroundTaskBase*>(newTask);
         if (pbgt){
-            //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
+            //å¸¸é§ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
             return AddTask(pbgt);
         }
 
-        //’Êíƒ^ƒXƒN‚Æ‚µ‚ÄAdd
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
         return AddTaskGuaranteed(newTask);
     }
 
@@ -78,7 +70,7 @@ namespace GTF
             RemoveTaskByID(newTask->GetID());
         }
 
-        //’Êíƒ^ƒXƒN‚Æ‚µ‚ÄAdd
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
         tasks.emplace_back(newTask);
         auto pnew = tasks.back();
         newTask->Initialize();
@@ -91,11 +83,13 @@ namespace GTF
 
     CTaskManager::ExTaskPtr CTaskManager::AddTask(CExclusiveTaskBase *newTask)
     {
-        //”r‘¼ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
-        //Execute’†‚©‚à‚µ‚ê‚È‚¢‚Ì‚ÅAƒ|ƒCƒ“ƒ^•Û‘¶‚Ì‚İ
+        //æ’ä»–ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
+        //Executeä¸­ã‹ã‚‚ã—ã‚Œãªã„ã®ã§ã€ãƒã‚¤ãƒ³ã‚¿ä¿å­˜ã®ã¿
         if (exNext){
-            OutputLog("¡ALERT¡ ”r‘¼ƒ^ƒXƒN‚ª2‚ÂˆÈãAdd‚³‚ê‚½ : %s / %s",
-                typeid(*exNext).name(), typeid(*newTask).name());
+            auto t1 = *exNext;
+            auto t2 = *newTask;
+            OutputLog("â– ALERTâ–  æ’ä»–ã‚¿ã‚¹ã‚¯ãŒ2ã¤ä»¥ä¸ŠAddã•ã‚ŒãŸ : %s / %s",
+                typeid(t1).name(), typeid(t2).name());
         }
         exNext = shared_ptr<CExclusiveTaskBase>(newTask);
 
@@ -112,7 +106,7 @@ namespace GTF
 
         auto pbgt = bg_tasks.back();
 
-        //í’“ƒ^ƒXƒN‚Æ‚µ‚ÄAdd
+        //å¸¸é§ã‚¿ã‚¹ã‚¯ã¨ã—ã¦Add
         pbgt->Initialize();
         if (newTask->GetID() != 0)
             bg_indices[newTask->GetID()] = pbgt;
@@ -130,7 +124,7 @@ namespace GTF
         }
 #endif
 
-        //”r‘¼ƒ^ƒXƒNAtop‚Ì‚İExecute
+        //æ’ä»–ã‚¿ã‚¹ã‚¯ã€topã®ã¿Execute
         assert(ex_stack.size() != 0);
         shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.top().value;
 
@@ -151,13 +145,13 @@ namespace GTF
             if (!ex_ret)
             {
                 if (!exNext){
-                    //Œ»İ”r‘¼ƒ^ƒXƒN‚Ì•ÏX
+                    //ç¾åœ¨æ’ä»–ã‚¿ã‚¹ã‚¯ã®å¤‰æ›´
 
 #ifdef _CATCH_WHILE_EXEC
                     try{
 #endif
 
-                        //’Êíƒ^ƒXƒN‚ğ‘S‚Ä”jŠü‚·‚é
+                        //é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’å…¨ã¦ç ´æ£„ã™ã‚‹
                         CleanupPartialSubTasks(ex_stack.top().SubTaskStartPos);
 
 #ifdef _CATCH_WHILE_EXEC
@@ -171,7 +165,7 @@ namespace GTF
                     try{
 #endif
 
-                        //Œ»İ”r‘¼ƒ^ƒXƒN‚Ì”jŠü
+                        //ç¾åœ¨æ’ä»–ã‚¿ã‚¹ã‚¯ã®ç ´æ£„
                         unsigned int prvID = exTsk->GetID();
                         exTsk->Terminate();
                         exTsk = nullptr;
@@ -189,7 +183,7 @@ namespace GTF
                     try{
 #endif
 
-                        //Ÿ‚Ì”r‘¼ƒ^ƒXƒN‚ğActivate‚·‚é
+                        //æ¬¡ã®æ’ä»–ã‚¿ã‚¹ã‚¯ã‚’Activateã™ã‚‹
                         assert(ex_stack.size() != 0);
                         exTsk = ex_stack.top().value;
                         if (exTsk)
@@ -208,28 +202,28 @@ namespace GTF
             }
         }
 
-        //’Êíƒ^ƒXƒNExecute
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯Execute
         assert(!ex_stack.empty());
         taskExecute(tasks, ex_stack.top().SubTaskStartPos, tasks.end(), elapsedTime);
 
-        //í’“ƒ^ƒXƒNExecute
+        //å¸¸é§ã‚¿ã‚¹ã‚¯Execute
         taskExecute(bg_tasks, bg_tasks.begin(), bg_tasks.end(), elapsedTime);
 
-        // V‚µ‚¢ƒ^ƒXƒN‚ª‚ ‚éê‡
+        // æ–°ã—ã„ã‚¿ã‚¹ã‚¯ãŒã‚ã‚‹å ´åˆ
         if (exNext){
-            //Œ»İ”r‘¼ƒ^ƒXƒN‚ÌInactivate
+            //ç¾åœ¨æ’ä»–ã‚¿ã‚¹ã‚¯ã®Inactivate
             assert(ex_stack.size() != 0);
             auto& exTsk = ex_stack.top().value;
             if (exTsk && !exTsk->Inactivate(exNext->GetID())){
-                //’Êíƒ^ƒXƒN‚ğ‘S‚Ä”jŠü‚·‚é
+                //é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’å…¨ã¦ç ´æ£„ã™ã‚‹
                 CleanupPartialSubTasks(ex_stack.top().SubTaskStartPos);
 
                 exTsk->Terminate();
                 ex_stack.pop();
             }
 
-            //Add‚³‚ê‚½ƒ^ƒXƒN‚ğInitialize‚µ‚Ä“Ë‚Á‚Ş
-            const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());				// ƒ_ƒ~[ƒ^ƒXƒN‘}“ü
+            //Addã•ã‚ŒãŸã‚¿ã‚¹ã‚¯ã‚’Initializeã—ã¦çªã£è¾¼ã‚€
+            const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());				// ãƒ€ãƒŸãƒ¼ã‚¿ã‚¹ã‚¯æŒ¿å…¥
             ex_stack.emplace(move(exNext), it);
             ex_stack.top().value->Initialize();
 
@@ -242,7 +236,7 @@ namespace GTF
     {
          shared_ptr<CExclusiveTaskBase> pex = nullptr;
 
-        //”r‘¼ƒ^ƒXƒN‚ğæ“¾
+        //æ’ä»–ã‚¿ã‚¹ã‚¯ã‚’å–å¾—
         assert(ex_stack.size() != 0);
         if (ex_stack.top().value && ex_stack.top().value->GetDrawPriority() >= 0){
             pex = ex_stack.top().value;
@@ -264,7 +258,7 @@ namespace GTF
                     else
                         drawList.erase(iv++);
         };
-        auto DrawAll = [&]()		// •`‰æŠÖ”
+        auto DrawAll = [&]()		// æç”»é–¢æ•°
         {
             while (iv != iedv)
             {
@@ -281,26 +275,26 @@ namespace GTF
 #endif
             }
         };
-        //•`‰æ
+        //æç”»
         DrawAll();
 
-        // ”r‘¼ƒ^ƒXƒNDraw
+        // æ’ä»–ã‚¿ã‚¹ã‚¯Draw
         if (pex)
             pex->Draw();
 
-        //•`‰æ
+        //æç”»
         assert(iv == iedv);
         iedv = ex_stack.top().drawList.end();
         DrawAll();
 
-        // ‘‚«c‚µ‚½í’“ƒ^ƒXƒNˆ—
+        // æ›¸ãæ®‹ã—ãŸå¸¸é§ã‚¿ã‚¹ã‚¯å‡¦ç†
         while (ivBG != iedvBG)
             DrawAndProceed(ivBG, drawListBG);
     }
 
     void CTaskManager::RemoveTaskByID(unsigned int id)
     {
-        //’Êíƒ^ƒXƒN‚ğƒ`ƒFƒbƒN
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
         if (indices.count(id) != 0)
         {
             auto i = tasks.begin();
@@ -314,7 +308,7 @@ namespace GTF
             }
         }
 
-        //ƒoƒbƒNƒOƒ‰ƒEƒ“ƒhƒ^ƒXƒNTerminate
+        //ãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã‚¿ã‚¹ã‚¯Terminate
         if (bg_indices.count(id) != 0)
         {
             auto i = bg_tasks.begin();
@@ -330,7 +324,7 @@ namespace GTF
     }
 
 
-    //w’èID‚Ì”r‘¼ƒ^ƒXƒN‚Ü‚ÅTerminate/pop‚·‚é
+    //æŒ‡å®šIDã®æ’ä»–ã‚¿ã‚¹ã‚¯ã¾ã§Terminate/popã™ã‚‹
     void CTaskManager::RevertExclusiveTaskByID(unsigned int id)
     {
         bool act = false;
@@ -356,7 +350,7 @@ namespace GTF
         }
     }
 
-    //’Êíƒ^ƒXƒN‚ğˆê•”‚¾‚¯”jŠü‚·‚é
+    //é€šå¸¸ã‚¿ã‚¹ã‚¯ã‚’ä¸€éƒ¨ã ã‘ç ´æ£„ã™ã‚‹
     void CTaskManager::CleanupPartialSubTasks(TaskList::iterator it_task)
     {
         TaskList::iterator i = it_task, ied = tasks.end();
@@ -369,36 +363,29 @@ namespace GTF
     }
 
 
-    //ƒfƒoƒbƒOEƒ^ƒXƒNˆê——•\¦
+    //ãƒ‡ãƒãƒƒã‚°ãƒ»ã‚¿ã‚¹ã‚¯ä¸€è¦§è¡¨ç¤º
     void CTaskManager::DebugOutputTaskList()
     {
-        OutputLog("\n\n¡CTaskManager::DebugOutputTaskList() - start");
+        OutputLog("\n\nâ– CTaskManager::DebugOutputTaskList() - start");
 
-        OutputLog(" ’Êíƒ^ƒXƒNˆê—— ");
-        //’Êíƒ^ƒXƒN
-        auto i = tasks.begin();
-        const auto ied = tasks.end();
-        for (; i != ied; ++i){
-            OutputLog(typeid(**i).name());
-        }
+        OutputLog("â–¡é€šå¸¸ã‚¿ã‚¹ã‚¯ä¸€è¦§â–¡");
+        //é€šå¸¸ã‚¿ã‚¹ã‚¯
+        for(auto&& i : tasks) OutputLog(typeid(i).name());
 
-        OutputLog(" í’“ƒ^ƒXƒNˆê—— ");
-        //ƒoƒbƒNƒOƒ‰ƒEƒ“ƒhƒ^ƒXƒN
-        auto ib = bg_tasks.begin();
-        const auto ibed = bg_tasks.end();
-        for (; ib != ibed; ++ib){
-            OutputLog(typeid(**ib).name());
-        }
+        OutputLog("â–¡å¸¸é§ã‚¿ã‚¹ã‚¯ä¸€è¦§â–¡");
+        //ãƒãƒƒã‚¯ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰ã‚¿ã‚¹ã‚¯
+        for(auto&& ib : bg_tasks) OutputLog(typeid(ib).name());
 
-        //”r‘¼ƒ^ƒXƒN	
+        //æ’ä»–ã‚¿ã‚¹ã‚¯
         OutputLog("\n");
-        OutputLog(" Œ»İ‚Ìƒ^ƒXƒNF");
+        OutputLog("â–¡ç¾åœ¨ã®ã‚¿ã‚¹ã‚¯ï¼š");
         if (ex_stack.empty())
-            OutputLog("‚È‚µ");
-        else
-            OutputLog(typeid(*ex_stack.top().value).name());
+            OutputLog("ãªã—");
+        else {
+            auto s_top_v = *ex_stack.top().value;
+            OutputLog(typeid(s_top_v).name());
+        }
 
-
-        OutputLog("\n\n¡CTaskManager::DebugOutputTaskList() - end\n\n");
+        OutputLog("\n\nâ– CTaskManager::DebugOutputTaskList() - end\n\n");
     }
 }
