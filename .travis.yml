@@ -1,0 +1,48 @@
+compiler:
+  - clang
+  - gcc
+cache:
+  apt: true
+sudo: required
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty-5.0
+    packages:
+    #- lcov
+    - ruby
+    - clang-5.0
+    - g++-7
+    - gcc-7
+before_install: git submodule update --init
+install:
+  - |
+    if [ "$CXX" = "g++" ]; then
+      pwd
+      git clone https://github.com/linux-test-project/lcov.git ./lcov
+      cd lcov
+      sudo make install
+      cd ..
+      pwd
+      gem install lcoveralls;
+    fi
+language: cpp
+script:
+  - pwd
+  - pushd test
+  - mkdir -p build
+  - cd build
+  - which gcov-7
+  - |
+    if [ "$CXX" = "g++" ]; then
+      cmake -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7 -DGCOV_PATH=$(which gcov-7) -DCMAKE_BUILD_TYPE=Debug -DGTF_Test_ENABLE_COVERAGE=1 ..;
+    fi
+  - if [ "$CXX" = "clang++" ]; then cmake -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_C_COMPILER=clang-5.0 -DCMAKE_BUILD_TYPE=Debug ..; fi
+  - make
+  - if [ "$CXX" = "g++" ]; then make GTF_Test_coverage; fi
+after_success:
+  # Coverage - lcoveralls require current directory has .git
+  - popd
+  - pwd
+  - if [ "$CXX" = "g++" ]; then lcoveralls --retry-count 3 ./test/build/GTF_Test_coverage.info.cleaned; fi
