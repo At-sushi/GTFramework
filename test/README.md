@@ -52,3 +52,11 @@ $ make GTF_Test_coverage
 msys2では`make`の代わりに`ninja`を利用しないでください。`pacamn -U mingw-w64-x86_64-lcov-1.13-1-any.pkg.tar.xz`で`/mingw64/bin/lcov.exe`ではないく`/mingw64/bin/lcov`がインストールされるため、Windowsがこれを実行ファイルと認識できないためです。
 
 gcov, lcovが見つからないというエラーが出る場合は、`-DGCOV_PATH=<path/to/gcov>`/`-DLCOV_PATH=<path/to/lcov>`を`cmake`に指定してください
+
+生成した`GTF_Test_coverage.info.cleaned`をhtmlにしたい場合は
+
+```
+$ genhtml -O . GTF_Test_coverage.info.cleaned
+```
+
+などとすればいいです。`-O`がhtmlの生成先を指定するものです。

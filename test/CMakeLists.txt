@@ -29,6 +29,7 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/../cmake/modules)
     include(CodeCoverage)
     APPEND_COVERAGE_COMPILER_FLAGS()
+    set(COVERAGE_EXCLUDES "*gcc*" "*iutest*" "*/usr/include/*" "*mingw*")
     SETUP_TARGET_FOR_COVERAGE(
       NAME GTF_Test_coverage                    # New target name
       EXECUTABLE GTF_Test# Executable in PROJECT_BINARY_DIR
