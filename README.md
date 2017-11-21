@@ -15,6 +15,7 @@ src/systemフォルダ以下をプロジェクト内にコピーして使用し�
 ### タスク用クラスの定義
 タスク用の基礎クラスを継承することで、GTFrameworkで管理することの出来るタスククラスを生成することが出来ます。
 
+```cpp
     #include "task.h"
     
     using namespace GTF;
@@ -32,7 +33,8 @@ src/systemフォルダ以下をプロジェクト内にコピーして使用し�
             return 12;
         }
     };
-    
+```
+
 GTFrameworkには3種類の基礎クラスがあります。
 
 * `CTaskBase` 通常タスク（下記の排他タスクに依存して（子タスクとして）振る舞う。　親排他タスクが実行中の時のみ実行される。　シーン中のオブジェクトなど。）
@@ -46,31 +48,43 @@ GTFrameworkには3種類の基礎クラスがあります。
 `GetID`メソッドは、タスクに個別のIDを付けたいときに使えます（`0`にすると未設定扱いとなりますのでご注意ください。）
 
 ### 初期化・実行
+
+```cpp
     using namespace GTF;
     
     CTaskManager taskManager;
     
     taskManager.AddNewTask<CNewTask>();
+```
 
 `CTaskManager`クラスをインスタンス化するとタスクを管理できるようになります。
 
 `AddNewTask`メソッドにテンプレート引数としてクラスをわたすと、タスクが自動で生成されます。
 括弧の中に引数を記述すると、タスクのコンストラクタ引数として初期化時に渡すことが出来ます。
     
+```cpp
     taskManager.AddNewTask<CNewArgumentTask>(12, 2, "String");
+```
 
-タスクをすべて実行するには`Execute`メソッドを使います。
+タスクをすべて実行するにはExecuteメソッドを使います。
 
+```cpp
     taskManager.Execute(0);
+```
 
 ### 検索
+
+```cpp
     auto p = taskManager.FindTask<CNewTask>(12);
+```
 
 `FindTask`メソッドを使用すると、指定したIDのタスクのスマートポインタが手に入ります。
 テンプレート引数としてタスクのクラス型を指定すると、動的キャストを行い、指定された型の`shared_ptr`を返します。
 ただし排他タスクの検索は出来ません。
 
 ### 描画(優先度付き)
+
+```cpp
     #include "task.h"
     
     using namespace GTF;
@@ -87,7 +101,8 @@ GTFrameworkには3種類の基礎クラスがあります。
             return 0;	// 描画の優先度。数値の大きいものから先に処理される。-1で無効。
         }
     };
-    
+```
+
 `Draw`メソッドを使うには、`GetDrawPriority`メソッドをオーバーライドして、
 あらかじめ優先度を定義しておく必要があります。
 
@@ -95,7 +110,9 @@ GTFrameworkには3種類の基礎クラスがあります。
 
 すべてのタスクの`Draw`メソッドを実行するには、`CTaskManager`クラスの`Draw`メソッドを使います。
 
+```cpp
     taskManager.Draw();
+```
 
 ## リファレンス：
 http://at-sushi.github.io/GTFramework/
