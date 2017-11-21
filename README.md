@@ -59,7 +59,7 @@ GTFrameworkには3種類の基礎クラスがあります。
     
     taskManager.AddNewTask<CNewArgumentTask>(12, 2, "String");
 
-タスクをすべて実行するにはExecuteメソッドを使います。
+タスクをすべて実行するには`Execute`メソッドを使います。
 
     taskManager.Execute(0);
 
