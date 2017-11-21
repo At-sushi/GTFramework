@@ -37,9 +37,9 @@ src/systemフォルダ以下をプロジェクト内にコピーして使用し�
 
 GTFrameworkには3種類の基礎クラスがあります。
 
-* `CTaskBase` 通常タスク（下記の排他タスクに依存して（子タスクとして）振る舞う。　親排他タスクが実行中の時のみ実行される。　シーン中のオブジェクトなど。）
-* `CExclusiveTaskBase` 排他タスク（他の排他タスクと同時に実行されない。　スタック可能。　シーン遷移などに。）
-* `CBackGroundTaskBase` 常駐タスク（タスク階層に依存せずに常時実行されるタスク）
+* `GTF::CTaskBase` 通常タスク（下記の排他タスクに依存して（子タスクとして）振る舞う。　親排他タスクが実行中の時のみ実行される。　シーン中のオブジェクトなど。）
+* `GTF::CExclusiveTaskBase` 排他タスク（他の排他タスクと同時に実行されない。　スタック可能。　シーン遷移などに。）
+* `GTF::CBackGroundTaskBase` 常駐タスク（タスク階層に依存せずに常時実行されるタスク）
 
 これらの使い分けの詳細については，下記のリファレンスをご参照ください。
 
@@ -57,16 +57,16 @@ GTFrameworkには3種類の基礎クラスがあります。
     taskManager.AddNewTask<CNewTask>();
 ```
 
-`CTaskManager`クラスをインスタンス化するとタスクを管理できるようになります。
+`GTF::CTaskManager`クラスをインスタンス化するとタスクを管理できるようになります。
 
-`AddNewTask`メソッドにテンプレート引数としてクラスをわたすと、タスクが自動で生成されます。
+`GTF::CTaskManager::AddNewTask`メソッドにテンプレート引数としてクラスをわたすと、タスクが自動で生成されます。
 括弧の中に引数を記述すると、タスクのコンストラクタ引数として初期化時に渡すことが出来ます。
     
 ```cpp
     taskManager.AddNewTask<CNewArgumentTask>(12, 2, "String");
 ```
 
-タスクをすべて実行するにはExecuteメソッドを使います。
+タスクをすべて実行するには`GTF::CTaskManager::Execute`メソッドを使います。
 
 ```cpp
     taskManager.Execute(0);
@@ -78,7 +78,7 @@ GTFrameworkには3種類の基礎クラスがあります。
     auto p = taskManager.FindTask<CNewTask>(12);
 ```
 
-`FindTask`メソッドを使用すると、指定したIDのタスクのスマートポインタが手に入ります。
+`GTF::CTaskManager::FindTask`メソッドを使用すると、指定したIDのタスクのスマートポインタが手に入ります。
 テンプレート引数としてタスクのクラス型を指定すると、動的キャストを行い、指定された型の`shared_ptr`を返します。
 ただし排他タスクの検索は出来ません。
 
@@ -108,7 +108,7 @@ GTFrameworkには3種類の基礎クラスがあります。
 
 描画は(別に描画処理でなくてもいいのですが)優先度の数値が大きい順に処理され、`-1`のものは処理されません。
 
-すべてのタスクの`Draw`メソッドを実行するには、`CTaskManager`クラスの`Draw`メソッドを使います。
+すべてのタスクの`Draw`メソッドを実行するには、`GTF::CTaskManager`クラスの`Draw`メソッドを使います。
 
 ```cpp
     taskManager.Draw();
