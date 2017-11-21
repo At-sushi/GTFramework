@@ -33,14 +33,15 @@ script:
   - cd test
   - mkdir -p build
   - cd build
+  - which gcov-7
   - |
     if [ "$CXX" = "g++" ]; then
-      cmake -DCMAKE_CXX_COMPILER=g++-7 -DGCOV_PATH=$(which gcov) -DCMAKE_BUILD_TYPE=Debug -DGTF_Test_ENABLE_COVERAGE=1 ..;
+      cmake -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_C_COMPILER=gcc-7 -DGCOV_PATH=$(which gcov-7) -DCMAKE_BUILD_TYPE=Debug -DGTF_Test_ENABLE_COVERAGE=1 ..;
     fi
-  - if [ "$CXX" = "clang++" ]; then cmake -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_BUILD_TYPE=Debug ..; fi
+  - if [ "$CXX" = "clang++" ]; then cmake -DCMAKE_CXX_COMPILER=clang++-5.0 -DCMAKE_C_COMPILER=clang-5.0 -DCMAKE_BUILD_TYPE=Debug ..; fi
   - make
   - if [ "$CXX" = "g++" ]; then make GTF_Test_coverage; fi
 after_success:
   # Coverage
   - pwd
-  - if [ "$CXX" = "g++" ]; then lcoveralls --retry-count 3 coverage.info.cleaned; fi
+  - if [ "$CXX" = "g++" ]; then lcoveralls --retry-count 3 GTF_Test_coverage.info.cleaned; fi
