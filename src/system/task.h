@@ -232,8 +232,8 @@ namespace GTF
     private:
         template<class T,
             typename enable_if<
-                integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
-                !is_base_of<CExclusiveTaskBase, C>::value
+                integral_constant<bool, !is_base_of<CBackgroundTaskBase, T>::value &&
+                !is_base_of<CExclusiveTaskBase, T>::value
                 >::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
