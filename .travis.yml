@@ -11,7 +11,7 @@ addons:
     - llvm-toolchain-trusty-5.0
     packages:
     #- lcov
-    - rubygems
+    - ruby
     - clang-5.0
     - g++-7
     - gcc-7
