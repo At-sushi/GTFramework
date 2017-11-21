@@ -63,7 +63,6 @@ IUTEST(GTFTest, TestMethod3)
 {
     CTaskManager task;
     auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-    IUTEST_ASSERT_NE((void*)(task.FindTask<CExclusiveTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
     auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 }
