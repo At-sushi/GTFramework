@@ -71,7 +71,6 @@ include(CMakeParseArguments)
 # Check prereqs
 find_program( GCOV_PATH gcov )
 find_program( LCOV_PATH lcov )
-find_program( GENHTML_PATH genhtml )
 find_program( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/scripts/test)
 find_program( SIMPLE_PYTHON_EXECUTABLE python )
 
@@ -143,10 +142,6 @@ function(SETUP_TARGET_FOR_COVERAGE)
         message(FATAL_ERROR "lcov not found! Aborting...")
     endif() # NOT LCOV_PATH
 
-    if(NOT GENHTML_PATH)
-        message(FATAL_ERROR "genhtml not found! Aborting...")
-    endif() # NOT GENHTML_PATH
-
     # Setup target
     add_custom_target(${Coverage_NAME}
 
@@ -163,8 +158,7 @@ function(SETUP_TARGET_FOR_COVERAGE)
         # add baseline counters
         COMMAND ${LCOV_PATH} -a ${Coverage_NAME}.base -a ${Coverage_NAME}.info --output-file ${Coverage_NAME}.total
         COMMAND ${LCOV_PATH} --remove ${Coverage_NAME}.total ${COVERAGE_EXCLUDES} --output-file ${PROJECT_BINARY_DIR}/${Coverage_NAME}.info.cleaned
-        COMMAND ${GENHTML_PATH} -o ${Coverage_NAME} ${PROJECT_BINARY_DIR}/${Coverage_NAME}.info.cleaned
-        COMMAND ${CMAKE_COMMAND} -E remove ${Coverage_NAME}.base ${Coverage_NAME}.info ${Coverage_NAME}.total ${PROJECT_BINARY_DIR}/${Coverage_NAME}.info.cleaned
+        COMMAND ${CMAKE_COMMAND} -E remove ${Coverage_NAME}.base ${Coverage_NAME}.info ${Coverage_NAME}.total
 
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS ${Coverage_DEPENDENCIES}
@@ -174,7 +168,7 @@ function(SETUP_TARGET_FOR_COVERAGE)
     # Show info where to find the report
     add_custom_command(TARGET ${Coverage_NAME} POST_BUILD
         COMMAND ;
-        COMMENT "Open ./${Coverage_NAME}/index.html in your browser to view the coverage report."
+        COMMENT "Result is ${PROJECT_BINARY_DIR}/${Coverage_NAME}.info.cleaned"
     )
 
 endfunction() # SETUP_TARGET_FOR_COVERAGE
