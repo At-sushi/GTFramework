@@ -30,7 +30,7 @@ install:
 language: cpp
 script:
   - pwd
-  - cd test
+  - pushd test
   - mkdir -p build
   - cd build
   - which gcov-7
@@ -42,6 +42,7 @@ script:
   - make
   - if [ "$CXX" = "g++" ]; then make GTF_Test_coverage; fi
 after_success:
-  # Coverage
+  # Coverage - lcoveralls require current directory has .git
+  - popd
   - pwd
-  - if [ "$CXX" = "g++" ]; then lcoveralls --retry-count 3 GTF_Test_coverage.info.cleaned; fi
+  - if [ "$CXX" = "g++" ]; then lcoveralls --retry-count 3 ./test/build/GTF_Test_coverage.info.cleaned; fi
