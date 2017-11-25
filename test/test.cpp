@@ -45,7 +45,7 @@ public:
 IUTEST(GTFTest, TestMethod1)
 {
     CTaskManager task;
-    auto ptr = task.AddNewTask< CTekitou<int, CTaskBase> >(1).lock();
+    auto ptr = task.AddNewTask< CTekitou<int, CTaskBase> >(1);
     IUTEST_ASSERT_EQ((void*)task.FindTask(ptr->GetID()).lock().get(), (void*)ptr.get());
     IUTEST_ASSERT_EQ((void*)task.FindTask<CTaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 }

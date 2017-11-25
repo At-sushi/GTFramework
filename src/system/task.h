@@ -142,8 +142,8 @@ namespace GTF
             return ex_stack.top().value;
         }
 
-        //! タスクの自動生成（暫定）
-        template <class C, typename... A, class PC = weak_ptr<C>,
+        //! タスクの自動生成
+        template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
                 is_base_of<CExclusiveTaskBase, C>::value
@@ -152,7 +152,7 @@ namespace GTF
         {
             return static_pointer_cast<C>(AddTask(new C(args...)).lock());
         }
-        template <class C, typename... A, class PC = weak_ptr<C>,
+        template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
                 !is_base_of<CExclusiveTaskBase, C>::value
