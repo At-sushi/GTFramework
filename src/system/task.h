@@ -12,6 +12,7 @@
 #include <memory>
 #include <functional>
 #include <type_traits>
+#include <utility>
 
 #ifdef __clang__
 #   if !__has_feature(cxx_noexcept)
@@ -148,18 +149,18 @@ namespace GTF
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
                 is_base_of<CExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
-            PC AddNewTask(A... args)
+            PC AddNewTask(A&&... args)
         {
-            return static_pointer_cast<C>(AddTask(new C(args...)).lock());
+            return static_pointer_cast<C>(AddTask(new C(forward<A>(args)...)).lock());
         }
         template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
                 !is_base_of<CExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
-            PC AddNewTask(A... args)
+            PC AddNewTask(A&&... args)
         {
-            return static_pointer_cast<C>(AddTaskGuaranteed(new C(args...)).lock());
+            return static_pointer_cast<C>(AddTaskGuaranteed(new C(forward<A>(args)...)).lock());
         }
 
         //!指定IDの通常タスク取得
@@ -203,11 +204,11 @@ namespace GTF
             const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
             DrawPriorityMap drawList;						//!< 描画順ソート用コンテナ
 
-            ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos)
+            ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
                 : value(source), SubTaskStartPos(startPos)
             {
             }
-            ExTaskInfo(shared_ptr<CExclusiveTaskBase>&& source, TaskList::iterator startPos)
+            ExTaskInfo(shared_ptr<CExclusiveTaskBase>&& source, TaskList::iterator startPos) NOEXCEPT
                 : value(move(source)), SubTaskStartPos(startPos)
             {
             }
