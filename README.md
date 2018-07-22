@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/At-sushi/GTFramework.svg?branch=master)](https://travis-ci.org/At-sushi/GTFramework)
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./LICENSE)
 # GTFramework
-Goluah Task Framework ver1.00
+Goluah Task Framework ver1.50
 
 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
@@ -22,6 +23,11 @@ src/systemフォルダ以下をプロジェクト内にコピーして使用し�
     
     class CNewTask : CTaskBase
     {
+        virtual void Initialize() override						// 初期化時の処理
+        {
+            // タスク追加処理など
+        }
+        
         virtual bool Execute(double elapsedTime) override					// 実行時の処理
         {
             // do something
@@ -42,6 +48,9 @@ GTFrameworkには3種類の基礎クラスがあります。
 * `GTF::CBackGroundTaskBase` 常駐タスク（タスク階層に依存せずに常時実行されるタスク）
 
 これらの使い分けの詳細については，下記のリファレンスをご参照ください。
+
+タスクが初期化され、実行可能な状態になると`Initialize`メソッドが実行されます。
+排他タスクの場合、生成直後にはタスクがアクティブにならないため、子タスクの生成処理などはこの関数の内部で行うようにしてください。
 
 タスクが実行されると`Execute`メソッドが実行され、`false`を返すとそのタスクは破棄されます。
 
@@ -113,6 +122,20 @@ GTFrameworkには3種類の基礎クラスがあります。
 ```cpp
     taskManager.Draw();
 ```
+
+排他タスクの生成時、コンストラクタ引数`fallthroughDraw`に`true`を指定して生成すると、Draw処理のフォールスルーが行われるようになります。
+この状態で`Draw`処理がコールされると、一つ下の階層のタスクも含めて描画することが出来ます。
+```cpp
+    class CNewExTask : CExcusiveTaskBase
+    {
+        CNewExTask() : CExcusiveTaskBase(true)
+        {
+            // do something
+            return true;
+        }
+    };
+```
+
 
 ## リファレンス：
 http://at-sushi.github.io/GTFramework/

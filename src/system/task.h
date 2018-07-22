@@ -4,11 +4,11 @@
 */
 #pragma once
 #include <vector>
+#include <deque>
 #include <string>
 #include <map>
 #include <list>
 #include <unordered_map>
-#include <stack>
 #include <memory>
 #include <functional>
 #include <type_traits>
@@ -57,7 +57,7 @@ namespace GTF
         virtual void Terminate(){}							//!< タスクのリストから外されるときにコールされる（その直後、deleteされる）
         virtual void Draw(){}								//!< 描画時にコールされる
         virtual unsigned int GetID() const { return 0; }	//!< 0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される
-        virtual int GetDrawPriority() const { return -1; }	//!< 描画プライオリティ。低いほど手前に（後順に）描画。マイナスならば表示しない
+        virtual int GetDrawPriority() const { return -1; }	//!< 描画プライオリティ。低いほど後順に（手前に）Draw処理。マイナスならば表示しない
     };
 
 
@@ -75,11 +75,16 @@ namespace GTF
     class CExclusiveTaskBase : public CTaskBase
     {
     public:
+        CExclusiveTaskBase(bool fallthroughDraw = false) NOEXCEPT : isFallthroughDraw(fallthroughDraw) {}
         virtual ~CExclusiveTaskBase(){}
         virtual void Activate(unsigned int /* prvTaskID */){}				//!< Executeが再開されるときに呼ばれる
         virtual bool Inactivate(unsigned int /* nextTaskID */){return true;}//!< 他の排他タスクが開始したときに呼ばれる
 
         virtual int GetDrawPriority() const override {return 0;}				//!< 描画プライオリティ取得メソッド
+        bool IsFallthroughDraw() const NOEXCEPT { return isFallthroughDraw; }		//!< 一つ下の階層のタスクのDrawを実行するかどうか
+
+    private:
+        const bool isFallthroughDraw = false;
     };
 
 
@@ -100,7 +105,7 @@ namespace GTF
         void Enable() NOEXCEPT { m_isEnabled = true; }
         void Disable() NOEXCEPT { m_isEnabled = false; }
 
-    protected:
+    private:
         bool m_isEnabled=true;
     };
 
@@ -111,7 +116,7 @@ namespace GTF
     *	@ingroup System
     *	@brief タスク管理クラス
     *
-    *	タスク継承クラスのリストを管理し、描画、更新、ウィンドウメッセージ等の配信を行う。
+    *	タスク継承クラスのリストを管理し、描画、更新を行う。
     *
     *	実行中に例外が起こったとき、どのクラスが例外を起こしたのかをログに吐き出す。
     *	その際に実行時型情報からクラス名を取得しているので、コンパイルの際には
@@ -140,7 +145,7 @@ namespace GTF
         //! 最上位にあるエクスクルーシブタスクをゲト
         ExTaskPtr GetTopExclusiveTask() const
         {
-            return ex_stack.top().value;
+            return ex_stack.back().value;
         }
 
         //! タスクの自動生成
@@ -184,7 +189,7 @@ namespace GTF
         }
 
         void Execute(double elapsedTime);					//!< 各タスクのExecute関数をコールする
-        void Draw();										//!< 各タスクをプライオリティ順に描画する
+        void Draw();										//!< 各タスクをプライオリティ順にDrawする
 
         //!< 排他タスクが全部なくなっちゃったかどうか
         bool ExEmpty() const    {
@@ -202,7 +207,7 @@ namespace GTF
         struct ExTaskInfo {
             const shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
             const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
-            DrawPriorityMap drawList;						//!< 描画順ソート用コンテナ
+            DrawPriorityMap drawList;						//!< Draw順ソート用コンテナ。排他タスク自身や、DrawFallthrough時は一つ下の階層のDrawリストも含まれる。
 
             ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
                 : value(source), SubTaskStartPos(startPos)
@@ -214,7 +219,7 @@ namespace GTF
             }
 
         };
-        using ExTaskStack = stack<ExTaskInfo>;
+        using ExTaskStack = deque<ExTaskInfo>;
 
         //! 通常タスクを全てTerminate , deleteする
         void CleanupAllSubTasks()    {
@@ -286,7 +291,7 @@ namespace GTF
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
         shared_ptr<CExclusiveTaskBase> exNext = nullptr;		//!< 現在フレームでAddされた排他タスク
-        DrawPriorityMap drawListBG;					//!< 描画順ソート用コンテナ（常駐タスク）
+        DrawPriorityMap drawListBG;					//!< Draw順ソート用コンテナ（常駐タスク）
         unordered_map<unsigned int, TaskPtr> indices;
         unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };

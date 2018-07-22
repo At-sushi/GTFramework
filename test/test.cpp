@@ -25,11 +25,11 @@ public:
     void Draw() override { veve.push_back(hogehoge); }
 };
 
-template<typename T, class B>
+template<typename T, class B, typename... Arg>
 class CTekitou2 : public B
 {
 public:
-	CTekitou2(T init) : hogehoge(init)
+	CTekitou2(T init, Arg&&... args) : B(forward<Arg>(args)...), hogehoge(init)
 	{
 
 	}
@@ -120,7 +120,7 @@ IUTEST(GTFTest, Draw1)
     }
     veve.clear();
     task.RemoveTaskByID(1);
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < 4; i++)
         task.Draw();
 
     IUTEST_ASSERT_EQ(513, veve[0]);
@@ -141,14 +141,42 @@ IUTEST(GTFTest, Draw2)
         }
     };
 
-    for (int i = 1; i < 257; i++)
+    for (int i = 1; i < 5; i++)
     {
         task.AddNewTask<ct2>(i * 2);
         task.Execute(0);
     }
     veve.clear();
     task.RemoveTaskByID(1);
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < 4; i++)
+        task.Draw();
+
+    IUTEST_ASSERT_EQ(3, veve[0]);
+}
+IUTEST(GTFTest, DrawFallthrough)
+{
+    static CTaskManager task;
+    class ct2 : public CTekitou2 < int, CExclusiveTaskBase, bool >
+    {
+    public:
+        ct2(int init) : CTekitou2 < int, CExclusiveTaskBase, bool >(init, true)
+        {
+
+        }
+        void Initialize()
+        {
+            task.AddNewTask< CTekitou<int, CTaskBase> >(hogehoge + 1);
+        }
+    };
+
+    for (int i = 1; i < 5; i++)
+    {
+        task.AddNewTask<ct2>(i * 2);
+        task.Execute(0);
+    }
+    veve.clear();
+    task.RemoveTaskByID(1);
+    for (int i = 0; i < 4; i++)
         task.Draw();
 
     IUTEST_ASSERT_EQ(3, veve[0]);
