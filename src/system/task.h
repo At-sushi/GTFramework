@@ -135,7 +135,9 @@ namespace GTF
 
         void Destroy();
 
+        //! deprecated:please use AddNewTask function instead
         //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+        [[deprecated("please use AddNewTask function instead")]]
         TaskPtr AddTask(CTaskBase *newTask);		        //!< タスク追加
         ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< 排他タスク追加
         BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< 常駐タスク追加
@@ -168,6 +170,7 @@ namespace GTF
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(forward<A>(args)...)).lock());
         }
 
+        //! deprecated:please use FindTask<ClassType> function instead
         //!指定IDの通常タスク取得
         TaskPtr FindTask(unsigned int id) const
         {
@@ -175,6 +178,7 @@ namespace GTF
             return (result != indices.end()) ? result->second : TaskPtr();
         }
 
+        //! deprecated:please use FindTask<ClassType> function instead
         //!指定IDの常駐タスク取得
         BgTaskPtr FindBGTask(unsigned int id) const
         {
