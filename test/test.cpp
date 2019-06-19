@@ -225,10 +225,11 @@ IUTEST(GTFTest, ReuseContainer)
     CTaskManager task;
     auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
     auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
-    task.Execute(0);
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 
     task.Destroy();
+    task.Execute(0);
+    IUTEST_ASSERT_EQ((void*)task.GetTopExclusiveTask().lock().get(), (void*)nullptr);
 
     auto ptr3 = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
     auto ptr4 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();

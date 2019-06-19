@@ -37,6 +37,7 @@ namespace GTF
             ex_stack.back().value->Terminate();
             ex_stack.pop_back();
         }
+        exNext = nullptr;
     }
 
 
