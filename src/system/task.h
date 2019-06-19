@@ -225,11 +225,6 @@ namespace GTF
         };
         using ExTaskStack = deque<ExTaskInfo>;
 
-        //! 通常タスクを全てTerminate , deleteする
-        void CleanupAllSubTasks()    {
-            CleanupPartialSubTasks(tasks.begin());
-        }
-
         TaskPtr AddTaskGuaranteed(CTaskBase *newTask);		        //!< タスク追加（エラー検出無し）
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
 
