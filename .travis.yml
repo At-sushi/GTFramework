@@ -17,7 +17,7 @@ addons:
     - gcc-7
 before_install:
     - git submodule update --init
-    - cpanm PerlIO::gzip
+    - cpanm PerlIO::gzip --sudo
 install:
   - |
     if [ "$CXX" = "g++" ]; then
