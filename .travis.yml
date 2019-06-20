@@ -15,7 +15,9 @@ addons:
     - clang-5.0
     - g++-7
     - gcc-7
-before_install: git submodule update --init
+before_install:
+    - git submodule update --init
+    - cpanm PerlIO::gzip
 install:
   - |
     if [ "$CXX" = "g++" ]; then
