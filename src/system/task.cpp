@@ -30,8 +30,8 @@ namespace GTF
 
         //排他タスク・通常タスクTerminate
         while (ex_stack.size() != 0 && ex_stack.back().value){
-            ex_stack.back().value->Terminate();
             CleanupPartialSubTasks(ex_stack.back().SubTaskStartPos);
+            ex_stack.back().value->Terminate();
             ex_stack.pop_back();
         }
         exNext = nullptr;
