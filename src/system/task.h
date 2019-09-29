@@ -251,7 +251,7 @@ namespace GTF
         }
 
         //! タスクExecute
-        template<class T, typename I = typename T::iterator, class QI = deque<I>, typename I_QI = typename QI::iterator>
+        template<class T, typename I = typename T::iterator, class QI = deque<I>>
             void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
             QI deleteList;
@@ -275,11 +275,7 @@ namespace GTF
             }
 
             //タスクでfalseを返したものを消す
-            I_QI idl = deleteList.begin();
-            const I_QI idl_ed = deleteList.end();
-
-            for (; idl != idl_ed; ++idl){
-                i = *idl;
+            for (I&& i : deleteList){
                 (*i)->Terminate();
                 tasks.erase(i);
             }
