@@ -46,11 +46,11 @@ template<typename T, typename... Arg>
 class CExTaskSelfDestruct : public CExclusiveTaskBase
 {
 public:
-	CTekitou2(T init, Arg&&... args) : CExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
+	CExTaskSelfDestruct(T init, Arg&&... args) : CExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
 	{
 
 	}
-	~CTekitou2()
+	~CExTaskSelfDestruct()
 	{}
 
 	T hogehoge;
