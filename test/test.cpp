@@ -42,6 +42,23 @@ public:
 	unsigned int GetID()const override{ return hogehoge; }
 };
 
+template<typename T, typename... Arg>
+class CExTaskSelfDestruct : public CExclusiveTaskBase
+{
+public:
+	CTekitou2(T init, Arg&&... args) : CExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
+	{
+
+	}
+	~CTekitou2()
+	{}
+
+	T hogehoge;
+
+	bool Execute(double /* e */) override{ veve.push_back(hogehoge); return false; }
+	unsigned int GetID()const override{ return hogehoge; }
+};
+
 IUTEST(GTFTest, TestMethod1)
 {
     CTaskManager task;
@@ -235,6 +252,19 @@ IUTEST(GTFTest, ReuseContainer)
     auto ptr4 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
     task.Execute(0);
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr4->GetID()).lock().get(), (void*)ptr4.get());
+}
+IUTEST(GTFTest, ExTaskSelfDeestruct)
+{
+    CTaskManager task;
+    veve.clear();
+    auto ptr = task.AddNewTask< CTekitou2<int, CExclusiveTaskBase> >(1);
+    task.Execute(0);
+    auto ptr2 = task.AddNewTask< CExTaskSelfDestruct<int> >(2);
+    task.Execute(0);
+    task.Execute(0);
+    IUTEST_ASSERT_EQ(1, veve[0]);
+    IUTEST_ASSERT_EQ(2, veve[1]);
+    IUTEST_ASSERT_EQ(1, veve[2]);
 }
 int main(int argc, char** argv)
 {
