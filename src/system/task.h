@@ -275,7 +275,7 @@ namespace GTF
             }
 
             //タスクでfalseを返したものを消す
-            for (I&& i : deleteList){
+            for (const I& i : deleteList){
                 (*i)->Terminate();
                 tasks.erase(i);
             }
