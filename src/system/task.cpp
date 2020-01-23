@@ -126,6 +126,34 @@ namespace GTF
         assert(ex_stack.size() != 0);
         shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.back().value;
 
+        // 新しいタスクがある場合
+        if (exNext){
+            //現在排他タスクのInactivate
+            assert(ex_stack.size() != 0);
+            if (exTsk && !exTsk->Inactivate(exNext->GetID())){
+                //通常タスクを全て破棄する
+                CleanupPartialSubTasks(ex_stack.back().SubTaskStartPos);
+
+                exTsk->Terminate();
+                ex_stack.pop_back();
+            }
+
+            //AddされたタスクをInitializeして突っ込む
+            const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());				// ダミータスク挿入
+            ex_stack.emplace_back(move(exNext), it);
+            auto pnew = ex_stack.back().value;
+            if (pnew->IsFallthroughDraw()) {
+                assert(ex_stack.size() >= 2);
+                ex_stack.back().drawList = (ex_stack.rbegin() + 1)->drawList;					// 一つ下の階層のdrawListをコピー
+            }
+            pnew->Initialize();
+            if (pnew->GetDrawPriority() >= 0)
+                ex_stack.back().drawList.emplace(pnew->GetDrawPriority(), pnew);
+
+            exNext = nullptr;
+            exTsk = move(pnew);
+        }
+
         if (exTsk)
         {
             bool ex_ret = true;
@@ -206,34 +234,6 @@ namespace GTF
 
         //常駐タスクExecute
         taskExecute(bg_tasks, bg_tasks.begin(), bg_tasks.end(), elapsedTime);
-
-        // 新しいタスクがある場合
-        if (exNext){
-            //現在排他タスクのInactivate
-            assert(ex_stack.size() != 0);
-            exTsk = ex_stack.back().value;
-            if (exTsk && !exTsk->Inactivate(exNext->GetID())){
-                //通常タスクを全て破棄する
-                CleanupPartialSubTasks(ex_stack.back().SubTaskStartPos);
-
-                exTsk->Terminate();
-                ex_stack.pop_back();
-            }
-
-            //AddされたタスクをInitializeして突っ込む
-            const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());				// ダミータスク挿入
-            ex_stack.emplace_back(move(exNext), it);
-            auto pnew = ex_stack.back().value;
-            if (pnew->IsFallthroughDraw()) {
-                assert(ex_stack.size() >= 2);
-                ex_stack.back().drawList = (ex_stack.rbegin() + 1)->drawList;					// 一つ下の階層のdrawListをコピー
-            }
-            pnew->Initialize();
-            if (pnew->GetDrawPriority() >= 0)
-                ex_stack.back().drawList.emplace(pnew->GetDrawPriority(), pnew);
-
-            exNext = nullptr;
-        }
     }
 
 

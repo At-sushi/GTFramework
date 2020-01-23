@@ -91,7 +91,9 @@ IUTEST(GTFTest, RunOrder1)
     auto ptr2 = task.AddNewTask< CTekitou2<int, CTaskBase> >(2);
     //modify veve
     task.Execute(0);
-    IUTEST_ASSERT_EQ(2, veve[0]);
+    task.Execute(1);
+    IUTEST_ASSERT_EQ(1, veve[0]);
+    IUTEST_ASSERT_EQ(1, veve[1]);
 }
 IUTEST(GTFTest, RunOrder2)
 {
@@ -223,7 +225,6 @@ IUTEST(GTFTest, TaskDependency)
     task.Execute(1);
     IUTEST_ASSERT_EQ(1, veve[0]);
     IUTEST_ASSERT_EQ(1 + 20, veve[1]);
-    task.Execute(2);
     IUTEST_ASSERT_EQ(3, veve[2]);
     IUTEST_ASSERT_EQ(3 + 20, veve[3]);
     task.RevertExclusiveTaskByID(1);
