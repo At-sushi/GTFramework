@@ -6,7 +6,6 @@
 
 using namespace gtf;
 
-IUTEST_MAKE_PEEP(weak_ptr<ExclusiveTaskBase> (TaskManager::*)(ExclusiveTaskBase*), TaskManager, AddTask);
 IUTEST_MAKE_PEEP(weak_ptr<TaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindTask);
 IUTEST_MAKE_PEEP(weak_ptr<BackgroundTaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindBGTask);
 
@@ -80,7 +79,7 @@ IUTEST(gtfTest, TestMethod2)
 IUTEST(gtfTest, TestMethod3)
 {
     TaskManager task;
-    auto ptr = IUTEST_PEEP_GET(task, TaskManager, AddTask)(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
     IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr->GetID()).lock().get(), (void*)ptr.get());
 }
 IUTEST(gtfTest, RunOrder1)
@@ -241,14 +240,14 @@ IUTEST(gtfTest, TaskDependency)
 IUTEST(gtfTest, ReuseContainer)
 {
     TaskManager task;
-    auto ptr = IUTEST_PEEP_GET(task, TaskManager, AddTask)(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
     IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr->GetID()).lock().get(), (void*)ptr.get());
 
     task.Destroy();
     task.Execute(0);
     IUTEST_ASSERT_EQ((void*)task.GetTopExclusiveTask().lock().get(), (void*)nullptr);
 
-    auto ptr3 = IUTEST_PEEP_GET(task, TaskManager, AddTask)(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr3 = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
     task.Execute(0);
     IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr3->GetID()).lock().get(), (void*)ptr3.get());
 }
