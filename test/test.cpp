@@ -6,7 +6,6 @@
 
 using namespace gtf;
 
-IUTEST_MAKE_PEEP(weak_ptr<TaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindTask);
 IUTEST_MAKE_PEEP(weak_ptr<BackgroundTaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindBGTask);
 
 static std::vector<int> veve;
@@ -66,7 +65,6 @@ IUTEST(gtfTest, TestMethod1)
 {
     TaskManager task;
     auto ptr = task.AddNewTask< CTekitou<int, TaskBase> >(1);
-    IUTEST_ASSERT_EQ((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr->GetID()).lock().get(), (void*)ptr.get());
     IUTEST_ASSERT_EQ((void*)task.FindTask<TaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 }
 
@@ -80,7 +78,7 @@ IUTEST(gtfTest, TestMethod3)
 {
     TaskManager task;
     auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
-    IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr->GetID()).lock().get(), (void*)ptr.get());
+    IUTEST_ASSERT_NE((void*)task.FindTask<TaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 }
 IUTEST(gtfTest, RunOrder1)
 {
@@ -241,7 +239,7 @@ IUTEST(gtfTest, ReuseContainer)
 {
     TaskManager task;
     auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
-    IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr->GetID()).lock().get(), (void*)ptr.get());
+    IUTEST_ASSERT_NE((void*)task.FindTask<TaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 
     task.Destroy();
     task.Execute(0);
@@ -249,7 +247,7 @@ IUTEST(gtfTest, ReuseContainer)
 
     auto ptr3 = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
     task.Execute(0);
-    IUTEST_ASSERT_NE((void*)IUTEST_PEEP_GET(task, TaskManager, FindTask)(ptr3->GetID()).lock().get(), (void*)ptr3.get());
+    IUTEST_ASSERT_NE((void*)task.FindTask<TaskBase>(ptr3->GetID()).get(), (void*)ptr3.get());
 }
 IUTEST(gtfTest, ExTaskSelfDeestruct)
 {
