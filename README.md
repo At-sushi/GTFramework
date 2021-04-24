@@ -46,7 +46,7 @@ GTFrameworkには3種類の基礎クラスがあります。
 
 * `gtf::TaskBase` 通常タスク（下記の排他タスクに依存して（子タスクとして）振る舞う。　親排他タスクが実行中の時のみ実行される。　シーン中のオブジェクトなど。）
 * `gtf::ExclusiveTaskBase` 排他タスク（他の排他タスクと同時に実行されない。　スタック可能。　シーン遷移などに。）
-* `gtf::BackGroundTaskBase` 常駐タスク（タスク階層に依存せずに常時実行されるタスク）
+* `gtf::BackgroundTaskBase` 常駐タスク（タスク階層に依存せずに常時実行されるタスク）
 
 これらの使い分けの詳細については，下記のリファレンスをご参照ください。
 
@@ -129,7 +129,7 @@ GTFrameworkには3種類の基礎クラスがあります。
 ```cpp
     class NewExTask : CExcusiveTaskBase
     {
-        iNewExTask() : CExcusiveTaskBase(true)
+        NewExTask() : CExcusiveTaskBase(true)
 
         {
             // do something

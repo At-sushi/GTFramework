@@ -187,24 +187,6 @@ namespace gtf
         using BgTaskList = list<shared_ptr<BackgroundTaskBase>>;
         using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
 
-        //! 追加したタスクはTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     //!< 排他タスク追加
-        BgTaskPtr AddTask(BackgroundTaskBase *newTask);    //!< 常駐タスク追加
-
-        //!指定IDの通常タスク取得
-        TaskPtr FindTask(unsigned int id) const
-        {
-            const auto result = indices.find(id);
-            return (result != indices.end()) ? result->second : TaskPtr();
-        }
-
-        //!指定IDの常駐タスク取得
-        BgTaskPtr FindBGTask(unsigned int id) const
-        {
-            const auto result = bg_indices.find(id);
-            return (result != bg_indices.end()) ? result->second : BgTaskPtr();
-        }
-
         struct ExTaskInfo {
             const shared_ptr<ExclusiveTaskBase> value;		//!< 排他タスクのポインタ
             const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
@@ -220,9 +202,26 @@ namespace gtf
             }
 
         };
-        using ExTaskStack = deque<ExTaskInfo>;
+        using ExTaskStack = std::deque<ExTaskInfo>;
 
-        TaskPtr AddTaskGuaranteed(TaskBase *newTask);		        //!< タスク追加（エラー検出無し）
+        //! 追加したタスクはTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     //!< 排他タスク追加
+        BgTaskPtr AddTask(BackgroundTaskBase *newTask);    //!< 常駐タスク追加
+        TaskPtr AddTaskGuaranteed(TaskBase *newTask);      //!< タスク追加（エラー検出無し）
+
+        //!指定IDの通常タスク取得
+        TaskPtr FindTask(unsigned int id) const
+        {
+            const auto result = indices.find(id);
+            return (result != indices.end()) ? result->second : TaskPtr();
+        }
+
+        //!指定IDの常駐タスク取得
+        BgTaskPtr FindBGTask(unsigned int id) const
+        {
+            const auto result = bg_indices.find(id);
+            return (result != bg_indices.end()) ? result->second : BgTaskPtr();
+        }
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
 
         //! ログ出力

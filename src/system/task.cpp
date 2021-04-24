@@ -323,8 +323,7 @@ namespace gtf
         TaskList::iterator i = it_task, ied = tasks.end();
 
         for (; i != ied; ++i){
-            shared_ptr<TaskBase>& delTgt = (*i);
-            delTgt->Terminate();
+            (*i)->Terminate();
         }
         tasks.erase(it_task, ied);
     }
