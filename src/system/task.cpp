@@ -11,18 +11,18 @@
 #include <typeinfo>
 #include "task.h"
 
-namespace GTF
+namespace gtf
 {
     using namespace std;
 
-    CTaskManager::CTaskManager()
+    TaskManager::TaskManager()
     {
         // ダミーデータ挿入
-        const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());
+        const auto it = tasks.emplace(tasks.end(), make_shared<TaskBase>());
         ex_stack.emplace_back(exNext, it);
     }
 
-    void CTaskManager::Destroy()
+    void TaskManager::Destroy()
     {
         //バックグラウンドタスクTerminate
         for(auto&& ib : bg_tasks) ib->Terminate();
@@ -38,11 +38,11 @@ namespace GTF
     }
 
 
-    CTaskManager::TaskPtr CTaskManager::AddTask(CTaskBase *newTask)
+    TaskManager::TaskPtr TaskManager::AddTask(TaskBase *newTask)
     {
         assert(newTask);
 
-        CExclusiveTaskBase *pext = dynamic_cast<CExclusiveTaskBase*>(newTask);
+        ExclusiveTaskBase *pext = dynamic_cast<ExclusiveTaskBase*>(newTask);
         if (pext){
             //排他タスクとしてAdd
             return AddTask(pext);
@@ -58,10 +58,10 @@ namespace GTF
         return AddTaskGuaranteed(newTask);
     }
 
-    CTaskManager::TaskPtr CTaskManager::AddTaskGuaranteed(CTaskBase *newTask)
+    TaskManager::TaskPtr TaskManager::AddTaskGuaranteed(TaskBase *newTask)
     {
         assert(newTask);
-        assert(dynamic_cast<CExclusiveTaskBase*>(newTask) == nullptr);
+        assert(dynamic_cast<ExclusiveTaskBase*>(newTask) == nullptr);
         assert(dynamic_cast<CBackgroundTaskBase*>(newTask) == nullptr);
 
         if (newTask->GetID() != 0){
@@ -79,7 +79,7 @@ namespace GTF
         return pnew;
     }
 
-    CTaskManager::ExTaskPtr CTaskManager::AddTask(CExclusiveTaskBase *newTask)
+    TaskManager::ExTaskPtr TaskManager::AddTask(ExclusiveTaskBase *newTask)
     {
         //排他タスクとしてAdd
         //Execute中かもしれないので、ポインタ保存のみ
@@ -89,12 +89,12 @@ namespace GTF
             OutputLog("■ALERT■ 排他タスクが2つ以上Addされた : %s / %s",
                 typeid(t1).name(), typeid(t2).name());
         }
-        exNext = shared_ptr<CExclusiveTaskBase>(newTask);
+        exNext = shared_ptr<ExclusiveTaskBase>(newTask);
 
         return exNext;
     }
 
-    CTaskManager::BgTaskPtr CTaskManager::AddTask(CBackgroundTaskBase *newTask)
+    TaskManager::BgTaskPtr TaskManager::AddTask(CBackgroundTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -113,7 +113,7 @@ namespace GTF
         return pbgt;
     }
 
-    void CTaskManager::Execute(double elapsedTime)
+    void TaskManager::Execute(double elapsedTime)
     {
 #ifdef ARRAYBOUNDARY_DEBUG
         if(!AfxCheckMemory()){
@@ -124,7 +124,7 @@ namespace GTF
 
         //排他タスク、topのみExecute
         assert(ex_stack.size() != 0);
-        shared_ptr<CExclusiveTaskBase> exTsk = ex_stack.back().value;
+        shared_ptr<ExclusiveTaskBase> exTsk = ex_stack.back().value;
 
         // 新しいタスクがある場合
         if (exNext){
@@ -139,7 +139,7 @@ namespace GTF
             }
 
             //AddされたタスクをInitializeして突っ込む
-            const auto it = tasks.emplace(tasks.end(), make_shared<CTaskBase>());				// ダミータスク挿入
+            const auto it = tasks.emplace(tasks.end(), make_shared<TaskBase>());				// ダミータスク挿入
             ex_stack.emplace_back(move(exNext), it);
             auto pnew = ex_stack.back().value;
             if (pnew->IsFallthroughDraw()) {
@@ -237,7 +237,7 @@ namespace GTF
     }
 
 
-    void CTaskManager::Draw()
+    void TaskManager::Draw()
     {
         assert(ex_stack.size() != 0);
 
@@ -280,7 +280,7 @@ namespace GTF
             DrawAndProceed(ivBG, drawListBG);
     }
 
-    void CTaskManager::RemoveTaskByID(unsigned int id)
+    void TaskManager::RemoveTaskByID(unsigned int id)
     {
         //通常タスクをチェック
         if (indices.count(id) != 0)
@@ -313,14 +313,14 @@ namespace GTF
 
 
     //指定IDの排他タスクまでTerminate/popする
-    void CTaskManager::RevertExclusiveTaskByID(unsigned int id)
+    void TaskManager::RevertExclusiveTaskByID(unsigned int id)
     {
         bool act = false;
         unsigned int previd = 0;
 
         assert(ex_stack.size() != 0);
         while (ex_stack.back().value){
-            const shared_ptr<CExclusiveTaskBase>& task = ex_stack.back().value;
+            const shared_ptr<ExclusiveTaskBase>& task = ex_stack.back().value;
             if (task->GetID() == id){
                 if (act){
                     task->Activate(previd);
@@ -339,12 +339,12 @@ namespace GTF
     }
 
     //通常タスクを一部だけ破棄する
-    void CTaskManager::CleanupPartialSubTasks(TaskList::iterator it_task)
+    void TaskManager::CleanupPartialSubTasks(TaskList::iterator it_task)
     {
         TaskList::iterator i = it_task, ied = tasks.end();
 
         for (; i != ied; ++i){
-            shared_ptr<CTaskBase>& delTgt = (*i);
+            shared_ptr<TaskBase>& delTgt = (*i);
             delTgt->Terminate();
         }
         tasks.erase(it_task, ied);
@@ -352,9 +352,9 @@ namespace GTF
 
 
     //デバッグ・タスク一覧表示
-    void CTaskManager::DebugOutputTaskList()
+    void TaskManager::DebugOutputTaskList()
     {
-        OutputLog("\n\n■CTaskManager::DebugOutputTaskList() - start");
+        OutputLog("\n\n■TaskManager::DebugOutputTaskList() - start");
 
         OutputLog("□通常タスク一覧□");
         //通常タスク
@@ -374,6 +374,6 @@ namespace GTF
             OutputLog(typeid(s_top_v).name());
         }
 
-        OutputLog("\n\n■CTaskManager::DebugOutputTaskList() - end\n\n");
+        OutputLog("\n\n■TaskManager::DebugOutputTaskList() - end\n\n");
     }
 }

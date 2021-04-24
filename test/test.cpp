@@ -1,10 +1,10 @@
-﻿#define GTF_HEADER_ONLY
+﻿#define gtf_HEADER_ONLY
 #include "../iutest/include/iutest.hpp"
 #include "../src/system/task.h"
 
 #include <vector>
 
-using namespace GTF;
+using namespace gtf;
 
 static std::vector<int> veve;
 
@@ -43,10 +43,10 @@ public:
 };
 
 template<typename T, typename... Arg>
-class CExTaskSelfDestruct : public CExclusiveTaskBase
+class CExTaskSelfDestruct : public ExclusiveTaskBase
 {
 public:
-	CExTaskSelfDestruct(T init, Arg&&... args) : CExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
+	CExTaskSelfDestruct(T init, Arg&&... args) : ExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
 	{
 
 	}
@@ -59,52 +59,52 @@ public:
 	unsigned int GetID()const override{ return hogehoge; }
 };
 
-IUTEST(GTFTest, TestMethod1)
+IUTEST(gtfTest, TestMethod1)
 {
-    CTaskManager task;
-    auto ptr = task.AddNewTask< CTekitou<int, CTaskBase> >(1);
+    TaskManager task;
+    auto ptr = task.AddNewTask< CTekitou<int, TaskBase> >(1);
     IUTEST_ASSERT_EQ((void*)task.FindTask(ptr->GetID()).lock().get(), (void*)ptr.get());
-    IUTEST_ASSERT_EQ((void*)task.FindTask<CTaskBase>(ptr->GetID()).get(), (void*)ptr.get());
+    IUTEST_ASSERT_EQ((void*)task.FindTask<TaskBase>(ptr->GetID()).get(), (void*)ptr.get());
 }
 
-IUTEST(GTFTest, TestMethod2)
+IUTEST(gtfTest, TestMethod2)
 {
-    CTaskManager task;
+    TaskManager task;
     auto ptr = task.AddTask(new CTekitou<int, CBackgroundTaskBase>(1)).lock();
     IUTEST_ASSERT_EQ((void*)(task.FindTask<CBackgroundTaskBase>(ptr->GetID())).get(), (void*)ptr.get());
-    auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
+    auto ptr2 = task.AddTask(static_cast<TaskBase*>(new CTekitou<int, CBackgroundTaskBase>(1))).lock();
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
     IUTEST_ASSERT_EQ((void*)task.FindBGTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 }
-IUTEST(GTFTest, TestMethod3)
+IUTEST(gtfTest, TestMethod3)
 {
-    CTaskManager task;
-    auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-    auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
+    TaskManager task;
+    auto ptr = task.AddTask(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr2 = task.AddTask(static_cast<TaskBase*>(new CTekitou<int, ExclusiveTaskBase>(1))).lock();
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 }
-IUTEST(GTFTest, RunOrder1)
+IUTEST(gtfTest, RunOrder1)
 {
-    CTaskManager task;
+    TaskManager task;
     veve.clear();
-    auto ptr = task.AddNewTask< CTekitou2<int, CExclusiveTaskBase> >(1);
-    auto ptr2 = task.AddNewTask< CTekitou2<int, CTaskBase> >(2);
+    auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
+    auto ptr2 = task.AddNewTask< CTekitou2<int, TaskBase> >(2);
     //modify veve
     task.Execute(0);
     task.Execute(1);
     IUTEST_ASSERT_EQ(1, veve[0]);
     IUTEST_ASSERT_EQ(1, veve[1]);
 }
-IUTEST(GTFTest, RunOrder2)
+IUTEST(gtfTest, RunOrder2)
 {
-    static CTaskManager task;
-    class ct : public CTekitou2 < int, CExclusiveTaskBase >
+    static TaskManager task;
+    class ct : public CTekitou2 < int, ExclusiveTaskBase >
     {
     public:
-        ct(int init) : CTekitou2 < int, CExclusiveTaskBase >(init) {}
+        ct(int init) : CTekitou2 < int, ExclusiveTaskBase >(init) {}
         void Initialize()
         {
-            task.AddTask(new CTekitou2<int, CTaskBase>(2));
+            task.AddTask(new CTekitou2<int, TaskBase>(2));
         }
     };
 
@@ -116,19 +116,19 @@ IUTEST(GTFTest, RunOrder2)
     IUTEST_ASSERT_EQ(2, veve[1]);
 }
 
-IUTEST(GTFTest, Draw1)
+IUTEST(gtfTest, Draw1)
 {
-    static CTaskManager task;
-    class ct2 : public CTekitou2 < int, CExclusiveTaskBase >
+    static TaskManager task;
+    class ct2 : public CTekitou2 < int, ExclusiveTaskBase >
     {
     public:
-        ct2(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+        ct2(int init) : CTekitou2 < int, ExclusiveTaskBase >(init)
         {
 
         }
         void Initialize()
         {
-            task.AddNewTask< CTekitou<int, CTaskBase> >(hogehoge + 1);
+            task.AddNewTask< CTekitou<int, TaskBase> >(hogehoge + 1);
         }
     };
 
@@ -144,13 +144,13 @@ IUTEST(GTFTest, Draw1)
 
     IUTEST_ASSERT_EQ(513, veve[0]);
 }
-IUTEST(GTFTest, Draw2)
+IUTEST(gtfTest, Draw2)
 {
-    static CTaskManager task;
-    class ct2 : public CTekitou2 < int, CExclusiveTaskBase >
+    static TaskManager task;
+    class ct2 : public CTekitou2 < int, ExclusiveTaskBase >
     {
     public:
-        ct2(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+        ct2(int init) : CTekitou2 < int, ExclusiveTaskBase >(init)
         {
 
         }
@@ -172,19 +172,19 @@ IUTEST(GTFTest, Draw2)
 
     IUTEST_ASSERT_EQ(3, veve[0]);
 }
-IUTEST(GTFTest, DrawFallthrough)
+IUTEST(gtfTest, DrawFallthrough)
 {
-    static CTaskManager task;
-    class ct2 : public CTekitou2 < int, CExclusiveTaskBase, bool >
+    static TaskManager task;
+    class ct2 : public CTekitou2 < int, ExclusiveTaskBase, bool >
     {
     public:
-        ct2(int init) : CTekitou2 < int, CExclusiveTaskBase, bool >(init, true)
+        ct2(int init) : CTekitou2 < int, ExclusiveTaskBase, bool >(init, true)
         {
 
         }
         void Initialize()
         {
-            task.AddNewTask< CTekitou<int, CTaskBase> >(hogehoge + 1);
+            task.AddNewTask< CTekitou<int, TaskBase> >(hogehoge + 1);
         }
     };
 
@@ -201,19 +201,19 @@ IUTEST(GTFTest, DrawFallthrough)
     IUTEST_ASSERT_EQ(3, veve[0]);
 }
 
-IUTEST(GTFTest, TaskDependency)
+IUTEST(gtfTest, TaskDependency)
 {
-    static CTaskManager task;
-    class ct : public CTekitou2 < int, CExclusiveTaskBase >
+    static TaskManager task;
+    class ct : public CTekitou2 < int, ExclusiveTaskBase >
     {
     public:
-        ct(int init) : CTekitou2 < int, CExclusiveTaskBase >(init)
+        ct(int init) : CTekitou2 < int, ExclusiveTaskBase >(init)
         {
 
         }
         void Initialize()
         {
-            task.AddNewTask< CTekitou2<int, CTaskBase> >(hogehoge + 20);
+            task.AddNewTask< CTekitou2<int, TaskBase> >(hogehoge + 20);
         }
         virtual bool Inactivate(unsigned int /* nextTaskID */){ return true; }//!< 他の排他タスクが開始したときに呼ばれる
     };
@@ -238,27 +238,27 @@ IUTEST(GTFTest, TaskDependency)
     IUTEST_ASSERT_EQ(4, veve[8]);
     IUTEST_ASSERT_EQ(4 + 20, veve[9]);
 }
-IUTEST(GTFTest, ReuseContainer)
+IUTEST(gtfTest, ReuseContainer)
 {
-    CTaskManager task;
-    auto ptr = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-    auto ptr2 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
+    TaskManager task;
+    auto ptr = task.AddTask(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr2 = task.AddTask(static_cast<TaskBase*>(new CTekitou<int, ExclusiveTaskBase>(1))).lock();
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr2->GetID()).lock().get(), (void*)ptr2.get());
 
     task.Destroy();
     task.Execute(0);
     IUTEST_ASSERT_EQ((void*)task.GetTopExclusiveTask().lock().get(), (void*)nullptr);
 
-    auto ptr3 = task.AddTask(new CTekitou<int, CExclusiveTaskBase>(1)).lock();
-    auto ptr4 = task.AddTask(static_cast<CTaskBase*>(new CTekitou<int, CExclusiveTaskBase>(1))).lock();
+    auto ptr3 = task.AddTask(new CTekitou<int, ExclusiveTaskBase>(1)).lock();
+    auto ptr4 = task.AddTask(static_cast<TaskBase*>(new CTekitou<int, ExclusiveTaskBase>(1))).lock();
     task.Execute(0);
     IUTEST_ASSERT_NE((void*)task.FindTask(ptr4->GetID()).lock().get(), (void*)ptr4.get());
 }
-IUTEST(GTFTest, ExTaskSelfDeestruct)
+IUTEST(gtfTest, ExTaskSelfDeestruct)
 {
-    CTaskManager task;
+    TaskManager task;
     veve.clear();
-    auto ptr = task.AddNewTask< CTekitou2<int, CExclusiveTaskBase> >(1);
+    auto ptr = task.AddNewTask< CTekitou2<int, ExclusiveTaskBase> >(1);
     task.Execute(0);
     auto ptr2 = task.AddNewTask< CExTaskSelfDestruct<int> >(2);
     task.Execute(0);

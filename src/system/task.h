@@ -30,13 +30,13 @@
 *	@defgroup Tasks
 *	@brief タスク
 *
-*	CTaskBaseを継承したクラスは、メインループから呼ばれる更新・描画処理関数を持っています。
+*	TaskBaseを継承したクラスは、メインループから呼ばれる更新・描画処理関数を持っています。
 *	システムはこのクラスのリストを持っています。
 *	タイトル・キャラセレ・試合 などのゲームの状態の変更は、
 *	これらタスククラスの切り替えによって行われます。
 */
 
-namespace GTF
+namespace gtf
 {
     using namespace std;
 
@@ -47,10 +47,10 @@ namespace GTF
     *	・Executeでfalseを返すと破棄される
     *	・親の排他タスクが変更されたとき、破棄される
     */
-    class CTaskBase
+    class TaskBase
     {
     public:
-        virtual ~CTaskBase(){}
+        virtual ~TaskBase(){}
         virtual void Initialize(){}							//!< ExecuteまたはDrawがコールされる前に1度だけコールされる
         virtual bool Execute(double /* elapsedTime */)
                             {return(true);}					//!< 毎フレームコールされる
@@ -72,11 +72,11 @@ namespace GTF
     *	・通常タスクとの親子関係を持つ。
     *	・AddTask実行後、一度Executeが実行されるまで追加が保留される。その後に追加された通常タスクは子タスクとなる。
     */
-    class CExclusiveTaskBase : public CTaskBase
+    class ExclusiveTaskBase : public TaskBase
     {
     public:
-        explicit CExclusiveTaskBase(bool fallthroughDraw = false) NOEXCEPT : isFallthroughDraw(fallthroughDraw) {}
-        virtual ~CExclusiveTaskBase(){}
+        explicit ExclusiveTaskBase(bool fallthroughDraw = false) NOEXCEPT : isFallthroughDraw(fallthroughDraw) {}
+        virtual ~ExclusiveTaskBase(){}
         virtual void Activate(unsigned int /* prvTaskID */){}				//!< Executeが再開されるときに呼ばれる
         virtual bool Inactivate(unsigned int /* nextTaskID */){return true;}//!< 他の排他タスクが開始したときに呼ばれる
 
@@ -96,7 +96,7 @@ namespace GTF
     *	・基本タスクと違い、排他タスクが変更されても破棄されない
     *	・Enabledでないときには Execute , WndMessage をコールしない
     */
-    class CBackgroundTaskBase : public CTaskBase
+    class CBackgroundTaskBase : public TaskBase
     {
     public:
         virtual ~CBackgroundTaskBase(){}
@@ -123,23 +123,24 @@ namespace GTF
     *	実行時型情報(RTTIと表記される場合もある)をONにすること。
     */
 
-    class CTaskManager
+    class TaskManager
     {
-    public:
-        CTaskManager();
-        ~CTaskManager(){Destroy();}
 
-        using TaskPtr = weak_ptr<CTaskBase>;
-        using ExTaskPtr = weak_ptr<CExclusiveTaskBase>;
+    public:
+        TaskManager();
+        ~TaskManager(){Destroy();}
+
+        using TaskPtr = weak_ptr<TaskBase>;
+        using ExTaskPtr = weak_ptr<ExclusiveTaskBase>;
         using BgTaskPtr = weak_ptr<CBackgroundTaskBase>;
 
         void Destroy();
 
-        //! deprecated:please use AddNewTask function instead
-        //! 追加したタスクはCTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        [[deprecated("please use AddNewTask function instead")]]
-        TaskPtr AddTask(CTaskBase *newTask);		        //!< タスク追加
-        ExTaskPtr AddTask(CExclusiveTaskBase *newTask);     //!< 排他タスク追加
+        //! deprecated:please use AddNewTask<ClassType, ...> method instead
+        //! 追加したタスクはTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+        [[deprecated("please use AddNewTask<ClassType, ...> method instead")]]
+        TaskPtr AddTask(TaskBase *newTask);		        //!< タスク追加
+        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     //!< 排他タスク追加
         BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< 常駐タスク追加
         void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
         void RevertExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
@@ -154,7 +155,7 @@ namespace GTF
         template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
                 integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
-                is_base_of<CExclusiveTaskBase, C>::value
+                is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
         {
@@ -163,14 +164,14 @@ namespace GTF
         template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
-                !is_base_of<CExclusiveTaskBase, C>::value
+                !is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
         {
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(forward<A>(args)...)).lock());
         }
 
-        //! deprecated:please use FindTask<ClassType> function instead
+        //! deprecated:please use FindTask<ClassType> method instead
         //!指定IDの通常タスク取得
         TaskPtr FindTask(unsigned int id) const
         {
@@ -178,7 +179,7 @@ namespace GTF
             return (result != indices.end()) ? result->second : TaskPtr();
         }
 
-        //! deprecated:please use FindTask<ClassType> function instead
+        //! deprecated:please use FindTask<ClassType> method instead
         //!指定IDの常駐タスク取得
         BgTaskPtr FindBGTask(unsigned int id) const
         {
@@ -197,27 +198,27 @@ namespace GTF
 
         //!< 排他タスクが全部なくなっちゃったかどうか
         bool ExEmpty() const    {
-            return ex_stack.empty();
+            return ex_stack.size() <= 1;
         }
 
         //デバッグ
         void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
 
-    protected:
-        using TaskList = list<shared_ptr<CTaskBase>>;
+    private:
+        using TaskList = list<shared_ptr<TaskBase>>;
         using BgTaskList = list<shared_ptr<CBackgroundTaskBase>>;
         using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
 
         struct ExTaskInfo {
-            const shared_ptr<CExclusiveTaskBase> value;		//!< 排他タスクのポインタ
+            const shared_ptr<ExclusiveTaskBase> value;		//!< 排他タスクのポインタ
             const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
             DrawPriorityMap drawList;						//!< Draw順ソート用コンテナ。排他タスク自身や、DrawFallthrough時は一つ下の階層のDrawリストも含まれる。
 
-            ExTaskInfo(shared_ptr<CExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
+            ExTaskInfo(shared_ptr<ExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
                 : value(source), SubTaskStartPos(startPos)
             {
             }
-            ExTaskInfo(shared_ptr<CExclusiveTaskBase>&& source, TaskList::iterator startPos) NOEXCEPT
+            ExTaskInfo(shared_ptr<ExclusiveTaskBase>&& source, TaskList::iterator startPos) NOEXCEPT
                 : value(move(source)), SubTaskStartPos(startPos)
             {
             }
@@ -225,7 +226,7 @@ namespace GTF
         };
         using ExTaskStack = deque<ExTaskInfo>;
 
-        TaskPtr AddTaskGuaranteed(CTaskBase *newTask);		        //!< タスク追加（エラー検出無し）
+        TaskPtr AddTaskGuaranteed(TaskBase *newTask);		        //!< タスク追加（エラー検出無し）
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
 
         //! ログ出力
@@ -234,11 +235,10 @@ namespace GTF
             // Not Implemented
         }
 
-    private:
         template<class T,
             typename enable_if<
                 integral_constant<bool, !is_base_of<CBackgroundTaskBase, T>::value &&
-                !is_base_of<CExclusiveTaskBase, T>::value
+                !is_base_of<ExclusiveTaskBase, T>::value
                 >::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
@@ -285,7 +285,7 @@ namespace GTF
         BgTaskList bg_tasks;						//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
-        shared_ptr<CExclusiveTaskBase> exNext = nullptr;		//!< 現在フレームでAddされた排他タスク
+        shared_ptr<ExclusiveTaskBase> exNext = nullptr;		//!< 現在フレームでAddされた排他タスク
         DrawPriorityMap drawListBG;					//!< Draw順ソート用コンテナ（常駐タスク）
         unordered_map<unsigned int, TaskPtr> indices;
         unordered_map<unsigned int, BgTaskPtr> bg_indices;
@@ -294,6 +294,6 @@ namespace GTF
 
 }
 
-#ifdef GTF_HEADER_ONLY
+#ifdef gtf_HEADER_ONLY
 #   include "task.cpp"
 #endif
