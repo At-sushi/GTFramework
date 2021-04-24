@@ -75,7 +75,7 @@ namespace GTF
     class CExclusiveTaskBase : public CTaskBase
     {
     public:
-        CExclusiveTaskBase(bool fallthroughDraw = false) NOEXCEPT : isFallthroughDraw(fallthroughDraw) {}
+        explicit CExclusiveTaskBase(bool fallthroughDraw = false) NOEXCEPT : isFallthroughDraw(fallthroughDraw) {}
         virtual ~CExclusiveTaskBase(){}
         virtual void Activate(unsigned int /* prvTaskID */){}				//!< Executeが再開されるときに呼ばれる
         virtual bool Inactivate(unsigned int /* nextTaskID */){return true;}//!< 他の排他タスクが開始したときに呼ばれる
