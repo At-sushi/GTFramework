@@ -106,7 +106,7 @@ namespace gtf
         void Disable() NOEXCEPT { m_isEnabled = false; }
 
     private:
-        bool m_isEnabled=true;
+        bool m_isEnabled = true;
     };
 
 
