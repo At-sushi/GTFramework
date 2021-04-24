@@ -96,10 +96,10 @@ namespace gtf
     *	・基本タスクと違い、排他タスクが変更されても破棄されない
     *	・Enabledでないときには Execute , WndMessage をコールしない
     */
-    class CBackgroundTaskBase : public TaskBase
+    class BackgroundTaskBase : public TaskBase
     {
     public:
-        virtual ~CBackgroundTaskBase(){}
+        virtual ~BackgroundTaskBase(){}
 
         bool IsEnabled() const NOEXCEPT { return m_isEnabled; }
         void Enable() NOEXCEPT { m_isEnabled = true; }
@@ -132,16 +132,10 @@ namespace gtf
 
         using TaskPtr = weak_ptr<TaskBase>;
         using ExTaskPtr = weak_ptr<ExclusiveTaskBase>;
-        using BgTaskPtr = weak_ptr<CBackgroundTaskBase>;
+        using BgTaskPtr = weak_ptr<BackgroundTaskBase>;
 
         void Destroy();
 
-        //! deprecated:please use AddNewTask<ClassType, ...> method instead
-        //! 追加したタスクはTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
-        [[deprecated("please use AddNewTask<ClassType, ...> method instead")]]
-        TaskPtr AddTask(TaskBase *newTask);		        //!< タスク追加
-        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     //!< 排他タスク追加
-        BgTaskPtr AddTask(CBackgroundTaskBase *newTask);    //!< 常駐タスク追加
         void RemoveTaskByID(unsigned int id);				//!< 指定IDを持つタスクの除去　※注：Exclusiveタスクはチェックしない
         void RevertExclusiveTaskByID(unsigned int id);		//!< 指定IDの排他タスクまでTerminate/popする
 
@@ -154,7 +148,7 @@ namespace gtf
         //! タスクの自動生成
         template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
-                integral_constant<bool, is_base_of<CBackgroundTaskBase, C>::value ||
+                integral_constant<bool, is_base_of<BackgroundTaskBase, C>::value ||
                 is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
@@ -163,28 +157,12 @@ namespace gtf
         }
         template <class C, typename... A, class PC = shared_ptr<C>,
             typename enable_if<
-                integral_constant<bool, !is_base_of<CBackgroundTaskBase, C>::value &&
+                integral_constant<bool, !is_base_of<BackgroundTaskBase, C>::value &&
                 !is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
         {
             return static_pointer_cast<C>(AddTaskGuaranteed(new C(forward<A>(args)...)).lock());
-        }
-
-        //! deprecated:please use FindTask<ClassType> method instead
-        //!指定IDの通常タスク取得
-        TaskPtr FindTask(unsigned int id) const
-        {
-            const auto result = indices.find(id);
-            return (result != indices.end()) ? result->second : TaskPtr();
-        }
-
-        //! deprecated:please use FindTask<ClassType> method instead
-        //!指定IDの常駐タスク取得
-        BgTaskPtr FindBGTask(unsigned int id) const
-        {
-            const auto result = bg_indices.find(id);
-            return (result != bg_indices.end()) ? result->second : BgTaskPtr();
         }
 
         //! 任意のクラス型のタスクを取得（通常・常駐兼用）
@@ -206,8 +184,26 @@ namespace gtf
 
     private:
         using TaskList = list<shared_ptr<TaskBase>>;
-        using BgTaskList = list<shared_ptr<CBackgroundTaskBase>>;
+        using BgTaskList = list<shared_ptr<BackgroundTaskBase>>;
         using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
+
+        //! 追加したタスクはTaskManager内部で自動的に破棄されるので、呼び出し側でdeleteしないこと。
+        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     //!< 排他タスク追加
+        BgTaskPtr AddTask(BackgroundTaskBase *newTask);    //!< 常駐タスク追加
+
+        //!指定IDの通常タスク取得
+        TaskPtr FindTask(unsigned int id) const
+        {
+            const auto result = indices.find(id);
+            return (result != indices.end()) ? result->second : TaskPtr();
+        }
+
+        //!指定IDの常駐タスク取得
+        BgTaskPtr FindBGTask(unsigned int id) const
+        {
+            const auto result = bg_indices.find(id);
+            return (result != bg_indices.end()) ? result->second : BgTaskPtr();
+        }
 
         struct ExTaskInfo {
             const shared_ptr<ExclusiveTaskBase> value;		//!< 排他タスクのポインタ
@@ -237,14 +233,14 @@ namespace gtf
 
         template<class T,
             typename enable_if<
-                integral_constant<bool, !is_base_of<CBackgroundTaskBase, T>::value &&
+                integral_constant<bool, !is_base_of<BackgroundTaskBase, T>::value &&
                 !is_base_of<ExclusiveTaskBase, T>::value
                 >::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
-        template<class T, typename enable_if<is_base_of<CBackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
+        template<class T, typename enable_if<is_base_of<BackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);

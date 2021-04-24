@@ -37,32 +37,11 @@ namespace gtf
         exNext = nullptr;
     }
 
-
-    TaskManager::TaskPtr TaskManager::AddTask(TaskBase *newTask)
-    {
-        assert(newTask);
-
-        ExclusiveTaskBase *pext = dynamic_cast<ExclusiveTaskBase*>(newTask);
-        if (pext){
-            //排他タスクとしてAdd
-            return AddTask(pext);
-        }
-
-        CBackgroundTaskBase *pbgt = dynamic_cast<CBackgroundTaskBase*>(newTask);
-        if (pbgt){
-            //常駐タスクとしてAdd
-            return AddTask(pbgt);
-        }
-
-        //通常タスクとしてAdd
-        return AddTaskGuaranteed(newTask);
-    }
-
     TaskManager::TaskPtr TaskManager::AddTaskGuaranteed(TaskBase *newTask)
     {
         assert(newTask);
         assert(dynamic_cast<ExclusiveTaskBase*>(newTask) == nullptr);
-        assert(dynamic_cast<CBackgroundTaskBase*>(newTask) == nullptr);
+        assert(dynamic_cast<BackgroundTaskBase*>(newTask) == nullptr);
 
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
@@ -94,7 +73,7 @@ namespace gtf
         return exNext;
     }
 
-    TaskManager::BgTaskPtr TaskManager::AddTask(CBackgroundTaskBase *newTask)
+    TaskManager::BgTaskPtr TaskManager::AddTask(BackgroundTaskBase *newTask)
     {
         if (newTask->GetID() != 0){
             RemoveTaskByID(newTask->GetID());
