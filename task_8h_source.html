@@ -1,0 +1,347 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GTFramework: D:/Git/GTFramework/src/system/task.h ソースファイル</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">GTFramework
+   &#160;<span id="projectnumber">1.50a</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 構築: Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'検索','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','検索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_501bdb11da9e3ff85a05ee91b220e720.html">Git</a></li><li class="navelem"><a class="el" href="dir_3b449db933fdac946414ca9fb6996231.html">GTFramework</a></li><li class="navelem"><a class="el" href="dir_f48f71dc570c0e856d27d5d4fbdfaa67.html">src</a></li><li class="navelem"><a class="el" href="dir_06cc7a1669064a4c90fa1ab7b783a8ce.html">system</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">task.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="task_8h.html">[詳解]</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;deque&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;list&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#ifdef __clang__</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#   if !__has_feature(cxx_noexcept)</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#       define NOEXCEPT</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#   else</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#       define NOEXCEPT noexcept</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#   endif</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#elif (defined(_MSC_FULL_VER) &amp;&amp; _MSC_FULL_VER &lt; 190023026) || (defined(__GNUC__) &amp;&amp; (__GNUC__ &lt; 4 || (__GNUC__ == 4 &amp;&amp; __GNUC_MINOR__ &lt; 6) || !defined(__GXX_EXPERIMENTAL_CXX0X__)))</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define NOEXCEPT</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">   26</a></span>&#160;<span class="preprocessor">#define NOEXCEPT noexcept</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegtf.html">gtf</a></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html">   50</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classgtf_1_1_task_base.html">TaskBase</a></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#a40bd68aa779500da26e2702e9c0117e4">   53</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classgtf_1_1_task_base.html#a40bd68aa779500da26e2702e9c0117e4">~TaskBase</a>(){}</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#a2d7835819d65fe8f28a8170526ac05b2">   54</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_task_base.html#a2d7835819d65fe8f28a8170526ac05b2">Initialize</a>(){}                         </div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#a40707afcafb85cfe29550edf7546eaa4">   55</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classgtf_1_1_task_base.html#a40707afcafb85cfe29550edf7546eaa4">Execute</a>(<span class="keywordtype">double</span> <span class="comment">/* elapsedTime */</span>)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                            {<span class="keywordflow">return</span>(<span class="keyword">true</span>);}                 </div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#afc26057eb9175ccc2c0eb89276b6e785">   57</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_task_base.html#afc26057eb9175ccc2c0eb89276b6e785">Terminate</a>(){}                          </div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#ab89c2fd66a1624a4c6ddd40fad926db8">   58</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_task_base.html#ab89c2fd66a1624a4c6ddd40fad926db8">Draw</a>(){}                               </div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#ac948a36bed0f2a12b4f16006684446a1">   59</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classgtf_1_1_task_base.html#ac948a36bed0f2a12b4f16006684446a1">GetID</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 0; }    </div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_base.html#a39a388e7185637cbabd5348e86d0165a">   60</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">int</span> <a class="code" href="classgtf_1_1_task_base.html#a39a388e7185637cbabd5348e86d0165a">GetDrawPriority</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> -1; }  </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    };</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html">   75</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classgtf_1_1_exclusive_task_base.html">ExclusiveTaskBase</a> : <span class="keyword">public</span> <a class="code" href="classgtf_1_1_task_base.html">TaskBase</a></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    {</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#abf135065c04c91e36ddbd5daabbc883a">   78</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#abf135065c04c91e36ddbd5daabbc883a">ExclusiveTaskBase</a>(<span class="keywordtype">bool</span> fallthroughDraw = <span class="keyword">false</span>) <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a> : isFallthroughDraw(fallthroughDraw) {}</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#a7102d36aacdada151693999339ea1d98">   79</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#a7102d36aacdada151693999339ea1d98">~ExclusiveTaskBase</a>(){}</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#a2317bfd4bde9ef087f007bbb882cd812">   80</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#a2317bfd4bde9ef087f007bbb882cd812">Activate</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="comment">/* prvTaskID */</span>){}               </div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#ad883a9bdb843f39a4fa531d3188856fb">   81</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#ad883a9bdb843f39a4fa531d3188856fb">Inactivate</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="comment">/* nextTaskID */</span>){<span class="keywordflow">return</span> <span class="keyword">true</span>;}</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#a001e50428abd49a8d95d786b9f9e2843">   83</a></span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">int</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#a001e50428abd49a8d95d786b9f9e2843">GetDrawPriority</a>()<span class="keyword"> const override </span>{<span class="keywordflow">return</span> 0;}                </div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="classgtf_1_1_exclusive_task_base.html#aade4e84c243f5987d79d38315cfa1ffb">   84</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classgtf_1_1_exclusive_task_base.html#aade4e84c243f5987d79d38315cfa1ffb">IsFallthroughDraw</a>() const <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a> { <span class="keywordflow">return</span> isFallthroughDraw; }       </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">bool</span> isFallthroughDraw = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    };</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classgtf_1_1_background_task_base.html">   99</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classgtf_1_1_background_task_base.html">BackgroundTaskBase</a> : <span class="keyword">public</span> <a class="code" href="classgtf_1_1_task_base.html">TaskBase</a></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="classgtf_1_1_background_task_base.html#a170d05735fbeb23965dfd4e8893fbe9d">  102</a></span>&#160;        <span class="keyword">virtual</span> <a class="code" href="classgtf_1_1_background_task_base.html#a170d05735fbeb23965dfd4e8893fbe9d">~BackgroundTaskBase</a>(){}</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classgtf_1_1_background_task_base.html#a27c0a28a2c13d632fd4e8b33a8111135">  104</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classgtf_1_1_background_task_base.html#a27c0a28a2c13d632fd4e8b33a8111135">IsEnabled</a>() const <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a> { <span class="keywordflow">return</span> m_isEnabled; }</div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classgtf_1_1_background_task_base.html#aaefff883672a428173c13f758418aec9">  105</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_background_task_base.html#aaefff883672a428173c13f758418aec9">Enable</a>() <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a> { m_isEnabled = <span class="keyword">true</span>; }</div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="classgtf_1_1_background_task_base.html#a7772b1204d19ece7935c36cef71497b2">  106</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classgtf_1_1_background_task_base.html#a7772b1204d19ece7935c36cef71497b2">Disable</a>() <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a> { m_isEnabled = <span class="keyword">false</span>; }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordtype">bool</span> m_isEnabled = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    };</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html">  126</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classgtf_1_1_task_manager.html">TaskManager</a></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    {</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <a class="code" href="classgtf_1_1_task_manager.html">TaskManager</a>();</div>
+<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#a403140c93d3265985944a972e81da9ab">  131</a></span>&#160;        <a class="code" href="classgtf_1_1_task_manager.html#a403140c93d3265985944a972e81da9ab">~TaskManager</a>(){Destroy();}</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#accf17afdbc65c158a925b1ebc528a5e5">  133</a></span>&#160;        <span class="keyword">using</span> <a class="code" href="classgtf_1_1_task_manager.html#accf17afdbc65c158a925b1ebc528a5e5">TaskPtr</a> = weak_ptr&lt;TaskBase&gt;;</div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#aa9f3a156dc0045c2e892c93936064112">  134</a></span>&#160;        <span class="keyword">using</span> <a class="code" href="classgtf_1_1_task_manager.html#aa9f3a156dc0045c2e892c93936064112">ExTaskPtr</a> = weak_ptr&lt;ExclusiveTaskBase&gt;;</div>
+<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#a9c71bf965d696ee5a082caec78d7409d">  135</a></span>&#160;        <span class="keyword">using</span> <a class="code" href="classgtf_1_1_task_manager.html#a9c71bf965d696ee5a082caec78d7409d">BgTaskPtr</a> = weak_ptr&lt;BackgroundTaskBase&gt;;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keywordtype">void</span> Destroy();</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordtype">void</span> RemoveTaskByID(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>);               </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordtype">void</span> RevertExclusiveTaskByID(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>);      </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#a3cd0054d0de727c5701d7562dedaa301">  143</a></span>&#160;        <a class="code" href="classgtf_1_1_task_manager.html#aa9f3a156dc0045c2e892c93936064112">ExTaskPtr</a> <a class="code" href="classgtf_1_1_task_manager.html#a3cd0054d0de727c5701d7562dedaa301">GetTopExclusiveTask</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            <span class="keywordflow">return</span> ex_stack.back().value;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">class </span>C, <span class="keyword">typename</span>... A, <span class="keyword">class </span>PC = shared_ptr&lt;C&gt;,</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <span class="keyword">typename</span> enable_if&lt;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                integral_constant&lt;bool, is_base_of&lt;BackgroundTaskBase, C&gt;::value ||</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                is_base_of&lt;ExclusiveTaskBase, C&gt;::value</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                &gt;::value, std::nullptr_t&gt;::type = <span class="keyword">nullptr</span>&gt;</div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4">  154</a></span>&#160;            PC <a class="code" href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4">AddNewTask</a>(A&amp;&amp;... args)</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            <span class="keywordflow">return</span> static_pointer_cast&lt;C&gt;(AddTask(<span class="keyword">new</span> C(forward&lt;A&gt;(args)...)).lock());</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        <span class="keyword">template</span> &lt;<span class="keyword">class </span>C, <span class="keyword">typename</span>... A, <span class="keyword">class </span>PC = shared_ptr&lt;C&gt;,</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <span class="keyword">typename</span> enable_if&lt;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                integral_constant&lt;bool, !is_base_of&lt;BackgroundTaskBase, C&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                !is_base_of&lt;ExclusiveTaskBase, C&gt;::value</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                &gt;::value, std::nullptr_t&gt;::type = <span class="keyword">nullptr</span>&gt;</div>
+<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4">  163</a></span>&#160;            PC <a class="code" href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4">AddNewTask</a>(A&amp;&amp;... args)</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            <span class="keywordflow">return</span> static_pointer_cast&lt;C&gt;(AddTaskGuaranteed(<span class="keyword">new</span> C(forward&lt;A&gt;(args)...)).lock());</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#acc9d7b50b9f069028ad715a059ac8117">  169</a></span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt; shared_ptr&lt;T&gt; <a class="code" href="classgtf_1_1_task_manager.html#acc9d7b50b9f069028ad715a059ac8117">FindTask</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            <span class="keywordflow">return</span> dynamic_pointer_cast&lt;T&gt;(FindTask_impl&lt;T&gt;(<span class="keywordtype">id</span>).lock());</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        }</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordtype">void</span> Execute(<span class="keywordtype">double</span> elapsedTime);                   </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordtype">void</span> Draw();                                        </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00178"></a><span class="lineno"><a class="line" href="classgtf_1_1_task_manager.html#a00f783e438eaf443f521dac6d72c2157">  178</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classgtf_1_1_task_manager.html#a00f783e438eaf443f521dac6d72c2157">ExEmpty</a>()<span class="keyword"> const    </span>{</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            <span class="keywordflow">return</span> ex_stack.size() &lt;= 1;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        }</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        <span class="comment">//デバッグ</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keywordtype">void</span> DebugOutputTaskList();                         </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="keyword">using</span> TaskList = list&lt;shared_ptr&lt;TaskBase&gt;&gt;;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <span class="keyword">using</span> BgTaskList = list&lt;shared_ptr&lt;BackgroundTaskBase&gt;&gt;;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keyword">using</span> DrawPriorityMap = multimap&lt;int, TaskPtr, greater&lt;int&gt;&gt;;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keyword">struct </span>ExTaskInfo {</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            <span class="keyword">const</span> shared_ptr&lt;ExclusiveTaskBase&gt; value;      </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            <span class="keyword">const</span> TaskList::iterator SubTaskStartPos;       </div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            DrawPriorityMap drawList;                       </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;            ExTaskInfo(shared_ptr&lt;ExclusiveTaskBase&gt;&amp; source, TaskList::iterator startPos) <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                : value(source), SubTaskStartPos(startPos)</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            ExTaskInfo(shared_ptr&lt;ExclusiveTaskBase&gt;&amp;&amp; source, TaskList::iterator startPos) <a class="code" href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                : value(move(source)), SubTaskStartPos(startPos)</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            {</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            }</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        };</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keyword">using</span> ExTaskStack = std::deque&lt;ExTaskInfo&gt;;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        ExTaskPtr AddTask(ExclusiveTaskBase *newTask);     </div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        BgTaskPtr AddTask(BackgroundTaskBase *newTask);    </div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        TaskPtr AddTaskGuaranteed(TaskBase *newTask);      </div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        TaskPtr FindTask(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> result = indices.find(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            <span class="keywordflow">return</span> (result != indices.end()) ? result-&gt;second : TaskPtr();</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        }</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        BgTaskPtr FindBGTask(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> result = bg_indices.find(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            <span class="keywordflow">return</span> (result != bg_indices.end()) ? result-&gt;second : BgTaskPtr();</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordtype">void</span> CleanupPartialSubTasks(TaskList::iterator it_task);    </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keywordtype">void</span> OutputLog(<span class="keywordtype">string</span> <span class="comment">/* s */</span>, ...)</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="comment">// Not Implemented</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">class </span>T,</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            <span class="keyword">typename</span> enable_if&lt;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                integral_constant&lt;bool, !is_base_of&lt;BackgroundTaskBase, T&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                !is_base_of&lt;ExclusiveTaskBase, T&gt;::value</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                &gt;::value, std::nullptr_t&gt;::type = <span class="keyword">nullptr</span>&gt;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            TaskPtr FindTask_impl(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            <span class="keywordflow">return</span> FindTask(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        }</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        template&lt;class T, typename enable_if&lt;is_base_of&lt;BackgroundTaskBase, T&gt;::value, std::nullptr_t&gt;::type = <span class="keyword">nullptr</span>&gt;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            BgTaskPtr FindTask_impl(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keyword">        </span>{</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keywordflow">return</span> FindBGTask(<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        }</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">class</span> T, <span class="keyword">typename</span> I = <span class="keyword">typename</span> T::iterator, <span class="keyword">class</span> QI = deque&lt;I&gt;&gt;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keywordtype">void</span> taskExecute(T&amp; tasks, I i, I ied, <span class="keywordtype">double</span> elapsedTime)</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        {</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            QI deleteList;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keywordflow">for</span> (; i != ied; ++i){</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">#ifdef _CATCH_WHILE_EXEC</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;                <span class="keywordflow">try</span>{</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                    <span class="keywordflow">if</span> ((*i)-&gt;Execute(elapsedTime) == <span class="keyword">false</span>)</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                    {</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                        deleteList.push_back(i);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                    }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="preprocessor">#ifdef _CATCH_WHILE_EXEC</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                }</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                <span class="keywordflow">catch</span> (...){</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                    <span class="keywordflow">if</span> (*i == <span class="keyword">nullptr</span>)OutputLog(<span class="stringliteral">&quot;catch while execute1 : NULL&quot;</span>, SYSLOG_ERROR);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                    <span class="keywordflow">else</span> OutputLog(<span class="stringliteral">&quot;catch while execute1 : %X , %s&quot;</span>, *i, <span class="keyword">typeid</span>(**i).name());</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            <span class="comment">//タスクでfalseを返したものを消す</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> I&amp; i : deleteList){</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                (*i)-&gt;Terminate();</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                tasks.erase(i);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            }</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        TaskList tasks;                             </div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        BgTaskList bg_tasks;                        </div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        ExTaskStack ex_stack;                       </div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        shared_ptr&lt;ExclusiveTaskBase&gt; exNext = <span class="keyword">nullptr</span>;     </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        DrawPriorityMap drawListBG;                 </div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        unordered_map&lt;unsigned int, TaskPtr&gt; indices;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        unordered_map&lt;unsigned int, BgTaskPtr&gt; bg_indices;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    };</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;}</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="preprocessor">#ifdef gtf_HEADER_ONLY</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="preprocessor">#   include &quot;<a class="code" href="task_8cpp.html">task.cpp</a>&quot;</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassgtf_1_1_background_task_base_html"><div class="ttname"><a href="classgtf_1_1_background_task_base.html">gtf::BackgroundTaskBase</a></div><div class="ttdoc">常駐タスク</div><div class="ttdef"><b>Definition:</b> task.h:100</div></div>
+<div class="ttc" id="aclassgtf_1_1_background_task_base_html_a170d05735fbeb23965dfd4e8893fbe9d"><div class="ttname"><a href="classgtf_1_1_background_task_base.html#a170d05735fbeb23965dfd4e8893fbe9d">gtf::BackgroundTaskBase::~BackgroundTaskBase</a></div><div class="ttdeci">virtual ~BackgroundTaskBase()</div><div class="ttdef"><b>Definition:</b> task.h:102</div></div>
+<div class="ttc" id="aclassgtf_1_1_background_task_base_html_a27c0a28a2c13d632fd4e8b33a8111135"><div class="ttname"><a href="classgtf_1_1_background_task_base.html#a27c0a28a2c13d632fd4e8b33a8111135">gtf::BackgroundTaskBase::IsEnabled</a></div><div class="ttdeci">bool IsEnabled() const NOEXCEPT</div><div class="ttdef"><b>Definition:</b> task.h:104</div></div>
+<div class="ttc" id="aclassgtf_1_1_background_task_base_html_a7772b1204d19ece7935c36cef71497b2"><div class="ttname"><a href="classgtf_1_1_background_task_base.html#a7772b1204d19ece7935c36cef71497b2">gtf::BackgroundTaskBase::Disable</a></div><div class="ttdeci">void Disable() NOEXCEPT</div><div class="ttdef"><b>Definition:</b> task.h:106</div></div>
+<div class="ttc" id="aclassgtf_1_1_background_task_base_html_aaefff883672a428173c13f758418aec9"><div class="ttname"><a href="classgtf_1_1_background_task_base.html#aaefff883672a428173c13f758418aec9">gtf::BackgroundTaskBase::Enable</a></div><div class="ttdeci">void Enable() NOEXCEPT</div><div class="ttdef"><b>Definition:</b> task.h:105</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html">gtf::ExclusiveTaskBase</a></div><div class="ttdoc">排他タスク? =ゲームのシーンと考えてください。</div><div class="ttdef"><b>Definition:</b> task.h:76</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_a001e50428abd49a8d95d786b9f9e2843"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#a001e50428abd49a8d95d786b9f9e2843">gtf::ExclusiveTaskBase::GetDrawPriority</a></div><div class="ttdeci">virtual int GetDrawPriority() const override</div><div class="ttdoc">描画プライオリティ取得メソッド</div><div class="ttdef"><b>Definition:</b> task.h:83</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_a2317bfd4bde9ef087f007bbb882cd812"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#a2317bfd4bde9ef087f007bbb882cd812">gtf::ExclusiveTaskBase::Activate</a></div><div class="ttdeci">virtual void Activate(unsigned int)</div><div class="ttdoc">Executeが再開されるときに呼ばれる</div><div class="ttdef"><b>Definition:</b> task.h:80</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_a7102d36aacdada151693999339ea1d98"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#a7102d36aacdada151693999339ea1d98">gtf::ExclusiveTaskBase::~ExclusiveTaskBase</a></div><div class="ttdeci">virtual ~ExclusiveTaskBase()</div><div class="ttdef"><b>Definition:</b> task.h:79</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_aade4e84c243f5987d79d38315cfa1ffb"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#aade4e84c243f5987d79d38315cfa1ffb">gtf::ExclusiveTaskBase::IsFallthroughDraw</a></div><div class="ttdeci">bool IsFallthroughDraw() const NOEXCEPT</div><div class="ttdoc">一つ下の階層のタスクのDrawを実行するかどうか</div><div class="ttdef"><b>Definition:</b> task.h:84</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_abf135065c04c91e36ddbd5daabbc883a"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#abf135065c04c91e36ddbd5daabbc883a">gtf::ExclusiveTaskBase::ExclusiveTaskBase</a></div><div class="ttdeci">ExclusiveTaskBase(bool fallthroughDraw=false) NOEXCEPT</div><div class="ttdef"><b>Definition:</b> task.h:78</div></div>
+<div class="ttc" id="aclassgtf_1_1_exclusive_task_base_html_ad883a9bdb843f39a4fa531d3188856fb"><div class="ttname"><a href="classgtf_1_1_exclusive_task_base.html#ad883a9bdb843f39a4fa531d3188856fb">gtf::ExclusiveTaskBase::Inactivate</a></div><div class="ttdeci">virtual bool Inactivate(unsigned int)</div><div class="ttdoc">他の排他タスクが開始したときに呼ばれる</div><div class="ttdef"><b>Definition:</b> task.h:81</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html"><div class="ttname"><a href="classgtf_1_1_task_base.html">gtf::TaskBase</a></div><div class="ttdoc">基本タスク</div><div class="ttdef"><b>Definition:</b> task.h:51</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_a2d7835819d65fe8f28a8170526ac05b2"><div class="ttname"><a href="classgtf_1_1_task_base.html#a2d7835819d65fe8f28a8170526ac05b2">gtf::TaskBase::Initialize</a></div><div class="ttdeci">virtual void Initialize()</div><div class="ttdoc">ExecuteまたはDrawがコールされる前に1度だけコールされる</div><div class="ttdef"><b>Definition:</b> task.h:54</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_a39a388e7185637cbabd5348e86d0165a"><div class="ttname"><a href="classgtf_1_1_task_base.html#a39a388e7185637cbabd5348e86d0165a">gtf::TaskBase::GetDrawPriority</a></div><div class="ttdeci">virtual int GetDrawPriority() const</div><div class="ttdoc">描画プライオリティ。低いほど後順に（手前に）Draw処理。マイナスならば表示しない</div><div class="ttdef"><b>Definition:</b> task.h:60</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_a40707afcafb85cfe29550edf7546eaa4"><div class="ttname"><a href="classgtf_1_1_task_base.html#a40707afcafb85cfe29550edf7546eaa4">gtf::TaskBase::Execute</a></div><div class="ttdeci">virtual bool Execute(double)</div><div class="ttdoc">毎フレームコールされる</div><div class="ttdef"><b>Definition:</b> task.h:55</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_a40bd68aa779500da26e2702e9c0117e4"><div class="ttname"><a href="classgtf_1_1_task_base.html#a40bd68aa779500da26e2702e9c0117e4">gtf::TaskBase::~TaskBase</a></div><div class="ttdeci">virtual ~TaskBase()</div><div class="ttdef"><b>Definition:</b> task.h:53</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_ab89c2fd66a1624a4c6ddd40fad926db8"><div class="ttname"><a href="classgtf_1_1_task_base.html#ab89c2fd66a1624a4c6ddd40fad926db8">gtf::TaskBase::Draw</a></div><div class="ttdeci">virtual void Draw()</div><div class="ttdoc">描画時にコールされる</div><div class="ttdef"><b>Definition:</b> task.h:58</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_ac948a36bed0f2a12b4f16006684446a1"><div class="ttname"><a href="classgtf_1_1_task_base.html#ac948a36bed0f2a12b4f16006684446a1">gtf::TaskBase::GetID</a></div><div class="ttdeci">virtual unsigned int GetID() const</div><div class="ttdoc">0以外を返すようにした場合、マネージャに同じIDを持つタスクがAddされたとき破棄される</div><div class="ttdef"><b>Definition:</b> task.h:59</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_base_html_afc26057eb9175ccc2c0eb89276b6e785"><div class="ttname"><a href="classgtf_1_1_task_base.html#afc26057eb9175ccc2c0eb89276b6e785">gtf::TaskBase::Terminate</a></div><div class="ttdeci">virtual void Terminate()</div><div class="ttdoc">タスクのリストから外されるときにコールされる（その直後、deleteされる）</div><div class="ttdef"><b>Definition:</b> task.h:57</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html"><div class="ttname"><a href="classgtf_1_1_task_manager.html">gtf::TaskManager</a></div><div class="ttdoc">タスク管理クラス</div><div class="ttdef"><b>Definition:</b> task.h:127</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_a00f783e438eaf443f521dac6d72c2157"><div class="ttname"><a href="classgtf_1_1_task_manager.html#a00f783e438eaf443f521dac6d72c2157">gtf::TaskManager::ExEmpty</a></div><div class="ttdeci">bool ExEmpty() const</div><div class="ttdef"><b>Definition:</b> task.h:178</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_a3cd0054d0de727c5701d7562dedaa301"><div class="ttname"><a href="classgtf_1_1_task_manager.html#a3cd0054d0de727c5701d7562dedaa301">gtf::TaskManager::GetTopExclusiveTask</a></div><div class="ttdeci">ExTaskPtr GetTopExclusiveTask() const</div><div class="ttdoc">最上位にあるエクスクルーシブタスクをゲト</div><div class="ttdef"><b>Definition:</b> task.h:143</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_a403140c93d3265985944a972e81da9ab"><div class="ttname"><a href="classgtf_1_1_task_manager.html#a403140c93d3265985944a972e81da9ab">gtf::TaskManager::~TaskManager</a></div><div class="ttdeci">~TaskManager()</div><div class="ttdef"><b>Definition:</b> task.h:131</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_a9c71bf965d696ee5a082caec78d7409d"><div class="ttname"><a href="classgtf_1_1_task_manager.html#a9c71bf965d696ee5a082caec78d7409d">gtf::TaskManager::BgTaskPtr</a></div><div class="ttdeci">weak_ptr&lt; BackgroundTaskBase &gt; BgTaskPtr</div><div class="ttdef"><b>Definition:</b> task.h:135</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_aa9f3a156dc0045c2e892c93936064112"><div class="ttname"><a href="classgtf_1_1_task_manager.html#aa9f3a156dc0045c2e892c93936064112">gtf::TaskManager::ExTaskPtr</a></div><div class="ttdeci">weak_ptr&lt; ExclusiveTaskBase &gt; ExTaskPtr</div><div class="ttdef"><b>Definition:</b> task.h:134</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_acc9d7b50b9f069028ad715a059ac8117"><div class="ttname"><a href="classgtf_1_1_task_manager.html#acc9d7b50b9f069028ad715a059ac8117">gtf::TaskManager::FindTask</a></div><div class="ttdeci">shared_ptr&lt; T &gt; FindTask(unsigned int id) const</div><div class="ttdoc">任意のクラス型のタスクを取得（通常・常駐兼用）</div><div class="ttdef"><b>Definition:</b> task.h:169</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_accf17afdbc65c158a925b1ebc528a5e5"><div class="ttname"><a href="classgtf_1_1_task_manager.html#accf17afdbc65c158a925b1ebc528a5e5">gtf::TaskManager::TaskPtr</a></div><div class="ttdeci">weak_ptr&lt; TaskBase &gt; TaskPtr</div><div class="ttdef"><b>Definition:</b> task.h:133</div></div>
+<div class="ttc" id="aclassgtf_1_1_task_manager_html_afc5f25d1724571011ecf3c947b2778d4"><div class="ttname"><a href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4">gtf::TaskManager::AddNewTask</a></div><div class="ttdeci">PC AddNewTask(A &amp;&amp;... args)</div><div class="ttdoc">タスクの自動生成</div><div class="ttdef"><b>Definition:</b> task.h:154</div></div>
+<div class="ttc" id="anamespacegtf_html"><div class="ttname"><a href="namespacegtf.html">gtf</a></div><div class="ttdef"><b>Definition:</b> task.cpp:15</div></div>
+<div class="ttc" id="atask_8cpp_html"><div class="ttname"><a href="task_8cpp.html">task.cpp</a></div></div>
+<div class="ttc" id="atask_8h_html_a10a59554805ac7ce3905fd3540f98137"><div class="ttname"><a href="task_8h.html#a10a59554805ac7ce3905fd3540f98137">NOEXCEPT</a></div><div class="ttdeci">#define NOEXCEPT</div><div class="ttdef"><b>Definition:</b> task.h:26</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+構築:&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>

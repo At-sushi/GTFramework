@@ -1,5 +1,0 @@
-<map id="クラス階層図" name="クラス階層図">
-<area shape="rect" id="node1" href="$class_g_t_f_1_1_c_task_base.html" title="基本タスク " alt="" coords="5,31,128,57"/>
-<area shape="rect" id="node2" href="$class_g_t_f_1_1_c_background_task_base.html" title="常駐タスク " alt="" coords="176,5,367,32"/>
-<area shape="rect" id="node3" href="$class_g_t_f_1_1_c_exclusive_task_base.html" title="排他タスク? =ゲームのシーンと考えてください。 " alt="" coords="183,56,360,83"/>
-</map>

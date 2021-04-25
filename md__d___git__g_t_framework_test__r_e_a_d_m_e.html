@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GTFramework: Test</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">GTFramework
+   &#160;<span id="projectnumber">1.50a</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 構築: Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'検索','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','検索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">Test </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>単体テスト用のdirectoryです。</p>
+<p>単体テストフレームワークには、<a href="https://github.com/srz-zumix/iutest">iutest</a>を利用しています。</p>
+<h1><a class="anchor" id="autotoc_md9"></a>
+ビルド方法</h1>
+<h2><a class="anchor" id="autotoc_md10"></a>
+通常のビルド</h2>
+<p>CMakeが必要です。</p>
+<div class="fragment"><div class="line">$ mkdir -p build</div>
+<div class="line">$ cd $_</div>
+<div class="line">$ cmake -DCMAKE_BUILD_TYPE=Debug ..</div>
+<div class="line">$ make</div>
+</div><!-- fragment --><p>Debugビルドではないときは<code>-DCMAKE_BUILD_TYPE=Debug</code>を取り除いてください</p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+coverageを有効にする</h2>
+<ul>
+<li>gcc</li>
+<li>gcov</li>
+<li>lcov</li>
+<li>perl</li>
+</ul>
+<p>が必要です。</p>
+<p>Windowsではmsys2のMINGW64 shellで</p>
+<div class="fragment"><div class="line">$ pacman -S base_devel mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake git</div>
+<div class="line">$ cd ~</div>
+<div class="line">$ git clone https://github.com/Alexpux/MINGW-packages.git --depth=1</div>
+<div class="line">$ cd MINGW-packages/mingw-w64-lcov</div>
+<div class="line">$ makepkg -cs</div>
+<div class="line">$ pacamn -U mingw-w64-x86_64-lcov-1.13-1-any.pkg.tar.xz</div>
+</div><!-- fragment --><p>としてください。<code>mingw-w64-x86_64-lcov</code>のpacmanから落ちてくる<code>1.12-1</code>は壊れています(ref <a href="https://github.com/Alexpux/MINGW-packages/issues/3156">https://github.com/Alexpux/MINGW-packages/issues/3156</a>)。</p>
+<div class="fragment"><div class="line">$ mkdir -p build</div>
+<div class="line">$ cd $_</div>
+<div class="line">$ cmake -DCMAKE_BUILD_TYPE=Debug -DGTF_Test_ENABLE_COVERAGE=1 ..</div>
+<div class="line">$ make</div>
+<div class="line">$ make GTF_Test_coverage</div>
+</div><!-- fragment --><p>msys2では<code>make</code>の代わりに<code>ninja</code>を利用しないでください。<code>pacamn -U mingw-w64-x86_64-lcov-1.13-1-any.pkg.tar.xz</code>で<code>/mingw64/bin/lcov.exe</code>ではないく<code>/mingw64/bin/lcov</code>がインストールされるため、Windowsがこれを実行ファイルと認識できないためです。</p>
+<p>gcov, lcovが見つからないというエラーが出る場合は、<code>-DGCOV_PATH=&lt;path/to/gcov&gt;</code>/<code>-DLCOV_PATH=&lt;path/to/lcov&gt;</code>を<code>cmake</code>に指定してください</p>
+<p>生成した<code>GTF_Test_coverage.info.cleaned</code>をhtmlにしたい場合は</p>
+<div class="fragment"><div class="line">$ genhtml -O . GTF_Test_coverage.info.cleaned</div>
+</div><!-- fragment --><p>などとすればいいです。<code>-O</code>がhtmlの生成先を指定するものです。 </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+構築:&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>

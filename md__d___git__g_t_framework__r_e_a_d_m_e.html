@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GTFramework: README</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">GTFramework
+   &#160;<span id="projectnumber">1.50a</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 構築: Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'検索','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','検索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">README </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a href="https://travis-ci.org/At-sushi/GTFramework"><img src="https://travis-ci.org/At-sushi/GTFramework.svg?branch=master" alt="Build Status" style="pointer-events: none;" class="inline"/></a> <a href="https://coveralls.io/github/At-sushi/GTFramework?branch=master"><img src="https://coveralls.io/repos/github/At-sushi/GTFramework/badge.svg?branch=master" alt="Coverage Status" style="pointer-events: none;" class="inline"/></a> <a href="./LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License" style="pointer-events: none;" class="inline"/></a> </p>
+<h1><a class="anchor" id="autotoc_md0"></a>
+GTFramework</h1>
+<p>Goluah Task Framework ver1.50</p>
+<p>「Goluah!」から流用したゲーム開発向け汎用タスクシステム</p>
+<p>タスクのリスト式管理・検索・優先度つきの描画などが高速に行えます。</p>
+<h2><a class="anchor" id="autotoc_md1"></a>
+導入方法</h2>
+<p>src/systemフォルダ以下をプロジェクト内にコピーして使用してください。</p>
+<p>ライブラリを作るMakefile等は今のところありません。</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+簡単な使い方</h2>
+<h3><a class="anchor" id="autotoc_md3"></a>
+タスク用クラスの定義</h3>
+<p>タスク用の基礎クラスを継承することで、GTFrameworkで管理することの出来るタスククラスを生成することが出来ます。</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="task_8h.html">task.h</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacegtf.html">gtf</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">class </span>NewTask : TaskBase</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">virtual</span> <span class="keywordtype">void</span> Initialize() override                      <span class="comment">// 初期化時の処理</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// タスク追加処理など</span></div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> Execute(<span class="keywordtype">double</span> elapsedTime) <span class="keyword">override</span>                   <span class="comment">// 実行時の処理</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// do something</span></div>
+<div class="line">        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="keyword">virtual</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> GetID()<span class="keyword"> const override</span></div>
+<div class="line"><span class="keyword">    </span>{</div>
+<div class="line">        <span class="keywordflow">return</span> 12;</div>
+<div class="line">    }</div>
+<div class="line">};</div>
+<div class="ttc" id="anamespacegtf_html"><div class="ttname"><a href="namespacegtf.html">gtf</a></div><div class="ttdef"><b>Definition:</b> task.cpp:15</div></div>
+<div class="ttc" id="atask_8h_html"><div class="ttname"><a href="task_8h.html">task.h</a></div><div class="ttdoc">タスク(?)管理・定義</div></div>
+</div><!-- fragment --><p>GTFrameworkには3種類の基礎クラスがあります。</p>
+<ul>
+<li><code><a class="el" href="classgtf_1_1_task_base.html" title="基本タスク">gtf::TaskBase</a></code> 通常タスク（下記の排他タスクに依存して（子タスクとして）振る舞う。　親排他タスクが実行中の時のみ実行される。　シーン中のオブジェクトなど。）</li>
+<li><code><a class="el" href="classgtf_1_1_exclusive_task_base.html" title="排他タスク? =ゲームのシーンと考えてください。">gtf::ExclusiveTaskBase</a></code> 排他タスク（他の排他タスクと同時に実行されない。　スタック可能。　シーン遷移などに。）</li>
+<li><code><a class="el" href="classgtf_1_1_background_task_base.html" title="常駐タスク">gtf::BackgroundTaskBase</a></code> 常駐タスク（タスク階層に依存せずに常時実行されるタスク）</li>
+</ul>
+<p>これらの使い分けの詳細については，下記のリファレンスをご参照ください。</p>
+<p>タスクが初期化され、実行可能な状態になると<code>Initialize</code>メソッドが実行されます。 排他タスクの場合、生成直後にはタスクがアクティブにならないため、子タスクの生成処理などはこの関数の内部で行うようにしてください。</p>
+<p>タスクが実行されると<code>Execute</code>メソッドが実行され、<code>false</code>を返すとそのタスクは破棄されます。</p>
+<p><code>GetID</code>メソッドは、タスクに個別のIDを付けたいときに使えます（<code>0</code>にすると未設定扱いとなりますのでご注意ください。）</p>
+<h3><a class="anchor" id="autotoc_md4"></a>
+初期化・実行</h3>
+<div class="fragment"><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacegtf.html">gtf</a>;</div>
+<div class="line"> </div>
+<div class="line">TaskManager taskManager;</div>
+<div class="line"> </div>
+<div class="line">taskManager.AddNewTask&lt;NewTask&gt;();</div>
+</div><!-- fragment --><p><code><a class="el" href="classgtf_1_1_task_manager.html" title="タスク管理クラス">gtf::TaskManager</a></code>クラスをインスタンス化するとタスクを管理できるようになります。</p>
+<p><code><a class="el" href="classgtf_1_1_task_manager.html#afc5f25d1724571011ecf3c947b2778d4" title="タスクの自動生成">gtf::TaskManager::AddNewTask</a></code>メソッドにテンプレート引数としてクラスをわたすと、タスクが自動で生成されます。 括弧の中に引数を記述すると、タスクのコンストラクタ引数として初期化時に渡すことが出来ます。</p>
+<div class="fragment"><div class="line">taskManager.AddNewTask&lt;NewArgumentTask&gt;(12, 2, <span class="stringliteral">&quot;String&quot;</span>);</div>
+</div><!-- fragment --><p>タスクをすべて実行するには<code><a class="el" href="classgtf_1_1_task_manager.html#a5c368289ea80d9d91841953b99fad778" title="各タスクのExecute関数をコールする">gtf::TaskManager::Execute</a></code>メソッドを使います。</p>
+<div class="fragment"><div class="line">taskManager.Execute(0);</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md5"></a>
+検索</h3>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> p = taskManager.FindTask&lt;NewTask&gt;(12);</div>
+</div><!-- fragment --><p><code><a class="el" href="classgtf_1_1_task_manager.html#acc9d7b50b9f069028ad715a059ac8117" title="任意のクラス型のタスクを取得（通常・常駐兼用）">gtf::TaskManager::FindTask</a></code>メソッドを使用すると、指定したIDのタスクのスマートポインタが手に入ります。 テンプレート引数としてタスクのクラス型を指定すると、動的キャストを行い、指定された型の<code>shared_ptr</code>を返します。 ただし排他タスクの検索は出来ません。</p>
+<h3><a class="anchor" id="autotoc_md6"></a>
+描画(優先度付き)</h3>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="task_8h.html">task.h</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacegtf.html">gtf</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">class </span>NewTask : TaskBase</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">virtual</span> <span class="keywordtype">void</span> Draw() override                    <span class="comment">// Draw実行時の処理</span></div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// do something</span></div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="keyword">virtual</span> <span class="keywordtype">int</span> GetDrawPriority()<span class="keyword"> const override</span></div>
+<div class="line"><span class="keyword">    </span>{</div>
+<div class="line">        <span class="keywordflow">return</span> 0;   <span class="comment">// 描画の優先度。数値の大きいものから先に処理される。-1で無効。</span></div>
+<div class="line">    }</div>
+<div class="line">};</div>
+</div><!-- fragment --><p><code>Draw</code>メソッドを使うには、<code>GetDrawPriority</code>メソッドをオーバーライドして、 あらかじめ優先度を定義しておく必要があります。</p>
+<p>描画は(別に描画処理でなくてもいいのですが)優先度の数値が大きい順に処理され、<code>-1</code>のものは処理されません。</p>
+<p>すべてのタスクの<code>Draw</code>メソッドを実行するには、<code><a class="el" href="classgtf_1_1_task_manager.html" title="タスク管理クラス">gtf::TaskManager</a></code>クラスの<code>Draw</code>メソッドを使います。</p>
+<div class="fragment"><div class="line">taskManager.Draw();</div>
+</div><!-- fragment --><p>排他タスクの生成時、コンストラクタ引数<code>fallthroughDraw</code>に<code>true</code>を指定して生成すると、Draw処理のフォールスルーが行われるようになります。 この状態で<code>Draw</code>処理がコールされると、一つ下の階層のタスクも含めて描画することが出来ます。 </p><div class="fragment"><div class="line"><span class="keyword">class </span>NewExTask : CExcusiveTaskBase</div>
+<div class="line">{</div>
+<div class="line">    NewExTask() : CExcusiveTaskBase(true)</div>
+<div class="line"> </div>
+<div class="line">    {</div>
+<div class="line">        <span class="comment">// do something</span></div>
+<div class="line">        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line">    }</div>
+<div class="line">};</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
+リファレンス：</h2>
+<p><a href="http://at-sushi.github.io/GTFramework/">http://at-sushi.github.io/GTFramework/</a></p>
+<p>詳しいことはこちらをご参照ください。 </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+構築:&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>
