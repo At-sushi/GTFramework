@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/At-sushi/GTFramework/badge.svg?branch=master)](https://coveralls.io/github/At-sushi/GTFramework?branch=master)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./LICENSE)
 # GTFramework
-Goluah Task Framework ver1.50
+Goluah Task Framework ver1.50a
 
 「Goluah!」から流用したゲーム開発向け汎用タスクシステム
 
@@ -130,7 +130,6 @@ GTFrameworkには3種類の基礎クラスがあります。
     class NewExTask : CExcusiveTaskBase
     {
         NewExTask() : CExcusiveTaskBase(true)
-
         {
             // do something
             return true;
