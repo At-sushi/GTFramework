@@ -261,31 +261,38 @@ namespace gtf
 
     void TaskManager::RemoveTaskByID(unsigned int id)
     {
+        // ID比較用関数
+        const auto is_equal_to_id = [id](const auto& i){
+            return id == i->GetID();
+        };
+
         //通常タスクをチェック
         if (indices.count(id) != 0)
         {
-            auto i = tasks.begin();
-            const auto ied = tasks.end();
-            for (; i != ied; ++i){
-                if (id == (*i)->GetID()){
-                    (*i)->Terminate();
-                    tasks.erase(i);
-                    return;
-                }
+            // 該当するIDのタスクがあったら削除
+            const auto it = std::find_if(
+                    tasks.begin(),
+                    tasks.end(), 
+                    is_equal_to_id);
+
+            if (it != tasks.end()) {
+                (*it)->Terminate();
+                tasks.erase(it);
             }
         }
 
         //バックグラウンドタスクTerminate
         if (bg_indices.count(id) != 0)
         {
-            auto i = bg_tasks.begin();
-            const auto ied = bg_tasks.end();
-            for (; i != ied; ++i){
-                if (id == (*i)->GetID()){
-                    (*i)->Terminate();
-                    bg_tasks.erase(i);
-                    return;
-                }
+            // 該当するIDのタスクがあったら削除
+            const auto it = std::find_if(
+                    bg_tasks.begin(),
+                    bg_tasks.end(), 
+                    is_equal_to_id);
+
+            if (it != bg_tasks.end()) {
+                (*it)->Terminate();
+                bg_tasks.erase(it);
             }
         }
     }
@@ -320,12 +327,10 @@ namespace gtf
     //通常タスクを一部だけ破棄する
     void TaskManager::CleanupPartialSubTasks(TaskList::iterator it_task)
     {
-        TaskList::iterator i = it_task, ied = tasks.end();
-
-        for (; i != ied; ++i){
+        for (TaskList::iterator i = it_task; i != tasks.end(); ++i){
             (*i)->Terminate();
         }
-        tasks.erase(it_task, ied);
+        tasks.erase(it_task, tasks.end());
     }
 
 
