@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/At-sushi/GTFramework.svg?branch=master)](https://travis-ci.org/At-sushi/GTFramework)
+[![Build Status](https://app.travis-ci.com/At-sushi/GTFramework.svg?branch=master)](https://app.travis-ci.com/At-sushi/GTFramework)
 [![Coverage Status](https://coveralls.io/repos/github/At-sushi/GTFramework/badge.svg?branch=master)](https://coveralls.io/github/At-sushi/GTFramework?branch=master)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](./LICENSE)
 # GTFramework
