@@ -7,6 +7,7 @@
 #include <deque>
 #include <string>
 #include <map>
+#include <forward_list>
 #include <list>
 #include <unordered_map>
 #include <memory>
@@ -246,10 +247,10 @@ namespace gtf
         }
 
         //! タスクExecute
-        template<class T, typename I = typename T::iterator, class QI = deque<I>>
+        template<class T, typename I = typename T::iterator>
             void taskExecute(T& tasks, I i, I ied, double elapsedTime)
         {
-            QI deleteList;
+            std::forward_list<I> deleteList;
 
             for (; i != ied; ++i){
 #ifdef _CATCH_WHILE_EXEC
@@ -257,7 +258,7 @@ namespace gtf
 #endif
                     if ((*i)->Execute(elapsedTime) == false)
                     {
-                        deleteList.push_back(i);
+                        deleteList.push_front(i);
                     }
 #ifdef _CATCH_WHILE_EXEC
                 }
