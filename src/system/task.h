@@ -39,8 +39,6 @@
 
 namespace gtf
 {
-    using namespace std;
-
     /*!
     *	@ingroup Tasks
     *	@brief	基本タスク
@@ -131,9 +129,9 @@ namespace gtf
         TaskManager();
         ~TaskManager(){Destroy();}
 
-        using TaskPtr = weak_ptr<TaskBase>;
-        using ExTaskPtr = weak_ptr<ExclusiveTaskBase>;
-        using BgTaskPtr = weak_ptr<BackgroundTaskBase>;
+        using TaskPtr = std::weak_ptr<TaskBase>;
+        using ExTaskPtr = std::weak_ptr<ExclusiveTaskBase>;
+        using BgTaskPtr = std::weak_ptr<BackgroundTaskBase>;
 
         void Destroy();
 
@@ -147,29 +145,30 @@ namespace gtf
         }
 
         //! タスクの自動生成
-        template <class C, typename... A, class PC = shared_ptr<C>,
-            typename enable_if<
-                integral_constant<bool, is_base_of<BackgroundTaskBase, C>::value ||
-                is_base_of<ExclusiveTaskBase, C>::value
+        template <class C, typename... A, class PC = std::shared_ptr<C>,
+            typename std::enable_if<
+                std::integral_constant<bool, std::is_base_of<BackgroundTaskBase, C>::value ||
+                std::is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
         {
-            return static_pointer_cast<C>(AddTask(new C(forward<A>(args)...)).lock());
+            return std::static_pointer_cast<C>(AddTask(new C(std::forward<A>(args)...)).lock());
         }
-        template <class C, typename... A, class PC = shared_ptr<C>,
-            typename enable_if<
-                integral_constant<bool, !is_base_of<BackgroundTaskBase, C>::value &&
-                !is_base_of<ExclusiveTaskBase, C>::value
+        
+        template <class C, typename... A, class PC = std::shared_ptr<C>,
+            typename std::enable_if<
+                std::integral_constant<bool, !std::is_base_of<BackgroundTaskBase, C>::value &&
+                !std::is_base_of<ExclusiveTaskBase, C>::value
                 >::value, std::nullptr_t>::type = nullptr>
             PC AddNewTask(A&&... args)
         {
-            return static_pointer_cast<C>(AddTaskGuaranteed(new C(forward<A>(args)...)).lock());
+            return std::static_pointer_cast<C>(AddTaskGuaranteed(new C(std::forward<A>(args)...)).lock());
         }
 
         //! 任意のクラス型のタスクを取得（通常・常駐兼用）
-        template<class T> shared_ptr<T> FindTask(unsigned int id) const
+        template<class T> std::shared_ptr<T> FindTask(unsigned int id) const
         {
-            return dynamic_pointer_cast<T>(FindTask_impl<T>(id).lock());
+            return std::dynamic_pointer_cast<T>(FindTask_impl<T>(id).lock());
         }
 
         void Execute(double elapsedTime);					//!< 各タスクのExecute関数をコールする
@@ -184,21 +183,21 @@ namespace gtf
         void DebugOutputTaskList();							//!< 現在リストに保持されているクラスのクラス名をデバッグ出力する
 
     private:
-        using TaskList = list<shared_ptr<TaskBase>>;
-        using BgTaskList = list<shared_ptr<BackgroundTaskBase>>;
-        using DrawPriorityMap = multimap<int, TaskPtr, greater<int>>;
+        using TaskList = std::list<std::shared_ptr<TaskBase>>;
+        using BgTaskList = std::list<std::shared_ptr<BackgroundTaskBase>>;
+        using DrawPriorityMap = std::multimap<int, TaskPtr, std::greater<int>>;
 
         struct ExTaskInfo {
-            const shared_ptr<ExclusiveTaskBase> value;		//!< 排他タスクのポインタ
+            const std::shared_ptr<ExclusiveTaskBase> value;	//!< 排他タスクのポインタ
             const TaskList::iterator SubTaskStartPos;		//!< 依存する通常タスクの開始地点
             DrawPriorityMap drawList;						//!< Draw順ソート用コンテナ。排他タスク自身や、DrawFallthrough時は一つ下の階層のDrawリストも含まれる。
 
-            ExTaskInfo(shared_ptr<ExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
+            ExTaskInfo(std::shared_ptr<ExclusiveTaskBase>& source, TaskList::iterator startPos) NOEXCEPT
                 : value(source), SubTaskStartPos(startPos)
             {
             }
-            ExTaskInfo(shared_ptr<ExclusiveTaskBase>&& source, TaskList::iterator startPos) NOEXCEPT
-                : value(move(source)), SubTaskStartPos(startPos)
+            ExTaskInfo(std::shared_ptr<ExclusiveTaskBase>&& source, TaskList::iterator startPos) NOEXCEPT
+                : value(std::move(source)), SubTaskStartPos(startPos)
             {
             }
 
@@ -226,21 +225,22 @@ namespace gtf
         void CleanupPartialSubTasks(TaskList::iterator it_task);	//!< 一部の通常タスクをTerminate , deleteする
 
         //! ログ出力
-        void OutputLog(string /* s */, ...)
+        void OutputLog(std::string /* s */, ...)
         {
             // Not Implemented
         }
 
         template<class T,
-            typename enable_if<
-                integral_constant<bool, !is_base_of<BackgroundTaskBase, T>::value &&
-                !is_base_of<ExclusiveTaskBase, T>::value
+            typename std::enable_if<
+                std::integral_constant<bool, !std::is_base_of<BackgroundTaskBase, T>::value &&
+                !std::is_base_of<ExclusiveTaskBase, T>::value
                 >::value, std::nullptr_t>::type = nullptr>
             TaskPtr FindTask_impl(unsigned int id) const
         {
             return FindTask(id);
         }
-        template<class T, typename enable_if<is_base_of<BackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
+        
+        template<class T, typename std::enable_if<std::is_base_of<BackgroundTaskBase, T>::value, std::nullptr_t>::type = nullptr>
             BgTaskPtr FindTask_impl(unsigned int id) const
         {
             return FindBGTask(id);
@@ -263,7 +263,7 @@ namespace gtf
 #ifdef _CATCH_WHILE_EXEC
                 }
                 catch (...){
-                    if (*i == nullptr)OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
+                    if (*i == nullptr) OutputLog("catch while execute1 : NULL", SYSLOG_ERROR);
                     else OutputLog("catch while execute1 : %X , %s", *i, typeid(**i).name());
                     break;
                 }
@@ -281,10 +281,10 @@ namespace gtf
         BgTaskList bg_tasks;						//!< 常駐タスクリスト
         ExTaskStack ex_stack;						//!< 排他タスクのスタック。topしか実行しない
 
-        shared_ptr<ExclusiveTaskBase> exNext = nullptr;		//!< 現在フレームでAddされた排他タスク
+        std::shared_ptr<ExclusiveTaskBase> exNext = nullptr;	//!< 現在フレームでAddされた排他タスク
         DrawPriorityMap drawListBG;					//!< Draw順ソート用コンテナ（常駐タスク）
-        unordered_map<unsigned int, TaskPtr> indices;
-        unordered_map<unsigned int, BgTaskPtr> bg_indices;
+        std::unordered_map<unsigned int, TaskPtr> indices;
+        std::unordered_map<unsigned int, BgTaskPtr> bg_indices;
     };
 
 
