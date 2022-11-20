@@ -13,12 +13,10 @@
 
 namespace gtf
 {
-    using namespace std;
-
     TaskManager::TaskManager()
     {
         // ダミーデータ挿入
-        const auto it = tasks.emplace(tasks.end(), make_shared<TaskBase>());
+        const auto it = tasks.emplace(tasks.end(), std::make_shared<TaskBase>());
         ex_stack.emplace_back(exNext, it);
     }
 
@@ -68,7 +66,7 @@ namespace gtf
             OutputLog("■ALERT■ 排他タスクが2つ以上Addされた : %s / %s",
                 typeid(t1).name(), typeid(t2).name());
         }
-        exNext = shared_ptr<ExclusiveTaskBase>(newTask);
+        exNext = std::shared_ptr<ExclusiveTaskBase>(newTask);
 
         return exNext;
     }
@@ -103,7 +101,7 @@ namespace gtf
 
         //排他タスク、topのみExecute
         assert(ex_stack.size() != 0);
-        shared_ptr<ExclusiveTaskBase> exTsk = ex_stack.back().value;
+        std::shared_ptr<ExclusiveTaskBase> exTsk = ex_stack.back().value;
 
         // 新しいタスクがある場合
         if (exNext){
@@ -118,7 +116,7 @@ namespace gtf
             }
 
             //AddされたタスクをInitializeして突っ込む
-            const auto it = tasks.emplace(tasks.end(), make_shared<TaskBase>());				// ダミータスク挿入
+            const auto it = tasks.emplace(tasks.end(), std::make_shared<TaskBase>());				// ダミータスク挿入
             ex_stack.emplace_back(move(exNext), it);
             auto pnew = ex_stack.back().value;
             if (pnew->IsFallthroughDraw()) {
@@ -306,7 +304,7 @@ namespace gtf
 
         assert(ex_stack.size() != 0);
         while (ex_stack.back().value){
-            const shared_ptr<ExclusiveTaskBase>& task = ex_stack.back().value;
+            const std::shared_ptr<ExclusiveTaskBase>& task = ex_stack.back().value;
             if (task->GetID() == id){
                 if (act){
                     task->Activate(previd);

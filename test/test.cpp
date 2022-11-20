@@ -6,7 +6,7 @@
 
 using namespace gtf;
 
-IUTEST_MAKE_PEEP(weak_ptr<BackgroundTaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindBGTask);
+IUTEST_MAKE_PEEP(std::weak_ptr<BackgroundTaskBase> (TaskManager::*)(unsigned int) const, TaskManager, FindBGTask);
 
 static std::vector<int> veve;
 
@@ -31,7 +31,7 @@ template<typename T, class B, typename... Arg>
 class CTekitou2 : public B
 {
 public:
-	CTekitou2(T init, Arg&&... args) : B(forward<Arg>(args)...), hogehoge(init)
+	CTekitou2(T init, Arg&&... args) : B(std::forward<Arg>(args)...), hogehoge(init)
 	{
 
 	}
@@ -48,7 +48,7 @@ template<typename T, typename... Arg>
 class CExTaskSelfDestruct : public ExclusiveTaskBase
 {
 public:
-	CExTaskSelfDestruct(T init, Arg&&... args) : ExclusiveTaskBase(forward<Arg>(args)...), hogehoge(init)
+	CExTaskSelfDestruct(T init, Arg&&... args) : ExclusiveTaskBase(std::forward<Arg>(args)...), hogehoge(init)
 	{
 
 	}
