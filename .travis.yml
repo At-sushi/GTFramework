@@ -19,6 +19,7 @@ before_install:
     - cpanm local::lib --sudo
     - cpanm PerlIO::gzip --sudo
     - cpanm JSON --sudo
+    - cpanm Capture::Tiny --sudo
 install:
   - |
     if [ "$CXX" = "g++" ]; then
