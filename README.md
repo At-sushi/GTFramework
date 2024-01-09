@@ -11,35 +11,33 @@ Goluah Task Framework ver1.50a
 ## 導入方法
 src/systemフォルダ以下をプロジェクト内にコピーして使用してください。
 
-ライブラリを作るMakefile等は今のところありません。
+ライブラリをbuildするMakefile等は今のところありません。
 
 ## 簡単な使い方
 ### タスク用クラスの定義
 タスク用の基礎クラスを継承することで、GTFrameworkで管理することの出来るタスククラスを生成することが出来ます。
 
 ```cpp
-    #include "task.h"
-    
-    using namespace gtf;
-    
-    class NewTask : TaskBase
+#include "task.h"
+
+class NewTask : gtf::TaskBase
+{
+    virtual void Initialize() override                   // 初期化時の処理
     {
-        virtual void Initialize() override						// 初期化時の処理
-        {
-            // タスク追加処理など
-        }
-        
-        virtual bool Execute(double elapsedTime) override					// 実行時の処理
-        {
-            // do something
-            return true;
-        }
-        
-        virtual unsigned int GetID() const override
-        {
-            return 12;
-        }
-    };
+        // タスク追加処理など
+    }
+    
+    virtual bool Execute(double elapsedTime) override    // 実行時の処理
+    {
+        // do something
+        return true;
+    }
+    
+    virtual unsigned int GetID() const override
+    {
+        return 12;
+    }
+};
 ```
 
 GTFrameworkには3種類の基礎クラスがあります。
@@ -60,9 +58,7 @@ GTFrameworkには3種類の基礎クラスがあります。
 ### 初期化・実行
 
 ```cpp
-    using namespace gtf;
-    
-    TaskManager taskManager;
+    gtf::TaskManager taskManager;
     
     taskManager.AddNewTask<NewTask>();
 ```
@@ -95,22 +91,20 @@ GTFrameworkには3種類の基礎クラスがあります。
 ### 描画(優先度付き)
 
 ```cpp
-    #include "task.h"
-    
-    using namespace gtf;
-    
-    class NewTask : TaskBase
+#include "task.h"
+
+class NewTask : gtf::TaskBase
+{
+    virtual void Draw() override    // Draw実行時の処理
     {
-        virtual void Draw() override					// Draw実行時の処理
-        {
-            // do something
-        }
-        
-        virtual int GetDrawPriority() const override
-        {
-            return 0;	// 描画の優先度。数値の大きいものから先に処理される。-1で無効。
-        }
-    };
+        // do something
+    }
+    
+    virtual int GetDrawPriority() const override
+    {
+        return 0;    // 描画の優先度。数値の大きいものから先に処理される。-1で無効。
+    }
+};
 ```
 
 `Draw`メソッドを使うには、`GetDrawPriority`メソッドをオーバーライドして、
@@ -127,14 +121,14 @@ GTFrameworkには3種類の基礎クラスがあります。
 排他タスクの生成時、コンストラクタ引数`fallthroughDraw`に`true`を指定して生成すると、Draw処理のフォールスルーが行われるようになります。
 この状態で`Draw`処理がコールされると、一つ下の階層のタスクも含めて描画することが出来ます。
 ```cpp
-    class NewExTask : CExcusiveTaskBase
+class NewExTask : gtf::ExcusiveTaskBase
+{
+    NewExTask() : gtf::ExcusiveTaskBase(true)
     {
-        NewExTask() : CExcusiveTaskBase(true)
-        {
-            // do something
-            return true;
-        }
-    };
+        // do something
+        return true;
+    }
+};
 ```
 
 
