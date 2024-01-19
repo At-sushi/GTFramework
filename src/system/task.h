@@ -290,6 +290,6 @@ namespace gtf
 
 }
 
-#ifdef gtf_HEADER_ONLY
+#ifdef GTF_HEADER_ONLY
 #   include "task.cpp"
 #endif

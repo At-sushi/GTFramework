@@ -1,4 +1,4 @@
-﻿#define gtf_HEADER_ONLY
+﻿#define GTF_HEADER_ONLY
 #include "../iutest/include/iutest.hpp"
 #include "../src/system/task.h"
 
